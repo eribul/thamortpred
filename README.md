@@ -1,4 +1,4 @@
 # Projekt 29
 
-Paper work:
-"G:\Registrens egna mappar\SHPR\Forskning\Forskningsprojekt ny\Projekt 21-30\Projekt 29"
+Projekty påbörjat av SN. 
+Hans originalfiler under doc/Szilard v1.
