@@ -10,12 +10,19 @@ logging_level:            INFO
 load_libraries:           TRUE
 libraries:
   tidyverse,
+  future,
+  furrr,
+  tidymodels,
   pROC,
   tableone,
   caret,
   binom,
   survival,
-  data.table
+  data.table,
+  survminer,
+  writexl,
+  MuMIn,
+  parallel
 as_factors:                TRUE
 data_tables:               FALSE
 attach_internal_libraries: FALSE

@@ -1,13 +1,18 @@
 
 N <- function() c(n_distinct(df_shpr$LopNr), nrow(df_shpr))                       # pats   hips
 
+# Endast 2008-2015 enligt data/linkage.R
+
 # Endast primäroperationer
 df_shpr <-
   df_shpr_orig %>%
-  distinct(LopNr, P_Side, .keep_all = TRUE); N()                                  # 146159 162951
+  distinct(LopNr, P_Side, .keep_all = TRUE); N()                                  #
 
 # Endast OA
-df_shpr <- filter(df_shpr, P_DiaGrp == "Primär artros"); N()                      # 90173 102734
+df_shpr <- filter(df_shpr, P_DiaGrp == "Primär artros"); N()                      #
+
+# Endats THA
+df_shpr <- filter(df_shpr, P_ProstType == "Totalprotes"); N()                     #
 
 # Indikera opnr och tid mellan operationer för de som har två
 df_shpr <-
@@ -22,18 +27,22 @@ df_shpr <-
   ungroup()
 
 # Endast första höft
-df_shpr <- filter(df_shpr, opnr == 1); N()                                       # 77105 77105
+df_shpr <- filter(df_shpr, opnr == 1); N()                                       #
 
 # Ignorera om ytterligare THA inom ett år efter första
-df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 365); N()         # 70959
+df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 365); N()         #
 
-df_shpr <- filter(df_shpr, P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() # 70959
-df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 70959
-df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 67382
-df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       # 66387
-df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 65925
+df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() #
+df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          #
+df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      #
+df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       #
+df_shpr <- filter(df_shpr, !is.na(education)); N()                                #
+df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                                #
+df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         #
+df_shpr <- filter(df_shpr, !is.na(P_AcetCupCemMix)); N()                         #
+df_shpr <- filter(df_shpr, !is.na(P_FemStemCemMix)); N()                         #
 
-# INdikerar nya data för nyu peroid
+# Indikerar nya data för nyu peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")
 
 cache("df_shpr")

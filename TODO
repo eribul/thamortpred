@@ -1,0 +1,25 @@
+# Frågor
+
+Vilka index inkluderas?
+Enl löptext två versioner av Charlson men enligt skript och presenterade tabeller endat original.
+
+Enl text Elixhauser enl ValRaven men enl script och table1 summan av komorbiditeter.
+
+Vilken tidsperiod ska inkluderas. Tror att den data som användes inkluderade diagnoser sata under sjukhusvistelsen.
+Detta ger fler diagnoser men är problematiskt:
+1. Sämre rapportering från privata aktörer => saknat nidex ger bättre överlevnad.
+2. Vi kan ej säkert skilja komorbiditet från adverse events.
+Dock får vi förstås fler koder att jobba med vilket underlättar för själva modelleringen.
+
+Trunkering av resp index? Vi har väldigt få observationer med höga indextal. I table 1 presenteras endast ett fåtal värden.
+
+I table1 presenteras NA-värden för resp kommorbiditetsnidex men i skript sätts dessa till 0.
+Vad står i texetn? Ser inget vid snabb läsning men får läsa bättre.
+
+
+
+# Gör
+
+ta med operationsår för att kolla om vi kan generalisera utan extrapolation.
+
+Vi kan inte köra från stor modell med samtliga variabler. Att stegvis ta bort endast en prediktor i taget gör att vi nite ser korrekt effekt för variabler som är starkt korrelerade, vilket vi har gott om med våra tre komorbiditetsindex.
