@@ -88,7 +88,7 @@ list_predictors <- function(x, df, outcome = "death90f", thr = threshold) {
   list(winners = winners, loosers = loosers, extra = extra)
 }
 
-# Gret training data with selected columns
+# Create training data with selected columns
 getdata <- function(prefix) {
   select(df_train, death90f, starts_with(prefix), -matches("index"))
 }
@@ -283,6 +283,11 @@ models <-
 
 # Cache model data --------------------------------------------------------
 
+aucs <-
+  models %>%
+  select(name, preds, starts_with("AUC"))
+cache("aucs")
+
 rocs <-
   models %>%
   transmute(
@@ -380,3 +385,30 @@ obspreds %>%
 ggsave("graphs/separation_auc.png")
 
 
+# AUC
+
+# Fig
+aucs %>%
+  mutate(Model = fct_reorder(name, AUCfinal)) %>%
+  ggplot(aes(Model, AUCtrain_est)) +
+  geom_hline(aes(yintercept = .5), linetype = 2, col = "grey", size = 2) +
+  geom_pointrange(aes(ymin = AUCtrain_lo, ymax = AUCtrain_hi), size = 1.5) +
+  geom_point(aes(y = AUCfinal), color = "red", shape = 23, size = 4, fill = "red") +
+  coord_flip() +
+  theme_minimal() +
+  ylab("AUC") +
+  scale_y_continuous(breaks = seq(0, 1, .1))
+
+ggsave("graphs/auc_ci.png")
+
+# Table
+auc_table <-
+  aucs %>%
+  arrange(desc(AUCfinal)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  transmute(
+    Model = name,
+    AUC_train = paste0(AUCtrain_est, " (", AUCtrain_lo, ", ", AUCtrain_hi, ")"),
+    AUC_test = AUCfinal
+  )
+cache("auc_table")

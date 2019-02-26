@@ -9,7 +9,7 @@ lrm <- function(rhs) {
     glmCI(TRUE)
 }
 
-univariable <-
+t2_univariable <-
   tibble(
     name = predictors
   ) %>%
@@ -18,10 +18,10 @@ univariable <-
   ) %>%
   unnest(coefs) %>%
   mutate(
-    var = map2_chr(name, var, ~gsub(.x, "", .y, fixed = TRUE)),
+    var  = map2_chr(name, var, ~gsub(.x, "", .y, fixed = TRUE)),
     name = ifelse(duplicated(name), "", name),
-    CI  = paste0("(", round(low, 2), "-", round(high, 2), ")")
+    CI   = paste0("(", round(low, 2), "-", round(high, 2), ")")
   ) %>%
   select(-low, -high)
 
-cache("table2")
+cache("t2_univariable")

@@ -6,9 +6,9 @@ t1 <-
     vars = predictors,
     factorVars = c(
       "P_ASA",
-      "elix_icd10_index_walraven",
-      "charlson_icd10_index_quan_original",
-      "rxriskv_modified_atc_index_index"
+      "ECI_index_walraven",
+      "CCI_index_quan_original",
+      "Rx_index_index"
     ),
     data = df
   )
