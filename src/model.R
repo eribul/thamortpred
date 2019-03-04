@@ -15,6 +15,9 @@ threshold <- .75 # Proportion of models including variable for it to be choosen
 # Data --------------------------------------------------------------------
 
 # Use training and evaluation data
+# # Tillagda kopositvariabler efter att scriptet kördes exkluderas tills vi
+# bestämt hur de ska hanteras
+df         <- select(df, -starts_with("c_"))
 data_split <- initial_split(df, strata = "death90f", p = 0.9)
 df_train   <- training(data_split)
 df_test    <- testing(data_split)

@@ -71,6 +71,3 @@ df <-
   rename_all(~ gsub("charlson_icd10", "CCI", .)) %>%
   rename_all(~ gsub("rxriskv_modified_atc", "Rx", .)) %>%
   rename_all(~ gsub("elix_icd10", "ECI", .))
-
-
-cache("df")
