@@ -34,6 +34,9 @@ df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 365); N()       
 
 df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() #
 df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          #
+df_shpr <- filter(df_shpr,
+                  P_AcetCupCemMix != "Cementfritt",
+                  P_FemStemCemMix != "Cementfritt"); N()                          #
 df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      #
 df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       #
 df_shpr <- filter(df_shpr, !is.na(education)); N()                                #
@@ -42,7 +45,7 @@ df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                       
 df_shpr <- filter(df_shpr, !is.na(P_AcetCupCemMix)); N()                         #
 df_shpr <- filter(df_shpr, !is.na(P_FemStemCemMix)); N()                         #
 
-# Indikerar nya data för nyu peroid
+# Indikerar nya data för ny peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")
 
 cache("df_shpr")

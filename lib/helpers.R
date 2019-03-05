@@ -1,5 +1,5 @@
 predictors <- c(
-  "P_Age", "P_Gender", "P_BMI", "P_ASA", "P_TypeOfHospital", "P_ProtGrp", "P_SurgYear",
+  "P_Age", "P_Gender", "P_BMI", "P_ASA", "P_TypeOfHospital", "P_SurgYear",
   "education", "civil_status", "ECI_index_walraven",
   "CCI_index_quan_original", "Rx_index_index"
 )

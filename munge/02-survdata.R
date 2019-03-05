@@ -14,16 +14,6 @@ df <-
     P_SurgYear = as.factor(substr(P_SurgDate, 1, 4)),
     P_ASA = as.factor(P_ASA),
 
-    # Protestyp
-    acetcem = P_AcetCupCemMix != "Cementfritt",
-    stemcem = P_FemStemCemMix != "Cementfritt",
-    P_ProtGrp = case_when(
-      !acetcem & !stemcem ~ 'Cementless',
-      !acetcem &  stemcem ~ 'Hybrid',
-      acetcem  & !stemcem ~ 'Reversed hybrid',
-      acetcem  &  stemcem ~ 'Cemented'
-    ) %>% as.factor() %>% relevel("Cemented"),
-
     # Civilstånd
     civil_status = as.character(civil_status),
     civil_status =
@@ -49,8 +39,6 @@ df <-
   select(
     -P_AcetCupCemMix,
     -P_FemStemCemMix,
-    -acetcem,
-    -stemcem,
     -LopNr,
     -P_Side,
     -opnr,
