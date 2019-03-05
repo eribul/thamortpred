@@ -23,3 +23,87 @@ Vad står i texetn? Ser inget vid snabb läsning men får läsa bättre.
 ta med operationsår för att kolla om vi kan generalisera utan extrapolation.
 
 Vi kan inte köra från stor modell med samtliga variabler. Att stegvis ta bort endast en prediktor i taget gör att vi nite ser korrekt effekt för variabler som är starkt korrelerade, vilket vi har gott om med våra tre komorbiditetsindex.
+
+
+
+# Enskilda komorbiditeter att gruppera -----------------------------------------
+
+
+ECI_valvular_disease
+ECI_pulmonary_circulation_disorder
+ECI_paralysis
+ECI_other_neurological_disorders
+ECI_chronic_pulmonary_disease
+ECI_hypothyroidism
+ECI_liver_disease
+ECI_peptic_ulcer_disease
+ECI_rheumatoid_arthritis
+ECI_coagulopathy
+ECI_obesity
+ECI_weight_loss
+ECI_fluid_electrolyte_disorders
+ECI_blood_loss_anemia
+ECI_deficiency_anemia
+ECI_alcohol_abuse
+ECI_drug_abuse
+ECI_psychoses
+ECI_depression
+
+
+CCI_dementia
+CCI_chronic_pulmonary_disease
+CCI_rheumatic_disease
+CCI_peptic_ulcer_disease
+CCI_mild_liver_disease
+CCI_hemiplegia_or_paraplegia
+CCI_moderate_or_severe_liver_disease
+
+
+
+Rx_alcohol_dependence
+Rx_allergies
+Rx_anxiety
+Rx_benign_prostate_hypertrophy
+Rx_bipolar_disorder
+Rx_dementia
+Rx_depression
+Rx_epilepsy
+Rx_gastric_oesophageal_reflux_disorder
+Rx_glaucoma
+Rx_gout
+Rx_hepatitis_c
+Rx_hyperkalaemia
+Rx_hyperlipidemia
+Rx_hyperthyroidism
+Rx_inflammatory_bowel_disease
+Rx_liver_failure
+Rx_malnutrition
+Rx_migraine
+Rx_osteoporosis_pagets
+Rx_pain
+Rx_inflammation_pain
+Rx_pancreatic_insufficiency
+Rx_parkinsons_disease
+Rx_psoriasis
+Rx_psychotic_illness
+Rx_chronic_airways_disease
+Rx_smoking_cessation
+Rx_steroid_responsive_diseases
+Rx_transplant
+Rx_tuberculosis
+
+
+# Förslag på grupperingar ------------------------------------------------------
+
+AUD/HIV
+  ECI_aids_hiv
+  CCI_aids_hiv
+  Rx_hiv
+
+Cancer
+  ECI_lymphoma
+  ECI_metastatic_cancer
+  ECI_solid_tumor
+  CCI_malingnancy
+  CCI_metastatic_solid_tumor
+  Rx_malignancies

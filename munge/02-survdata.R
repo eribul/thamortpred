@@ -11,7 +11,7 @@ df <-
     ~ifelse(is.na(.), 0, .)
   ) %>%
   mutate(
-    P_SurgYear = as.factor(substr(P_SurgDate, 1, 4)),
+    P_SurgYear = as.numeric(as.factor(substr(P_SurgDate, 1, 4))),
     P_ASA = as.factor(P_ASA),
 
     # Civilstånd

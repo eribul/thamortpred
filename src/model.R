@@ -8,8 +8,8 @@ options('na.action' = "na.fail")
 memory.limit(1e10)
 set.seed(132456798)
 future::plan("multiprocess")
-N_bost    <- 1000 # No of Bootstrap replicates
-threshold <- .75 # Proportion of models including variable for it to be choosen
+N_bots    <- 5 # No of Bootstrap replicates
+threshold <- .5 # Proportion of models including variable for it to be choosen
 
 
 # Data --------------------------------------------------------------------
@@ -17,7 +17,7 @@ threshold <- .75 # Proportion of models including variable for it to be choosen
 # Use training and evaluation data
 # # Tillagda kopositvariabler efter att scriptet kördes exkluderas tills vi
 # bestämt hur de ska hanteras
-df         <- select(df, -starts_with("c_"))
+# df         <- select(df, -starts_with("c_"))
 data_split <- initial_split(df, strata = "death90f", p = 0.9)
 df_train   <- training(data_split)
 df_test    <- testing(data_split)
@@ -52,7 +52,7 @@ reci <- function(df, outcome = "death90f") {
     step_downsample(all_outcomes()) %>%
     step_nzv(all_predictors(), options = list(freq_cut = 99 / 1), skip = TRUE)
   if (sum(vapply(df, is.factor, logical(1))) > 1)
-    rec <- rec %>% step_dummy(all_predictors(), -all_numeric())
+    rec <- rec %>% step_dummy(has_type("factor"), -all_numeric(), -all)
   rec
 }
 
@@ -60,7 +60,7 @@ reci <- function(df, outcome = "death90f") {
 # Use bootstrap resampling to find number of times each variable is selected in
 # stepwise regression
 find_predictors <- function(
-  df, rec = reci(df), B = N_bost, outcome = "death90f") {
+  df, rec = reci(df), B = N_bots, outcome = "death90f") {
 
   df %>%
   rsample::bootstraps(B, strata = outcome) %>%
@@ -101,13 +101,13 @@ getdata <- function(prefix) {
 # Screen all comorbidity measures as well as other factors for
 # predictors to include in combined model
 important_factors <-
-  tibble( preds = c("ECI", "CCI", "Rx")) %>%
+  tibble( preds = c("ECI", "CCI", "Rx", "c_")) %>%
   mutate(data = map(preds, getdata)) %>%
   add_row(
     preds = "general",
     data = list(select(df_train, death90f, predictors))) %>%
   mutate(
-    facts   = map(data, find_predictors, B = N_bost),
+    facts   = map(data, find_predictors, B = N_bots),
     impfact = map2(facts, data, list_predictors, outcome = "death90f")
   )
 
@@ -132,27 +132,31 @@ prop_selected <-
 
 cache("prop_selected")
 
-# Combine correlatied variables to new predictors -------------------------
 
-# Prepare recipe to use for both training and evaluation data
-bestrec <- function(df) {
-  reci(df) %>%
-  step_mutate(
-    heart_infarct  = CCI_myocardial_infarction | Rx_angina,
-    arrythmia      = ECI_cardiac_arrhythmias | Rx_arrhythmia,
-    tumour         = ECI_solid_tumor | CCI_malingnancy | Rx_malignancies,
-    hypothyroidism = ECI_hypothyroidism | Rx_hyperthyroidism
-  ) %>%
 
-  # Drop original components of new combined predictors
-  step_rm(
-    one_of(drop),
-    CCI_myocardial_infarction, Rx_angina,
-    ECI_cardiac_arrhythmias, Rx_arrhythmia,
-    ECI_solid_tumor, CCI_malingnancy, Rx_malignancies,
-    ECI_hypothyroidism, Rx_hyperthyroidism
-  )
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -171,7 +175,7 @@ bsavg <- function(mod_data) {
   model <- glm(death90f ~ ., binomial, mod_data, x = TRUE, na.action = "na.fail")
   dr    <- MuMIn::dredge(model)
   am    <- model.avg(dr, data = mod_data)
-  Weights(am) <- bootWeights(am, R = floor(sqrt(N_bost)))
+  Weights(am) <- bootWeights(am, R = floor(sqrt(N_bots)))
   am
 }
 
@@ -182,9 +186,9 @@ mod_avg <- function(nms) {
   mod_avg <-
     df_train %>%
     # sqrt(B) outer bootstrap replicates
-    rsample::bootstraps(ceiling(sqrt(N_bost)), strata = "death90f", apparent = TRUE) %>%
+    rsample::bootstraps(ceiling(sqrt(N_bots)), strata = "death90f", apparent = TRUE) %>%
     mutate(
-      recipes  = map(splits, prepper, recipe = bestrec(df_train), retain = TRUE),
+      recipes  = map(splits, prepper, recipe = reci(df_train), retain = TRUE),
       # Only keep variables that are matched by the candidate vector names
       mod_data = map(recipes, juice, death90f, matches(nms)),
       am       = future_map(mod_data, bsavg),
@@ -229,7 +233,7 @@ pred <- function(..., model) {
 evaluate <- function(model, nms, rec) {
 
   df_train %>%
-  rsample::bootstraps(N_bost, strata = "death90f", apparent = TRUE) %>%
+  rsample::bootstraps(N_bots, strata = "death90f", apparent = TRUE) %>%
   mutate(
     recipes   = map(splits, prepper, recipe = rec, retain = TRUE),
     mod_data  = map(recipes, juice, death90f, matches(nms)),
@@ -269,7 +273,7 @@ models <-
 
     # Functions and recipes for model fitting (model averaging or GLM)
     fun          = map(modavg, ~ {if (.) mod_avg else glml}),
-    rec          = map(modavg, ~ {if (.) bestrec(df_train) else reci(df_train)}),
+    rec          = map(modavg, ~ {if (.) reci(df_train) else reci(df_train)}),
     # Model
     model        = map2(fun, preds, ~ .x(.y)),
     modsum       = map(model, summary),
