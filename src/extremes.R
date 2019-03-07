@@ -19,7 +19,7 @@ cache("ECI_extremes")
 # Find the most HEALTHY ECI-person
 healthy <-
   df_train %>%
-  filter(ECI_index_walraven == -14)
+  filter(ECI_index_walraven == min(ECI_extremes$ECI_index_walraven))
 # comorbids
 healthy %>%
   select(starts_with("ECI_"), -ECI_index_walraven) %>%
@@ -31,7 +31,7 @@ select(healthy, death90f)
 # Find the most SICK ECI-person
 sick <-
   df_train %>%
-  filter(ECI_index_walraven == 33)
+  filter(ECI_index_walraven == max(ECI_extremes$ECI_index_walraven))
 # comorbids
 sick %>%
   select(starts_with("ECI_"), -ECI_index_walraven) %>%

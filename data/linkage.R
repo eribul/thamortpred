@@ -1,5 +1,3 @@
-con <- shar_linkage_con()
-
 lisa <- tbl(con, "lisa_1yr_before") %>%
   select(LopNr, P_Side, civil_status, education)
 

@@ -8,8 +8,8 @@ options('na.action' = "na.fail")
 memory.limit(1e10)
 set.seed(132456798)
 future::plan("multiprocess")
-N_bots    <- 5 # No of Bootstrap replicates
-threshold <- .5 # Proportion of models including variable for it to be choosen
+N_bots    <- 1000 # No of Bootstrap replicates
+threshold <- .75 # Proportion of models including variable for it to be choosen
 
 
 # Data --------------------------------------------------------------------
@@ -18,7 +18,7 @@ threshold <- .5 # Proportion of models including variable for it to be choosen
 # # Tillagda kopositvariabler efter att scriptet kördes exkluderas tills vi
 # bestämt hur de ska hanteras
 # df         <- select(df, -starts_with("c_"))
-data_split <- initial_split(df, strata = "death90f", p = 0.9)
+data_split <- initial_split(df, strata = "death90f", p = 0.75)
 df_train   <- training(data_split)
 df_test    <- testing(data_split)
 
@@ -52,7 +52,7 @@ reci <- function(df, outcome = "death90f") {
     step_downsample(all_outcomes()) %>%
     step_nzv(all_predictors(), options = list(freq_cut = 99 / 1), skip = TRUE)
   if (sum(vapply(df, is.factor, logical(1))) > 1)
-    rec <- rec %>% step_dummy(has_type("factor"), -all_numeric(), -all)
+    rec <- rec %>% step_dummy(all_predictors(), all_numeric())
   rec
 }
 
@@ -158,6 +158,7 @@ cache("prop_selected")
 
 
 
+# N_bots    <- 2 # No of Bootstrap replicates
 
 
 
@@ -210,8 +211,8 @@ mod_avg <- function(nms) {
 
 # Cancidate names prepared for reular expression matching
 nms <- paste(candidates, collapse = "|")
-nms_simp <- paste(setdiff(
-  candidates, c("Rx_index_index", "Rx_inflammation_pain")), collapse = "|")
+# nms_simp <- paste(setdiff(
+#  candidates, c("Rx_index_index", "Rx_inflammation_pain")), collapse = "|")
 
 # Full and simplified model
 
@@ -263,11 +264,15 @@ evaluate_test <- function(model, rec) {
 # Object with models to compare and evaluate
 models <-
   tibble(
-    name  = c("full", "simp", "ASA", "CCI", "ECI", "Rx", "agesex"),
+    name  = c("full",
+              #"simp",
+              "ASA", "CCI", "ECI", "Rx", "agesex"),
     preds = c(
-      nms, nms_simp, "P_ASA", "CCI_index_quan_original",
+      nms,
+      #nms_simp,
+      "P_ASA", "CCI_index_quan_original",
       "ECI_index_walraven", "Rx_index_index", "P_Age|P_Gender"),
-    modavg = c(TRUE, TRUE, logical(5))
+    modavg = c(TRUE, TRUE, logical(4))
   ) %>%
   mutate(
 

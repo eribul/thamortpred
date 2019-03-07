@@ -1,19 +1,21 @@
 library(ProjectTemplate)
 load.project()
 
+fctrs <- c(
+  "P_ASA",
+  "ECI_index_walraven",
+  "CCI_index_quan_original",
+  "Rx_index_index"
+)
+
 t1 <-
   tableone::CreateTableOne(
-    vars = predictors,
-    factorVars = c(
-      "P_ASA",
-      "ECI_index_walraven",
-      "CCI_index_quan_original",
-      "Rx_index_index"
-    ),
+    vars = unique(c(fctrs, predictors)),
+    factorVars = fctrs,
     data = df
   )
 
-cache("table1")
+cache("t1")
 
 table1 <-
   t1 %>%

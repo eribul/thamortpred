@@ -1,3 +1,6 @@
+
+con <- shar_linkage_con()
+
 predictors <- c(
   "P_Age", "P_Gender", "P_BMI", "P_ASA", "P_TypeOfHospital", "P_SurgYear",
   "education", "civil_status"
