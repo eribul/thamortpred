@@ -8,7 +8,7 @@ df <-
   ) %>%
   mutate_at(
     vars(contains("index")),
-    ~ifelse(is.na(.), 0, .)
+    coalesce, 0
   ) %>%
   mutate(
     P_SurgYear = as.numeric(as.factor(substr(P_SurgDate, 1, 4))),
@@ -32,7 +32,12 @@ df <-
     death90    = status & stime < 90,
     death365   = status & stime < 365,
     death90f  = factor(death90,  c(FALSE, TRUE), c("alive", "dead")),
-    death365f = factor(death365, c(FALSE, TRUE), c("alive", "dead"))
+    death365f = factor(death365, c(FALSE, TRUE), c("alive", "dead")),
+
+    # rtuncate comorbidity indices
+    charlson_icd10_index_quan_original = pmin(charlson_icd10_index_quan_original, 4),
+    elix_icd10_index_sum_all           = pmin(elix_icd10_index_sum_all, 3),
+    rxriskv_modified_atc_index_index   = pmin(rxriskv_modified_atc_index_index, 7),
   ) %>%
 
   # Remove variables not needed for analysis
@@ -52,7 +57,7 @@ df <-
     -P_ProstType,
     -contains("index"),
     rxriskv_modified_atc_index_index,
-    elix_icd10_index_walraven,
+    elix_icd10_index_sum_all,
     # charlson_icd10_index_quan_updated,
     charlson_icd10_index_quan_original
   ) %>%

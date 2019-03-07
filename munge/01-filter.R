@@ -42,8 +42,6 @@ df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                     
 df_shpr <- filter(df_shpr, !is.na(education)); N()                                #
 df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                                #
 df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         #
-df_shpr <- filter(df_shpr, !is.na(P_AcetCupCemMix)); N()                         #
-df_shpr <- filter(df_shpr, !is.na(P_FemStemCemMix)); N()                         #
 
 # Indikerar nya data för ny peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")

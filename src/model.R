@@ -18,7 +18,7 @@ threshold <- .75 # Proportion of models including variable for it to be choosen
 # # Tillagda kopositvariabler efter att scriptet kördes exkluderas tills vi
 # bestämt hur de ska hanteras
 # df         <- select(df, -starts_with("c_"))
-data_split <- initial_split(df, strata = "death90f", p = 0.75)
+data_split <- initial_split(df, strata = "death90f", p = 0.9)
 df_train   <- training(data_split)
 df_test    <- testing(data_split)
 
@@ -48,9 +48,12 @@ bestfit <- function(x) {
 }
 
 reci <- function(df, outcome = "death90f") {
-  rec <- recipe(as.formula(paste(outcome, "~ .")), df) %>%
-    step_downsample(all_outcomes()) %>%
-    step_nzv(all_predictors(), options = list(freq_cut = 99 / 1), skip = TRUE)
+  rec <-
+    recipe(as.formula(paste(outcome, "~ .")), df) %>%
+    step_downsample(all_outcomes()) # %>%
+    # step_nzv(all_predictors(), skip = TRUE)
+
+  # Create dummy variables for categorical data
   if (sum(vapply(df, is.factor, logical(1))) > 1)
     rec <- rec %>% step_dummy(all_predictors(), all_numeric())
   rec
@@ -101,11 +104,12 @@ getdata <- function(prefix) {
 # Screen all comorbidity measures as well as other factors for
 # predictors to include in combined model
 important_factors <-
-  tibble( preds = c("ECI", "CCI", "Rx", "c_")) %>%
+  tibble(preds = c("ECI", "CCI", "Rx", "c_")) %>%
   mutate(data = map(preds, getdata)) %>%
   add_row(
     preds = "general",
-    data = list(select(df_train, death90f, predictors))) %>%
+    data = list(select(df_train, death90f, predictors))
+  ) %>%
   mutate(
     facts   = map(data, find_predictors, B = N_bots),
     impfact = map2(facts, data, list_predictors, outcome = "death90f")
@@ -158,7 +162,7 @@ cache("prop_selected")
 
 
 
-# N_bots    <- 2 # No of Bootstrap replicates
+# N_bots    <- 1 # No of Bootstrap replicates
 
 
 
@@ -174,8 +178,8 @@ cache("prop_selected")
 # and sqrt(B) inner replicates
 bsavg <- function(mod_data) {
   model <- glm(death90f ~ ., binomial, mod_data, x = TRUE, na.action = "na.fail")
-  dr    <- MuMIn::dredge(model)
-  am    <- model.avg(dr, data = mod_data)
+  dr          <- MuMIn::dredge(model)
+  am          <- model.avg(dr, data = mod_data)
   Weights(am) <- bootWeights(am, R = floor(sqrt(N_bots)))
   am
 }
@@ -192,7 +196,7 @@ mod_avg <- function(nms) {
       recipes  = map(splits, prepper, recipe = reci(df_train), retain = TRUE),
       # Only keep variables that are matched by the candidate vector names
       mod_data = map(recipes, juice, death90f, matches(nms)),
-      am       = future_map(mod_data, bsavg),
+      am       = map(mod_data, bsavg),
       w        = map(am, ~ enframe(c(Weights(.))))
     )
 
@@ -271,7 +275,7 @@ models <-
       nms,
       #nms_simp,
       "P_ASA", "CCI_index_quan_original",
-      "ECI_index_walraven", "Rx_index_index", "P_Age|P_Gender"),
+      "ECI_index_sum_all", "Rx_index_index", "P_Age|P_Gender"),
     modavg = c(TRUE, TRUE, logical(4))
   ) %>%
   mutate(
@@ -280,8 +284,9 @@ models <-
     fun          = map(modavg, ~ {if (.) mod_avg else glml}),
     rec          = map(modavg, ~ {if (.) reci(df_train) else reci(df_train)}),
     # Model
-    model        = map2(fun, preds, ~ .x(.y)),
-    modsum       = map(model, summary),
+    model        = future_map2(fun, preds, ~ .x(.y)),
+    modsum       = map2(modavg, model,
+                        ~ {if (.x) summary(.y) else summary(.y$fit)}),
     # Evaluate
     evaluate     = pmap(tibble(model, preds, rec), ~ evaluate(..1, ..2, ..3)),
     evalfinal    = map2(model, rec, evaluate_test),
@@ -312,9 +317,12 @@ rocs <-
 
 modsums <- models %>% select(name, modsum)
 
+# Estimated coefficients from full model
+bestmodelcoefs <- filter(models, name == "full")$model[[1]]$coefficients[1, ]
+
 cache("rocs")
 cache("modsums")
-
+cache("bestmodelcoefs")
 
 # Figures and tables ------------------------------------------------------
 
