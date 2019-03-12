@@ -1,0 +1,12 @@
+name: thamortpred
+title: thamortpred
+username:
+account: erikbulow
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 783458
+bundleId: 1932791
+url: https://erikbulow.shinyapps.io/thamortpred/
+when: 1552375389.51991
+asMultiple: FALSE
+asStatic: FALSE
