@@ -2,39 +2,40 @@
 
 df <-
   df_shpr %>%
-  mutate_if(
-    is.logical,
-    coalesce, FALSE
-  ) %>%
-  mutate_at(
-    vars(contains("index")),
-    coalesce, 0
-  ) %>%
+  mutate_if(is.logical, coalesce, FALSE) %>%
+  mutate_at(vars(contains("index")), coalesce, 0) %>%
   mutate(
-    P_SurgYear = as.numeric(as.factor(substr(P_SurgDate, 1, 4))),
-    P_ASA = as.factor(P_ASA),
+    P_SurgYear = as.numeric(substr(P_SurgDate, 1, 4)),
+    P_ASA = pmin(P_ASA, 4),
 
     # Civilstånd
     civil_status = as.character(civil_status),
     civil_status =
-      ifelse(civil_status %in% c("divorced", "unmarried"), "single", civil_status) %>%
+      ifelse(
+        civil_status %in% c("divorced", "unmarried"),
+        "single", civil_status) %>%
       as.factor() %>% relevel("married"),
 
-    education = relevel(education, "low"),
-    P_TypeOfHospital = relevel(P_TypeOfHospital, "Universitets- eller regionssjukhus"),
-    P_Gender = relevel(P_Gender, "Man"),
+    education =
+      factor(education, levels(education), c("low", "middle", "high")),
+    P_TypeOfHospital =
+      factor(P_TypeOfHospital, levels(P_TypeOfHospital),
+        c("University", "County", "Rural", "Private"),
+      ),
+    P_Gender = factor(P_Gender, c("Man", "Kvinna"), c("Male", "Female")),
 
     # Survival
-    stime   = as.numeric(coalesce(DateOfDeath, as.Date("2018-02-01")) - P_SurgDate),
+    stime   =
+      as.numeric(coalesce(DateOfDeath, as.Date("2018-02-01")) - P_SurgDate),
     status  = !is.na(DateOfDeath),
 
     # Outcome
-    death90    = status & stime < 90,
-    death365   = status & stime < 365,
+    death90   = status & stime < 90,
+    death365  = status & stime < 365,
     death90f  = factor(death90,  c(FALSE, TRUE), c("alive", "dead")),
     death365f = factor(death365, c(FALSE, TRUE), c("alive", "dead")),
 
-    # rtuncate comorbidity indices
+    # truncate comorbidity indices
     charlson_icd10_index_quan_original = pmin(charlson_icd10_index_quan_original, 4),
     elix_icd10_index_sum_all           = pmin(elix_icd10_index_sum_all, 3),
     rxriskv_modified_atc_index_index   = pmin(rxriskv_modified_atc_index_index, 7),
@@ -61,6 +62,7 @@ df <-
     # charlson_icd10_index_quan_updated,
     charlson_icd10_index_quan_original
   ) %>%
+  # Shorter names
   rename_all(~ gsub("charlson_icd10", "CCI", .)) %>%
   rename_all(~ gsub("rxriskv_modified_atc", "Rx", .)) %>%
   rename_all(~ gsub("elix_icd10", "ECI", .))

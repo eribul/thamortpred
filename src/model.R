@@ -12,92 +12,8 @@ N_bots    <- 1000 # No of Bootstrap replicates
 threshold <- .75 # Proportion of models including variable for it to be choosen
 
 
-# Data --------------------------------------------------------------------
-
-# Use training and evaluation data
-# # Tillagda kopositvariabler efter att scriptet kördes exkluderas tills vi
-# bestämt hur de ska hanteras
-# df         <- select(df, -starts_with("c_"))
-data_split <- initial_split(df, strata = "death90f", p = 0.9)
-df_train   <- training(data_split)
-df_test    <- testing(data_split)
-
-
 
 # Help functions ----------------------------------------------------------
-
-# Logistic regressoin using parsnip
-lr <- function(x) {
-  fit <-
-  logistic_reg() %>%
-  set_engine("glm") %>%
-  fit(death90f ~ ., data = x)
-}
-
-
-# Identify variables used in the best model according to stepwise regression
-bestfit <- function(x) {
-  vars <- setdiff(names(x), "death90f")
-  best <- stats::step(glm(death90f ~ ., binomial, x), trace = 0)
-
-  tibble(
-    var  = vars,
-    # Fins name matches fom original names (no dummies)
-    incl = map_lgl(vars, ~ any(startsWith(names(coef(best)), .)))
-  )
-}
-
-reci <- function(df, outcome = "death90f") {
-  rec <-
-    recipe(as.formula(paste(outcome, "~ .")), df) %>%
-    step_downsample(all_outcomes()) # %>%
-    # step_nzv(all_predictors(), skip = TRUE)
-
-  # Create dummy variables for categorical data
-  if (sum(vapply(df, is.factor, logical(1))) > 1)
-    rec <- rec %>% step_dummy(all_predictors(), all_numeric())
-  rec
-}
-
-
-# Use bootstrap resampling to find number of times each variable is selected in
-# stepwise regression
-find_predictors <- function(
-  df, rec = reci(df), B = N_bots, outcome = "death90f") {
-
-  df %>%
-  rsample::bootstraps(B, strata = outcome) %>%
-  mutate(
-    recipes  = map(splits, prepper, recipe = rec, retain = TRUE),
-    mod_data = map(recipes, juice),
-    included = future_map(mod_data, bestfit)
-  ) %>%
-  unnest(included) %>%
-  spread(var, incl)
-}
-
-# List names of predictors selected at least threshold % of the time
-list_predictors <- function(x, df, outcome = "death90f", thr = threshold) {
-
-  winners_all <-
-    x %>%
-    summarise_at(vars(-id), mean) %>%
-      mutate_all(~ . >= thr) %>%
-      c(recursive = TRUE) %>%
-      {names(.)[.]}
-
-  preds    <- setdiff(names(df), outcome)
-  winners  <- preds[map_lgl(preds, ~ any(startsWith(winners_all, .)))]
-  loosers  <- setdiff(preds, winners)
-  extra    <- winners_all[!map_lgl(winners_all, ~ any(startsWith(., winners)))]
-
-  list(winners = winners, loosers = loosers, extra = extra)
-}
-
-# Create training data with selected columns
-getdata <- function(prefix) {
-  select(df_train, death90f, starts_with(prefix), -matches("index"))
-}
 
 
 
@@ -108,7 +24,7 @@ important_factors <-
   mutate(data = map(preds, getdata)) %>%
   add_row(
     preds = "general",
-    data = list(select(df_train, death90f, predictors))
+    data = list(select(df, death90f, predictors))
   ) %>%
   mutate(
     facts   = map(data, find_predictors, B = N_bots),
@@ -140,161 +56,42 @@ cache("prop_selected")
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# N_bots    <- 1 # No of Bootstrap replicates
-
-
-
 # Best model --------------------------------------------------------------
-
-# We have found a candidate list of predictors to include.
-# It is important that those are not strongly correlatred!
-
-# Model averaging with model weights based on AIC from bootstrap replicates
-# Note that each BS replicate is taken after the recipi is applied.
-# The downsmapling means that this might be of limited value, wherefore an
-# additional BS is applied below. We use sqrt(B) outer bootstrappinug replicates
-# and sqrt(B) inner replicates
-bsavg <- function(mod_data) {
-  model <- glm(death90f ~ ., binomial, mod_data, x = TRUE, na.action = "na.fail")
-  dr          <- MuMIn::dredge(model)
-  am          <- model.avg(dr, data = mod_data)
-  Weights(am) <- bootWeights(am, R = floor(sqrt(N_bots)))
-  am
-}
-
-
-# Fit model based on variable names and average results based on bootstrap
-mod_avg <- function(nms) {
-
-  mod_avg <-
-    df_train %>%
-    # sqrt(B) outer bootstrap replicates
-    rsample::bootstraps(ceiling(sqrt(N_bots)), strata = "death90f", apparent = TRUE) %>%
-    mutate(
-      recipes  = map(splits, prepper, recipe = reci(df_train), retain = TRUE),
-      # Only keep variables that are matched by the candidate vector names
-      mod_data = map(recipes, juice, death90f, matches(nms)),
-      am       = map(mod_data, bsavg),
-      w        = map(am, ~ enframe(c(Weights(.))))
-    )
-
-  # Average weights over the outer bootstrap replicates
-  w <-
-    mod_avg %>%
-    unnest(w) %>%
-    group_by(name) %>%
-    summarise(w = mean(value))
-
-  # Update weights for the whole training set wit hthe boostatrap averaged weights
-  fit <- mod_avg$am[mod_avg$id == "Apparent"][[1]]
-  Weights(fit) <- w$w
-  fit
-}
 
 # Cancidate names prepared for reular expression matching
 nms <- paste(candidates, collapse = "|")
-# nms_simp <- paste(setdiff(
-#  candidates, c("Rx_index_index", "Rx_inflammation_pain")), collapse = "|")
-
-# Full and simplified model
-
-# Simple glm with result ni list, help function to below
-glml <- function(nms) {
-  lr(juice(prep(reci(df_train)), death90f, matches(nms)))
-}
-
-
-pred <- function(..., model) {
-  pred_type <- switch(class(model)[1], "_glm" = "prob", averaging = "response")
-  p <- predict(model, ..., type = pred_type)
-  if (inherits(model, "_glm")) p <- 1 - p$.pred_alive
-  p
-}
-
-
-# Evaluate the final model based on ROC-curves and AUC
-evaluate <- function(model, nms, rec) {
-
-  df_train %>%
-  rsample::bootstraps(N_bots, strata = "death90f", apparent = TRUE) %>%
-  mutate(
-    recipes   = map(splits, prepper, recipe = rec, retain = TRUE),
-    mod_data  = map(recipes, juice, death90f, matches(nms)),
-    # Tibble with observed data from bootstrap samples and predicted using the
-    # selected model from above applied to each bootstrap dataset
-    p         = map(mod_data, pred, model = model),
-    obspred   = map2(mod_data, p, ~ tibble(obs = .x$death90f, pred = .y)),
-
-    auc       = map(obspred, roc_auc, obs, pred),
-    auc       = map_dbl(auc, ".estimate"),
-    roc_curve = map(obspred, roc_curve, obs, pred)
-  )
-}
-
-
-# Evaluate model on test data
-evaluate_test <- function(model, rec) {
-  d <- bake(prep(rec), df_test)
-  obspred <- tibble(pred = pred(d, model = model), obs = d$death90f)
-  list(
-    obspred   = obspred,
-    auc       = roc_auc(obspred, obs, pred)$.estimate,
-    roc_curve = roc_curve(obspred, obs, pred)
-  )
-}
 
 # Object with models to compare and evaluate
 models <-
   tibble(
-    name  = c("full",
-              #"simp",
-              "ASA", "CCI", "ECI", "Rx", "agesex"),
+    name  = c(
+      "full", "full_age2", "full_age3",
+      "ASA", "CCI", "ECI", "Rx",
+      "sex_age", "sex_age2", "sex_age3"),
     preds = c(
-      nms,
-      #nms_simp,
-      "P_ASA", "CCI_index_quan_original",
-      "ECI_index_sum_all", "Rx_index_index", "P_Age|P_Gender"),
-    modavg = c(TRUE, TRUE, logical(4))
+      rep(nms, 3),
+      "P_ASA", "CCI_index_quan_original", "ECI_index_sum_all", "Rx_index_index",
+      rep("P_Age|P_Gender", 3)),
+    modavg = c(rep(TRUE, 3), logical(7))
   ) %>%
   mutate(
 
     # Functions and recipes for model fitting (model averaging or GLM)
     fun          = map(modavg, ~ {if (.) mod_avg else glml}),
-    rec          = map(modavg, ~ {if (.) reci(df_train) else reci(df_train)}),
+    rec          = map(name,   ~ {
+      if (!grepl("[23]$", name)) reci(df)
+      else reci(df) + step_ns(P_Age, deg_free = 2)}
+      ),
     # Model
     model        = future_map2(fun, preds, ~ .x(.y)),
     modsum       = map2(modavg, model,
                         ~ {if (.x) summary(.y) else summary(.y$fit)}),
     # Evaluate
     evaluate     = pmap(tibble(model, preds, rec), ~ evaluate(..1, ..2, ..3)),
-    evalfinal    = map2(model, rec, evaluate_test),
     # AUC values from evaluation sets
     AUCtrain_lo  = map_dbl(evaluate, ~ quantile(.$auc, .025)),
     AUCtrain_est = map_dbl(evaluate, ~ quantile(.$auc, .5)),
     AUCtrain_hi  = map_dbl(evaluate, ~ quantile(.$auc, .975)),
-    AUCfinal     = map_dbl(evalfinal, "auc")
   )
 
 
@@ -310,9 +107,7 @@ rocs <-
   transmute(
     name         = name,
     tr_obspred   = map(evaluate,  ~ bind_rows(.$obspred)),
-    tr_roc_curve = map(evaluate,  ~ bind_rows(.$roc_curve)),
-    te_obspred   = map(evalfinal, ~ bind_rows(.$obspred)),
-    te_roc_curve = map(evalfinal, ~ bind_rows(.$roc_curve))
+    tr_roc_curve = map(evaluate,  ~ bind_rows(.$roc_curve))
   )
 
 modsums <- models %>% select(name, modsum)
@@ -324,22 +119,12 @@ cache("rocs")
 cache("modsums")
 cache("bestmodelcoefs")
 
+
+
+
+
+
 # Figures and tables ------------------------------------------------------
-
-# ROC plot for all resamples
-
-# We have more data than we need for a plot. Simplify by loess model
-# if more than 50 uniqe points on either axis
-loesspreds <- function(data) {
-  if (length(unique(data$sensitivity)) < 50 |
-      length(unique(data$specificity)) < 50) {
-    return(data)
-  }
-  spec <- seq(0, 1, 0.01)
-  sens <- loess(sensitivity ~ specificity, data) %>%
-    predict(spec)
-  tibble(specificity = spec, sensitivity = sens)
-}
 
 # Make data set for plotting
 roc_curves <-
@@ -347,8 +132,6 @@ roc_curves <-
   select(name, ends_with("roc_curve")) %>%
   gather("stage", "roc_curve", -name) %>%
   mutate(
-    stage = if_else(startsWith(stage, "tr"), "Training", "Evaluation") %>%
-      factor(c("Training", "Evaluation")),
     roc_curve = map(roc_curve, loesspreds)
   ) %>%
   unnest(roc_curve)
@@ -356,14 +139,21 @@ roc_curves <-
 cache("roc_curves")
 
 # Plot it!
-roc_curves %>%
-  ggplot(aes(1 - specificity, sensitivity, col = name, group = name)) +
+  ggplot(
+    filter(roc_curves, name != "full"),
+    aes(1 - specificity, sensitivity, col = name)
+  ) +
+  facet_wrap(~ name) +
   geom_path(size = 2) +
+  geom_path(
+    aes(1 - specificity, sensitivity),
+    filter(roc_curves, name == "full") %>% select(specificity, sensitivity),
+    size = 2, col = "black"
+  ) +
   geom_abline(lty = 3) +
-  facet_grid(~ stage) +
   coord_equal() +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "none")
 
 ggsave("graphs/rocs.png")
 
@@ -371,14 +161,7 @@ ggsave("graphs/rocs.png")
 # Make data set for plotting
 obspreds <-
   rocs %>%
-  select(name, ends_with("obspred")) %>%
-  gather("stage", "obspred", -name) %>%
-  mutate(
-    stage = if_else(startsWith(stage, "tr"), "Training", "Evaluation") %>%
-      factor(c("Training", "Evaluation"))#,
-    #roc_curve = map(roc_curve, loesspreds)
-  ) %>%
-  unnest(obspred)
+  unnest(tr_obspred)
 
 cache("obspreds")
 
@@ -393,7 +176,7 @@ obspreds %>%
     alpha = .3, position = "identity"
   ) +
   geom_density(aes(col = `Observed survival`)) +
-  facet_wrap(~ name + stage, scales = "free", labeller = function(l) label_value(l, multi_line = FALSE)) +
+  facet_wrap(~ name, scales = "free", labeller = function(l) label_value(l, multi_line = FALSE)) +
   theme_minimal() +
   theme(
     legend.position = "bottom"
@@ -409,11 +192,10 @@ ggsave("graphs/separation_auc.png")
 
 # Fig
 aucs %>%
-  mutate(Model = fct_reorder(name, AUCfinal)) %>%
+  mutate(Model = fct_reorder(name, AUCtrain_est)) %>%
   ggplot(aes(Model, AUCtrain_est)) +
   geom_hline(aes(yintercept = .5), linetype = 2, col = "grey", size = 2) +
   geom_pointrange(aes(ymin = AUCtrain_lo, ymax = AUCtrain_hi), size = 1.5) +
-  geom_point(aes(y = AUCfinal), color = "red", shape = 23, size = 4, fill = "red") +
   coord_flip() +
   theme_minimal() +
   ylab("AUC") +
@@ -424,11 +206,10 @@ ggsave("graphs/auc_ci.png")
 # Table
 auc_table <-
   aucs %>%
-  arrange(desc(AUCfinal)) %>%
+  arrange(desc(AUCtrain_est)) %>%
   mutate_if(is.numeric, round, 2) %>%
   transmute(
     Model = name,
-    AUC_train = paste0(AUCtrain_est, " (", AUCtrain_lo, ", ", AUCtrain_hi, ")"),
-    AUC_test = AUCfinal
+    AUC_train = paste0(AUCtrain_est, " (", AUCtrain_lo, ", ", AUCtrain_hi, ")")
   )
 cache("auc_table")

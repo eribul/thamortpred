@@ -3,16 +3,17 @@ N <- function() c(n_distinct(df_shpr$LopNr), nrow(df_shpr))                     
 
 # Endast 2008-2015 enligt data/linkage.R
 
-# Endast primäroperationer
+# Endast primäroperationer - preselektion
 df_shpr <-
   df_shpr_orig %>%
-  distinct(LopNr, P_Side, .keep_all = TRUE); N()                                  #
-
-# Endast OA
-df_shpr <- filter(df_shpr, P_DiaGrp == "Primär artros"); N()                      #
+  distinct(LopNr, P_Side, .keep_all = TRUE)
 
 # Endats THA
-df_shpr <- filter(df_shpr, P_ProstType == "Totalprotes"); N()                     #
+df_shpr <- filter(df_shpr, P_ProstType == "Totalprotes"); N()                     # 112818 127671
+
+# Endast OA
+df_shpr <- filter(df_shpr, P_DiaGrp == "Primär artros"); N()                      # 90137 102698
+
 
 # Indikera opnr och tid mellan operationer för de som har två
 df_shpr <-
@@ -27,21 +28,24 @@ df_shpr <-
   ungroup()
 
 # Endast första höft
-df_shpr <- filter(df_shpr, opnr == 1); N()                                       #
+df_shpr <- filter(df_shpr, opnr == 1); N()                                       # 80805
 
-# Ignorera om ytterligare THA inom ett år efter första
-df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 365); N()         #
+# Ignorera om ytterligare THA inom 90 dagar efter första
+df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 90); N()         # 79888
 
-df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() #
-df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          #
+# Endast cementfria
 df_shpr <- filter(df_shpr,
                   P_AcetCupCemMix != "Cementfritt",
-                  P_FemStemCemMix != "Cementfritt"); N()                          #
-df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      #
-df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       #
-df_shpr <- filter(df_shpr, !is.na(education)); N()                                #
-df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                                #
-df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         #
+                  P_FemStemCemMix != "Cementfritt"); N()                          # 53718
+
+df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() # 53718
+df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 53718
+
+df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 50761
+df_shpr <- filter(df_shpr, P_ASA <= 5); N()                                       # 50152
+df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 49804
+df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 49804
+df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 49427
 
 # Indikerar nya data för ny peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")

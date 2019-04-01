@@ -10,12 +10,8 @@ lrm <- function(rhs) {
 }
 
 t2_univariable <-
-  tibble(
-    name = predictors
-  ) %>%
-  mutate(
-    coefs = map(name, lrm)
-  ) %>%
+  tibble(name = predictors) %>%
+  mutate(coefs = map(name, lrm)) %>%
   unnest(coefs) %>%
   mutate(
     var  = map2_chr(name, var, ~gsub(.x, "", .y, fixed = TRUE)),

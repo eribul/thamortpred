@@ -26,7 +26,7 @@ options(digits = 2)
 # Data
 
 I have used data from the "new linkage data base". Primary prosthesis inserted 2008-2015 were included. Note that we should have no problem with censoring here since death dates are recorded up until February 2018. Hence even if patients were operated during 2015, they are not automatically censored at the end of that year. (Censoring would only occour in the case of emigration etc.)
-Comorbidity indices based on Elixhauser van Walraven (ECI), Charlson's original index (CCI) and a modified Risk Rx IV index (modified by Anne Garland) were used. 
+Comorbidity indices based on the sum of comorbidities recognized by Elixhauser et al. (ECI), Charlson's original index (CCI) and a modified Risk Rx IV index (modified by Anne Garland) were used. Each of those indices were truncated since higher values are rare. 
 
 The following inclusion/exclusion criteria were applied:
 
@@ -34,11 +34,11 @@ The following inclusion/exclusion criteria were applied:
 2. Only OA.
 3. No hemi.
 4. No second bilaterals.
-5. No first bilateral if second bilateral inserted within a year.
+5. No first bilateral if second bilateral inserted within 90 days.
 6. No surface prosthesis
 7. Only age 18-100 years
 8. only BMI $\leq 50$
-9. Only ASA $\leq 3$
+9. Only ASA $\leq 5$
 10. Exclude if missing education level
 11. Exclude if missing marital status level
 12. Exclude if missing type of hospital
@@ -62,6 +62,8 @@ education =
 
 civil_status = married/single/widow(er). Registered partnership etc are treated as marriage.
 
+We have also used some individual comorbidities recognized by ECI, CCI and Rx and combined those to identify individual comorbidities using an arbitrary source. Those variables are included with suffixes "c_" to their variable names. 
+
 
 ## Data profiling report
 
@@ -70,7 +72,7 @@ Some comments:
 
 ### Basic statistics
 
-Most of our variables are categorical (very few numeric)
+Most of our variables are categorical/binary.
 
 ### Missing data 
 
@@ -108,9 +110,8 @@ Older people are over-represented among the dead.
 
 ## Table 1
 
-I include all values of each comorbidity index for the moment but those should obviously be truncated/transformed later.
 
-Proportions for most variables are roughly the same as in earlier versions, although not exact due to the extended time frame of the study period. 
+Note that some EPVs are low, thus that we have very few observed detahs among some levels! This can make modelleing hard. There is no perfect limit of cases, but 10-20 is commonly recommended and  [@Courvoisier2011] suggested to have at least 5!
 
 ```{r}
 library(tableone)
@@ -138,9 +139,11 @@ t2_univariable
 
 ## Risk of overfitting
 
-We have a lot of potential predictors but very few events to predict. This is problematic and we risk overfittnig the model to the data. Hence, if we develop/train our model using all data and then use the same data to evaluate predictive power, the result will look better than it actually is (applying the model to new data will not work as well).
+We have a lot of potential predictors but very few events to predict (low EPV). This is problematic and we risk overfittnig the model to the data. Hence, if we develop/train our model using all data and then use the same data to evaluate predictive power, the result will look better than it actually is (applying the model to new data will not work as well).
 
 We can use some proportion of our data as a hold-out sample to use for later validation. It is common to use 75 % of the data for model training and 25 % for evaluation. We can choose however to use 90 % for training and 10 % for evaluation. With the rare event rate, a totally random 90/10-split might lead to extremely few "positive outcomes" (deaths) in the evaluation set. The sampling is therefore stratified on the outcome. 
+
+To have such a small estimation set implies however that the observed outcome will be very rare, and the result of validating the model on that data set will be unstable. In this case, the split-sample approach might in fact lead to more confusion. It has been argued by [@Austin2017a] that Bootsrtap-validation is superiod in this case. Another prominent predictive modelling guru, Max Kuhn however, does argue for the need of a separate validation test. The approach used for this project should be further discussed!
 
 
 ## Downsamling
@@ -169,7 +172,7 @@ For each sample I used the Aikake Information Criteria as a selection criteria w
 
 Note that variables that are highly correlated could not be included in the same selection step, since it will then be arbitrary which one of those to select. I therefore used four independent step-wise regression procedures to each re-sample:
 
-1. General variables
+1. General variables (including our newly combined comorbidities)
 2. Individual ECI diagnosis
 3. Individual CCI diagnosis
 4. Individual Risk Rx IV diagnosis
@@ -218,7 +221,9 @@ It would be possible to do this on the whole training data set. We would still h
 
 ```{r}
 load("../cache/modsums.RData")
-round(modsums$modsum[[1]]$coefmat.full, 2)
+round(modsums$modsum[[1]]$coefmat.full, 2) %>% 
+  as_tibble(rownames = "coef") %>% 
+  mutate(Est_exp = round(exp(Estimate), 2))
 ```
 
 
@@ -275,7 +280,7 @@ Lets have a look at the extremes of the Elixhauser index (CCI is less extreme bu
 ```{r}
 load("../cache/ECI_extremes.RData")
 ECI_extremes %>% 
-  filter(!ECI_index_walraven %in% -7:21)
+  filter(!ECI_index_sum_all %in% -7:21)
 ```
 
 Hence, there is only one individual with ECI = -11, and she was assigned to the training set. She had obesity, drug abuse and depression, all associated with a long and happy life according to Van Walraven (Sic!). 
@@ -291,6 +296,8 @@ One way to avaoid extreme observations for ECI/CCI would be to transform those v
 ## Separation 
 
 Another attempt to illustrate each models ability to classify patients as either dead or alive is depicted below. If a model was able to fully predict death, the blue and red areas would be completely separated. If the model can not predict anything at all, those colors would completely blend into each other. More blue to the right means that people who actually died where also predicted to do so. We can see once more that the separation is larger when the models are applied to the training data, compared to the evaluation data set.
+
+This visualisation was just made up but a similar approach has been suggested by @Greenhill2011.
 
 ```{r}
 knitr::include_graphics("../graphs/separation_auc.png")

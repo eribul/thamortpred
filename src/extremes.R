@@ -11,7 +11,7 @@ ECI_extremes <-
     eval = df_test,
     .id = "dataset"
   ) %>%
-  count(dataset, ECI_index_walraven) %>%
+  count(dataset, ECI_index_sum_all) %>%
   spread(dataset, n)
 cache("ECI_extremes")
 
@@ -19,10 +19,10 @@ cache("ECI_extremes")
 # Find the most HEALTHY ECI-person
 healthy <-
   df_train %>%
-  filter(ECI_index_walraven == min(ECI_extremes$ECI_index_walraven))
+  filter(ECI_index_sum_all == min(ECI_extremes$ECI_index_sum_all))
 # comorbids
 healthy %>%
-  select(starts_with("ECI_"), -ECI_index_walraven) %>%
+  select(starts_with("ECI_"), -ECI_index_sum_all) %>%
   {names(.)[c(., recursive = TRUE)]}
 # Outcome = alive
 select(healthy, death90f)
@@ -31,10 +31,10 @@ select(healthy, death90f)
 # Find the most SICK ECI-person
 sick <-
   df_train %>%
-  filter(ECI_index_walraven == max(ECI_extremes$ECI_index_walraven))
+  filter(ECI_index_sum_all == max(ECI_extremes$ECI_index_sum_all))
 # comorbids
 sick %>%
-  select(starts_with("ECI_"), -ECI_index_walraven) %>%
+  select(starts_with("ECI_"), -ECI_index_sum_all) %>%
   {names(.)[c(., recursive = TRUE)]}
 # Outcome = alive
 select(sick, death90f)

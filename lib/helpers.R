@@ -1,10 +1,12 @@
-
 con <- shar_linkage_con()
 
 predictors <- c(
   "P_Age", "P_Gender", "P_BMI", "P_ASA", "P_TypeOfHospital", "P_SurgYear",
   "education", "civil_status"
 )
+
+# Cahe list of pobjects at once
+cache_all <- function(x, ...) Vectorize(cache, "variable")
 
 ### Summary function for GLM
 glmCI <- function(model, exponent = FALSE, alpha = 0.05) {
@@ -33,3 +35,24 @@ survEst <- function(fit, times) {
   x[ind]
 }
 
+
+# Change table text to labels that can be presented
+prestext <- function(df) {
+  gs <- function(x, pattern, ...) gsub(pattern, x, ...)
+  df %>%
+  rename(
+    variable = 1,
+    level = 2
+  ) %>%
+  mutate(
+    level    = tolower(level),
+    variable =
+      variable %>%
+      gs("P_|Surg|TypeOf", "") %>%
+      gs("_", " ") %>%
+      gs("Gender", "Sex"),
+
+    # Initial capital letter
+    variable = paste0(toupper(substr(variable, 1, 1)), substring(variable, 2))
+  )
+}

@@ -4,11 +4,11 @@ df <-
   df %>%
   mutate(
 
-    # Tidigare grupperingar
     c_heart_condition =
       ECI_congestive_heart_failure              |
       CCI_congestive_heart_failure              |
-      Rx_chronic_heart_failure,
+      Rx_chronic_heart_failure                  |
+      ECI_valvular_disease,
     c_heart_infarct =
       CCI_myocardial_infarction                 |
       Rx_angina                                 |
@@ -36,8 +36,6 @@ df <-
       CCI_cerebrovascular_disease               |
       Rx_anti_coagulation_therapy               |
       Rx_anti_platelet_therapy,
-
-    # EBs förslag
     c_cancer =
       ECI_lymphoma                              |
       ECI_metastatic_cancer                     |
@@ -53,7 +51,8 @@ df <-
       ECI_liver_disease                         |
       CCI_mild_liver_disease                    |
       CCI_moderate_or_severe_liver_disease      |
-      Rx_liver_failure,
+      Rx_liver_failure                          |
+      Rx_hepatitis_c,
     c_lung_airways =
       ECI_chronic_pulmonary_disease             |
       ECI_pulmonary_circulation_disorder        |
@@ -65,12 +64,21 @@ df <-
       ECI_alcohol_abuse                         |
       ECI_drug_abuse                            |
       Rx_alcohol_dependence,
-    c_dementia =
+    c_cns =
       CCI_dementia                              |
-      Rx_dementia,
-    c_depression =
+      Rx_dementia                               |
       ECI_depression                            |
-      Rx_depression,
+      Rx_depression                             |
+      ECI_paralysis                             |
+      CCI_hemiplegia_or_paraplegia              |
+      ECI_other_neurological_disorders          |
+      ECI_psychoses                             |
+      Rx_anxiety                                |
+      Rx_bipolar_disorder                       |
+      Rx_epilepsy                               |
+      Rx_migraine                               |
+      Rx_parkinsons_disease                     |
+      Rx_psychotic_illness,
     c_reuma =
       ECI_rheumatoid_arthritis                  |
       CCI_rheumatic_disease,
@@ -82,9 +90,6 @@ df <-
       CCI_peptic_ulcer_disease                  |
       Rx_gastric_oesophageal_reflux_disorder    |
       Rx_inflammatory_bowel_disease,
-    c_paralysis =
-      ECI_paralysis                             |
-      CCI_hemiplegia_or_paraplegia
 
   ) %>%
 
@@ -92,35 +97,24 @@ df <-
     everything(),
     -matches("^([CE]CI)|(Rx)_"),
 
-    ECI_valvular_disease,
-    ECI_other_neurological_disorders,
     ECI_hypothyroidism,
     ECI_coagulopathy,
     ECI_obesity,
     ECI_weight_loss,
     ECI_fluid_electrolyte_disorders,
-    ECI_psychoses,
 
     Rx_allergies,
-    Rx_anxiety,
     Rx_benign_prostate_hypertrophy,
-    Rx_bipolar_disorder,
-    Rx_epilepsy,
     Rx_glaucoma,
     Rx_gout,
-    Rx_hepatitis_c,
     Rx_hyperkalaemia,
     Rx_hyperlipidemia,
     Rx_hyperthyroidism,
     Rx_malnutrition,
-    Rx_migraine,
     Rx_osteoporosis_pagets,
     Rx_pain,
-    Rx_inflammation_pain,
     Rx_pancreatic_insufficiency,
-    Rx_parkinsons_disease,
     Rx_psoriasis,
-    Rx_psychotic_illness,
     Rx_steroid_responsive_diseases,
     Rx_transplant,
 
