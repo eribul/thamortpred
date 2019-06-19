@@ -20,7 +20,7 @@ df <-
       ECI_hypertension_uncomplicated            |
       ECI_hypertension_complicated              |
       Rx_hypertension,
-    c_kidney =
+    c_kidney_disease =
       ECI_renal_failure                         |
       CCI_renal_disease                         |
       Rx_end_stage_renal_disease,
@@ -30,7 +30,7 @@ df <-
       CCI_diabetes_without_complication         |
       CCI_diabetes_complication                 |
       Rx_diabetes,
-    c_vascular =
+    c_vascular_disease =
       ECI_peripheral_vascular_disorder          |
       CCI_peripheral_vascular_disease           |
       CCI_cerebrovascular_disease               |
@@ -53,7 +53,7 @@ df <-
       CCI_moderate_or_severe_liver_disease      |
       Rx_liver_failure                          |
       Rx_hepatitis_c,
-    c_lung_airways =
+    c_lung_airways_disease =
       ECI_chronic_pulmonary_disease             |
       ECI_pulmonary_circulation_disorder        |
       CCI_chronic_pulmonary_disease             |

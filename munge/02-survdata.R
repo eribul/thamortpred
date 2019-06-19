@@ -6,7 +6,7 @@ df <-
   mutate_at(vars(contains("index")), coalesce, 0) %>%
   mutate(
     P_SurgYear = as.numeric(substr(P_SurgDate, 1, 4)),
-    P_ASA = pmin(P_ASA, 4),
+    P_ASA = factor(P_ASA),
 
     # Civilstånd
     civil_status = as.character(civil_status),
@@ -22,7 +22,7 @@ df <-
       factor(P_TypeOfHospital, levels(P_TypeOfHospital),
         c("University", "County", "Rural", "Private"),
       ),
-    P_Gender = factor(P_Gender, c("Man", "Kvinna"), c("Male", "Female")),
+    P_Sex = factor(P_Gender, c("Man", "Kvinna"), c("Male", "Female")),
 
     # Survival
     stime   =

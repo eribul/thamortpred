@@ -42,10 +42,10 @@ df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total yters
 df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 53718
 
 df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 50761
-df_shpr <- filter(df_shpr, P_ASA <= 5); N()                                       # 50152
-df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 49804
-df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 49804
-df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 49427
+df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       # 49956
+df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 49611
+df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 49611
+df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 49235
 
 # Indikerar nya data för ny peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")

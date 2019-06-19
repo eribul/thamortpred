@@ -2,28 +2,34 @@ library(ProjectTemplate)
 load.project()
 
 fctrs <- c(
+  "P_Sex",
   "P_ASA",
-  "ECI_index_sum_all",
-  "CCI_index_quan_original",
-  "Rx_index_index",
-  "P_SurgYear"
+  "ECI",
+  "CCI",
+  "RxRiskV"#,
+  #"P_SurgYear"
 )
 
 dft1 <-
   df %>%
+  rename(
+    CCI = CCI_index_quan_original,
+    ECI = ECI_index_sum_all,
+    RxRiskV = Rx_index_index
+  ) %>%
   mutate(
-    Female = P_Gender == "Kvinna",
-    P_ASA = factor(P_ASA, 1:4, c(1:3, "4-5"))
+    CCI     = replace(CCI, CCI == 4, "4+"),
+    ECI     = replace(ECI, ECI == 3, "3+"),
+    RxRiskV = replace(RxRiskV, RxRiskV == 7, "7+")
   ) %>%
   select(
     death90f,
-    Female,
     one_of(predictors),
-    contains("_index_"),
+    -P_SurgYear,
+    CCI, ECI, RxRiskV,
     starts_with("c_"),
     starts_with("ECI_"),
-    starts_with("Rx_"),
-    -P_Gender
+    starts_with("Rx_")
   )
 
 t1 <-
@@ -42,12 +48,11 @@ table1 <-
   ) %>%
   as_tibble(rownames = "what") %>%
   mutate(
-    what = gsub("= TRUE|P_|c_|TypeOf|P_Surg|ECI_|Rx_", "", what),
-    what = gsub("_", " ", what)
+    what = gsub("= TRUE|P_|c_|TypeOf|P_Surg|index", "", what),
+    what = gsub("_", " ", what),
+    level = ifelse(startsWith(what, " "), what, ""),
+    what = ifelse(level == "", what, "")
   ) %>%
-  add_row(what = "Comorbidity indices",      .after = 31) %>%
-  add_row(what = "Combined comorbidities",   .after = 52) %>%
-  add_row(what = "Elixhauser comorbidities", .after = 69) %>%
-  add_row(what = "Risk Rx V comorbidities", .after = 75)
+  select(what, level, alive, dead)
 
 cache_all(c("t1", "table1"))

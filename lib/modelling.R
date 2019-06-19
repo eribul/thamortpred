@@ -22,7 +22,7 @@ bestfit <- function(x) {
   )
 }
 
-reci <- function(df, outcome = "death90f") {
+reci <- function(df, outcome = "death90f", rcs = NULL) {
   rec <-
     recipe(as.formula(paste(outcome, "~ .")), df) %>%
     step_downsample(all_outcomes())
@@ -30,6 +30,10 @@ reci <- function(df, outcome = "death90f") {
   # Create dummy variables for categorical data
   if (sum(vapply(df, is.factor, logical(1))) > 1)
     rec <- rec %>% step_dummy(all_predictors(), all_numeric())
+
+  # RCS for age
+  if (!is.null(rcs) && !is.na(rcs))
+    rec <- rec %>% step_ns(matches("P_Age"), deg_free = rcs)
   rec
 }
 

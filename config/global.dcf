@@ -15,7 +15,6 @@ libraries:
   tidymodels,
   pROC,
   tableone,
-  caret,
   binom,
   survival,
   data.table,

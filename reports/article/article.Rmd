@@ -1,36 +1,23 @@
 ---
-title: "Prediction of 90-day mortality after major surgery made simpler: An analysis
-of different comorbidity measures based on XXXX patients from the Swedish Hip
-Arthroplasty Register"
-author: Anne Garland^1,2,3^, Erik Bülow^2,4^, Szilard Nemes^2,4^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and extrenaly validated model based on Swedish and English register data"
+author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Adrian Sayers^5,6^, Szilard Nemes^2,4^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
 date: '2019-03-12'
 bibliography: P:/library.bib
 output: 
-  bookdown::html_document2:
-    toc: true
-    toc_float: true
+  bookdown::word_document2:
+    toc: false
     df_print: kable
-    theme: journal
-abstract: |
-  OBJECTIVE: Early mortality after one of the most common surgical procedures in developed countries, total hip arthroplasty (THA), is dependent on medical comorbidities. Complex diagnosis-based tools such as the Charlson Comorbidity Index (CCI) and the Elixhauser score as well as the prescription-based RxRiskV score have been used to estimate comorbidity, but we here investigate whether easily accessible data that are routinely collected in daily clinical practice are better at predicting early mortality after THA. 
- 
-  DESIGN: Nationwide retrospective cohort study.
-  
-  SETTING: Database combining the Swedish Hip Arthroplasty Registry, the Swedish Patient Registry, and data from Statistics Sweden.
-  
-  PARTICIPANTS: 38,735 patients who had received a THA due to primary osteoarthritis between 2008 and 2012.
-  
-  PRIMARY OUTCOME MEASURE: Death within 90 days after surgery.
-  
-  RESLUTS: Unadjusted cumulative 90-day survival was 99.7 (95% confidence interval: 99.68 to 99.78) and the number of deaths was 109. Best predictive performance for 90-day mortality was found for a model combining age, gender, presence of heart infarction, renal disease, and American Society of Anaesthesiologists (ASA) grade(c=0.80). The established, more complex comorbidity measures RxRiskV Score (c= 0.66), CCI (c=0.64), and Elixhauser (c=0.62) all had inferior predictive performance, while ASA grade alone had a c-statistic of 0.70. 
-  
-  CONCLUSION: A less demanding comorbidity measure based on age, gender, two important comorbidities, and ASA grade, is better at predicting early postoperative mortality after THA than commonly used comorbidity measures that depend on access to extensive information on ICD-codes or medication prescription. This novel tool could simplify research on mortality after surgical interventions and may result in easy-to-use risk estimators for daily clinical practice.
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-library(tidyverse)
-source("../../lib/helpers.R")
+options(
+  digits            = 1,
+  knitr.kable.NA    = '',
+  repos = list(CRAN = "https://cran.rstudio.com/")
+)
+knitr::opts_chunk$set(echo = FALSE, root.dir = '..')
+library(ProjectTemplate)
+load.project()
 ```
 
 # Affiliation and contact
@@ -39,106 +26,158 @@ source("../../lib/helpers.R")
 2.	Swedish Hip Arthroplasty Register, Gothenburg, Sweden
 3.	Department of Orthopaedics, Visby Hospital, Visby, Sweden 
 4.	Department of Orthopaedics, Institute of Clinical Sciences, The Sahlgrenska Academy, University of Gothenburg, Gothenburg, Sweden
+5. ...
+6. ...
 
-**Correspondence:** anne.l.garland@gmail.com, Tel: +46-498-26 80 00, Orthopeadic Department, Visby Hospital, St Göransgatan 10, 621 84 Visby, Sweden  
-nils.hailer@surgsci.uu.se  
-szilard.nemes@registercentrum.se  
-erik.bulow@registercentrum.se  
-goran.garellick@registercentrum.se  
+**Correspondence:** 
+AG: anne.l.garland@gmail.com, Phone: +46 498 26 80 00, Postal: Orthopeadic Department, Visby Hospital, St Göransgatan 10, 621 84 Visby, Sweden  
+EB: erik.bulow@registercentrum.se  
+SN: szilard.nemes@registercentrum.se  
+NH: nils.hailer@surgsci.uu.se 
 
+
+# Abstract
+
+**OBJECTIVE:** Early mortality after total hip arthroplasty (THA) is associated with comorbidity. Diagnosis-based tools such as the Charlson or Elixhauser Comorbidity indices, or the prescription-based RxRisk V score, have been used to quantify this. Those instruments are however complex and requires the use of extensive data sets not routinely available in most doctor-patient settings. We investigated if a simplified model, could substitute those complex indices to predict early mortality after THA. 
+
+**PATIENTS AND METHODS:** We studied `r nrow(df)` patients with THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` from the Swedish Hip Arthroplasty Register, linked to national the population register, the National Patient Register and the longitudinal integration database for health insurance and labour market studies from Statistics Sweden. We used stepwise forward and backward logistic regression in combination with bootstrap averaging (bagging), to develop a prediction model for patient deaths within 90 days after surgery. Predictive power was assessed by the area under the reciever operating characteristic curve (AUC). The final model was applied to British data for external validation.
+
+**RESLUTS:** The unadjusted cumulative 90-day survival was `r surv90d`. Best predictive performance for 90-day mortality was found for a model combining `r coefs_print` (AUC = `r with(aucs, AUCtrain_est[name == "full"])`). This mdoel was superior to the established but complex comorbidity measures RxRiskV Score (`r with(aucs, AUCtrain_est[name == "RxRiskV"])`), the Charlson comorbidity index (AUC = `r with(aucs, AUCtrain_est[name == "CCI"])`), and the Elixhauser comorbidity score (AUC = `r with(aucs, AUCtrain_est[name == "ECI"])`).
+  
+**CONCLUSION:** We found a relatively simple prediction model of 90 day mortality after total hip arthroplasty. This model requires less data and is easier to calculate compared to previously well-known comorbidity indices.
 
 
 # Introduction
 
-The presence of comorbidities is associated with a poorer outcome after THA surgery, ie an increased risk of early postoperative mortality, an increased risk of revision [@Inacio2015; @Gordon2013] and inferior patient-reported outcomes [@Gordon2013; @Hofstede2016]. In research settings, comorbidity is commonly measured using multi-facetted diagnosis- or prescription-based coding algorithms [@Bozic2013]. @Inacio2016 performed a study where the ability of three of the most commonly used coding algorithms to predict mortality after total hip arthroplasty (THA) and total knee arthroplasty (TKA), ie, Charlson Comorbidity Index (CCI), Elixhauser Score, and RxRiskV, was evaluated. These complex comorbidity measures are based on the availability of extensive databases including in- and outpatient data on ICD-codes, or detailed information on drug prescriptions prior to surgery. Oftentimes, such databases can only be created by combining several population-based registries, raising both ethical and practical concerns. Repeated modifications of the weighting of certain items contained in the comorbidity measures, and revalidations of the scores have been necessary [@Sundararajan2004; @Deyo1992; @Quan2011; @Cleves1997; @Walraven2009]. This has resulted in numerous variations of the same score, and hence uncertainty regarding the interpretation of, and comparison between different studies. Several universal and arthroplasty-specific risk prediction tools of various degrees of complexity have been introduced in an attempt to quantify the individual patients' risk profile, but none has been broadly accepted [@Manning2016].
+The presence of pre-surgery comorbidity is associated with poorer outcome after the insertion of total hip arthroplasty (THA). Patients with increased comorbidity an increased risk of early postoperative mortality and revision [@Inacio2015; @Gordon2013], as well as inferior patient-reported outcomes [@Gordon2013; @Hofstede2016]. In research settings, comorbidity is commonly measured using multi-facetted diagnosis- or prescription-based coding algorithms [@Bozic2013]. @Inacio2016 studied the ability of three commonly used coding algorithms to predict mortality after THA and total knee arthroplasty: the Charlson (CCI) and Elixhauser (ECI) Comorbidity Indices, as well as RxRiskV. These comorbidity measures are quite complex to estimate and are based on the availability of extensive datasets including in- and outpatient data on ICD-codes, or detailed information on drug prescriptions prior to surgery. Oftentimes, such datasets can only be created by linking several population-based registries, raising both ethical and practical concerns. Also, each of the comorbidity index exist in numerous versions [@Sundararajan2004; @Deyo1992; @Quan2011; @Cleves1997; @Walraven2009]. Interpretation and comparison between different studies is therefore difficult. 
+Comorbidity data have also been used in several universal and arthroplasty-specific risk prediction tools to make risk profiles for individual patients. In the context of trauma, prediction tools are common, and it has been possible to reduce the number of variables without losing predictive power [@Gerdin2016]. No model has so far been broadly accepted for elective THA however [@Manning2016]. An easily applicable tool with few dimensions is thus needed, both in research and in clinical practice. We aimed to find such a model to predict the risk of 90-day postoperative mortality after THA. 
 
-An easily applicable tool with few dimensions is thus needed, both in research and in clinical practice. In the context of trauma, prediction tools are common, and it has been possible to reduce the number of variables without losing predictive power [@Gerdin2016]. In this study, we therefore aimed to investigate whether the use of easily accessible data, that are routinely collected, is an alternative to complicated coding algorithms in predicting the risk of early postoperative mortality after THA. 
+
+# Patients and Methods
 
 
-# Methods
-
-## Study design and study population
-
-```{r flowchart, fig.cap = "Flowchart."}
+```{r flowchart, fig.cap = "Flowchart depicting inclusion criteria and number of patients included in the development phase of the model."}
 knitr::include_graphics("../../graphs/fig1.png")
 ```
 
+Patients recorded in the Swedish Hip Arthroplasty Register (SHAR) with cemented primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` were included in the development phase of the study (Figure \@ref(fig:flowchart)).
+Only the first THA was accounted for in bilaterally operated patients and patients were excluded if a second THA was inserted within 90 days after the first. Hence, the ninety-day mortality were not influenced by any subsequent THA surgery. 
+Follow-up started on the day of surgery and ended at death, emigration, or December 31st `r max(df$P_SurgYear)`, whichever came first. 
 
-We performed a nationwide retrospective cohort study (Figure \@ref(fig:flowchart)). Primary outcome measure was ninety-day mortality, the secondary outcome measure was one-year mortality. Patients registered in the Swedish Hip Arthroplasty Register (SHAR) who received a THA due to primary osteoarthritis between 2008 and 2012 were included. Only elective primary THA procedures were included, and all other diagnoses than primary osteoarthritis were excluded, in order to minimize the risk of selection bias. 
-Follow-up started on the date of surgery and ended on the day of death, emigration, or December 31st 2012, whichever came first. Only the first surgery was accounted for in bilaterally operated patients in order to avoid dependency issues. Patients were excluded if a second THA surgery was performed within 12 months after the first THA surgery, ie, neither ninety-day nor one year mortality were influenced by any subsequent THA surgery. Information on age, gender, body mass index (BMI), diagnosis codes and prescriptions registered within one year prior to surgery, and socioeconomic background was included in order to calculate and compare the comorbidity measures described below.
+Data linkage, based on the unique identity numbers assigned to all Swedish residents [@Ludvigsson2009], were used to collect data from a variaty of sources, as previsouly described by @Cnudde2016.
 
+Age, sex, body mass index (BMI), ASA class, type of hospital (university/county/rural/private) and year of surgery were collected from SHAR, with a completeness of 96-98% [@shpr2017]. Data on education level (low/middle/high) and civil status, were collected from the longitudinal integration database for health insurance and labour market studies from Statistics Sweden [@Ludvigsson2019]. The Swedish National Patient Register was used for  comorbidity data during one year before surgery. The register contains all relevant diagnoses coded by ICD-10, as well as admissions and discharge dates for in- and outpatient visits in all private and public hospitals [@Ludvigsson2011]. We used medical data from the national prescription register where all prescriptions are classified by the Anatomic Therapeutic Chemical classification system (ATC). Death dates were linked from the national population register.
 
-## Sources of data
+Comorbidity was recognized by individual ICD-10 and ATC codes grouped into 17 categories according to CCI [@Charlson1987; @Deyo1992; @Quan2005], 31 categories according to ECI and 42 categories according to the RxRiskV [@Fishman2003; @Sloan2003] classification. RxRiskV medications prescribed for inflammatory pain was excluded since those are also sold over-the-counter in grocery stores, yielding questionable completeness in the prescription register. Patients with no hospital visits or no prescriptions were assumed to have no comorbidity.
 
-**The SHAR** has collected information on all THA procedures performed in Sweden since 1979. The SHAR has a completeness of 96-98% and has been validated repeatedly [@Soderman2000; @shpr2014; @Soderman2001].
-
-**Statistics Sweden** is a state-owned registry collecting demographic and socioeconomic information on the entire Swedish population, eg, marital status, level of education, and personal and family income. 
-
-**The Swedish National Patient Register** was initiated in 1964 and contains information on diagnosis codes and dates of admissions and discharge for all individuals in Sweden. The positive predictive value of the Swedish National Patient Register is estimated around $90 \pm 5~\%$ [@Ludvigsson2011].
-
-**The Drug Register** was initiated in 2005. The register contains information on all collected prescriptions in Sweden. 
-Based on the ten-digit personal identity number that all Swedish citizens are assigned at birth or immigration, linkage of information from the databases described above is performed.
-
-
-## Definitions
-
-**The Charlson Comorbidity Index (CCI)** is a diagnose-based coding algorithm used in research [@Charlson1987]. It was developed through defining numerous clinical conditions and assessing their relevance in the prediction of one-year mortality. Each of the 19 comorbidities was then assigned a weighted score based on their relevance in prediction of one-year all-cause mortality. In the present study the original weighting of the Deyo-modification [@Deyo1992] of the index and the revised weighting according to Quan were both investigated [@Quan2011; @Charlson1987].
-
-**The Elixhauser Score** is a diagnose-based coding algorithm used in research [@Elixhauser1998]. The Elixhauser Score is more detailed than the CCI, with 30 categories included in the original algorithm. In the present study the weighting of categories according to van Walraven was used [@Walraven2009].
-
-**The RxRiskV Score** is a prescription-based coding algorithm used in research [@Fishman2003; @Sloan2003]. It has been argued that a prescription-based measure would be more reliable than a diagnosed based measure [@Iezzoni1997; @Johnson2006].
-The American Society of Anaesthesiologists (ASA) physical status classification is a six-category physical status evaluation system that has remained unchanged except for the sixth category (brain-dead person) that was subsequently added for use in transplantation surgery [@Saklad1941]. Information on ASA grade was introduced in the SHAR in 2008, which is why our study period begins that year. ASA grade is routinely assessed pre-operatively in most developed countries. However, ASA grade has not been validated as a predictor of 90-day mortality after THA, and ASA grade is known to have a high degree of internal variability [@Haynes1995]. ASA grade has previously been compared to the CCI, but not with respect to mortality after THA [@Whitmore2014; @Kork2015]. 
+Some comorbidities were identified by more than one classification and some distinct comorbidities were closely related (such as hypertension with and without complications, or abuse of either drugs or alcohol). We identified 16 broader categories in addition to 5 standalone ECI classes and 14 RxRiskV classes that were kept unchanged. Groups were merged according to clinical relevance as to be recognized in a patient-doctor meeting without access to external register data (see supplementary data).
 
 
 ## Statistics
 
-We adhered to the guidelines on statistical analyses of register data [@Ranstam2011c; @Ranstam2011b]. Means, medians and ranges were used to describe continuous data. 95% confidence intervals (CI) described estimation uncertainty. Categorical data were investigated by cross-tabulation and the Chi-square test. The Kaplan-Meier method was used to estimate unadjusted cumulative survival. In order to calculate unadjusted and adjusted odds ratios (OR) with CI logistic regression models were fitted, with adjustment for relevant confounders (age, gender, BMI (Body Mass Index), type of hospital, fixation method, comorbidity, and socioeconomic position). Continuous variables were not categorized in order to strengthen the precision of the statistical analyses [@Altman2006]. 
-The performance of the logistic regression models was evaluated by its discrimination capacity using c-statistics. The c-statistic represents the area under the curve (AUC in the plotted ROC [receiver operated characteristic] graph) and stands for the degree of predictability. We performed no imputation for missing data. 
-Separate dimensions in the comorbidity algorithms (Elixhauser, CCI, and RxRiskV) that were considered relevant based on lower bounds of CI being larger than one were combined in a larger model together with age, gender, BMI, and ASA. One at a time, the different dimensions were then removed until the optimal combination with the highest c-statistic was found.
+We used the Kaplan-Meier estimator to assess unadjusted cumulative survival.
 
+Further analysis was based on logistic regression since no censoring occoured within the 90 day study period.   
+
+Univariable models were applied to all predictors individually to estimate odds ratios for descriptive purposes.
+
+All potential predictors were then partioned into four groups where there were assumed to be no colinearity among variables: 1) the 17 combined comorbidities, 2) the 5 ECI comorbidities, 3) the 14 RxRiskV comorbidities, and 4) age, sex, BMI, ASA, type of hospital, year of surgery, education and civil status. 
+
+1,000 bootstrap samples were drawn from the initial data set. Early mortality is very rare for patients with elective THA however. Downsampling stratified on the outcome was therefore applied to each sample to include only as many survivals as deaths. This gave us balanced samples and managable computations. [@King2001; @Courvoisier2011; @Austin2017a].
+
+A step-wise linear regression procedure based on the Aikake Information Criteria (AIC) was applied to each bootstrap sample to identify important predictors from each of the four groups of variables [@Sauerbrei1999; @Zellner2004; @Lukacs2010]. Variables that were kept in the final model for at least 75 % of all bootstrap samples were selected as candidates for further consideration.   
+
+A full main effects model were made to include all previously selected candidate predictors. Two modified versions were considered as well, where age was modeled by resttricted cubic spline with either 2 or 3 knots. Three simplified models with age and sex only, were used for comparison, as well as four univariable regression models with ASA, CCI, ECI and RxRiskV alone.  
+
+We then took another 1,000 downsampled bootsrtap samples to estimate coefficients for each model. Model averaging based on the information criteria was used for the full main effects model and its variants. Hence, an automated model selection procedure evaluating all possible subsets of the included main effects, yielding averaged coeffients estimates based on variable importance.
+
+Each model, now with their coefficient estimates fixed, were then evaluated by their predictive power based on their area under the reciever operation characteristics (ROC) curve (AUC). Point estimates as well as 95 % confidence intervals were estimated by emperical bootstrap, once again with 1,000 resamples but this time without downsampling. Sensitivity and specificity from each bootstrap sample were subjected to a local polynomial regression fit (loess) to illustrate an averaged reciever operation characteristics (ROC) curve for each model. 
+
+We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr, pROC, MuMIn and rFSA [@Lambert2018].
 
 ## Ethical approval
 
-All patients registered in the SHAR have received information about the register and the type of data that are routinely collected prior to surgery, and all patients have been given the choice not to participate in the registry or associated research. In accordance with the Swedish Patient Data Law from 2009 written informed consent was not obtained from individual patients. Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (2013: 360-13).
+Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (271-14 and 360-13).
+
+
+
+
+
+
 
 
 
 # Results
 
-## The study population
+There were `r nrow(df)` patients (Figure \@ref(fig:flowchart)), `r paste(range(df$P_Age), collapse = " - ")` years old, whereof `r round(mean(df$P_Sex == "Female") * 100)` % were female. `r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` patients died within 90 days and no one was censored before that. The unadjusted cummulative 90-day survival was `r surv90d`. 
 
-After the exclusion process described above (Figure \@ref(fig:flowchart)) 38,735 individuals with an age between 18 and 100 years who hade undergone THA due to primary OA were eligible for analysis. Their mean age was 68.6 years (SD 10.11), and there were somewhat more women (56.2%) than men in the study population. 
-The highest proportion of patients with multiple comorbidities (ie, three or more) was identified by the RxRiskV measure (69.9%). The Elixhauser Score identified 5.0% of the study population as suffering from three or more comorbidities, whereas the proportion of patients with three or more comorbidities was 3.3% when calculated according to the CCI. The proportion of patients with an ASA grade above 2 was 15.2%.
-See Table 1 for characteristics of the study population.
+Some characteristics of the study population are presented in Table \@ref(tab:tab1). `r mean(df$Rx_index_index != 0) * 100` % of all patients had at least one pre-surgery comorbidity according to RxRiskV, but only `r mean(df$CCI_index_quan_original != 0) * 100` % and `r mean(df$ECI_index_sum_all  != 0) * 100` % according to ECI and CCI. The proportion of patients with ASA class 3 was `r mean(df$P_ASA == 3) * 100` %. Most individual comorbidities were more common among patients who died. 
 
-```{r}
-load("../../cache/table1.RData")
-prestext(table1)
+```{r tab1}
+prestext(table1) %>% 
+  knitr::kable(caption = "Baseline demographic information on the study population 2008-2012. CCI/ECI = Charlson/Elixhauser Comorbidity Index. Individual comorbidities without prefixes were based on combinations of different comorbidity classifications. Prefix ECI and Rx(RiskV) indicate classification specific comorbidities.")
 ```
 
 
-## Ninety-day mortality after THA
+Odds ratios from univariable logistic regresison models are presented in Table \@ref(tab:tab2). Higher age, ASA, CCI, ECI and RxRiskV, as well as being male or widow(er), or having cancer, gout, kidney disease or heart infarct, increase the risk of death within 90 days after surgery. Private hospitals tend to operate healthier patients and the odds of death decrease slightly by year of surgery.
 
-Unadjusted cumulative 90-day survival was 99.7 (CI 99.68 to 99.78) and the number of deaths during this period was 109. We found that age (OR 1.1 [CI 1.09-1.14]) and male gender were associated with an increased risk of death (OR for female gender: 0.5 [CI 0.37-0.79]). Patients with a higher degree of comorbidity according to the CCI, the Elixhauser score, and the RxRiskV score had an increased risk of 90-day mortality than patients with a lower score. After adjustment for age, gender, BMI, type of hospital, fixation method, comorbidity, and socioeconomic status only the CCI and ASA grade above 2 remained statistically significantly associated with an increased risk of 90-day mortality. Among the investigated socioeconomic background variables only the marital status of widows (-ers) was statistically significantly associated with an increased risk of 90-day mortality (adjusted OR 2.6 [CI 1.67-3.93]). Unadjusted and adjusted ORs for 90-day mortality with 95% confidence intervals are presented in Table \@ref(tab:tab2).
-Exploratory analyses of the excluded 151 patients with an ASA grade above 3 showed that 149 were classified as ASA 4, 2 as ASA 5, and none as ASA 6. 27 individuals with ASA grade 4 to 6 (18%) died during the study period.
 
 ```{r tab2}
-load("../../cache/t2_univariable.RData")
-prestext(t2_univariable)
+prestext(t2_univariable) %>% 
+  knitr::kable(caption = "Unadjusted odds ratios (OR) for 90-day mortality with 95 % confidence intervals (CI). Individual comorbiditities are only presented if selected in at least 75 % of all bootstrap samples (selected). Variables included in the final model are marked with 'FM' in model column.")
+```
+
+ASA class was the only variable included in the final models by all stage-wise regression procedures from each of the 1,000 bootstrap samples (100 % in column "selected" in Table \@ref(tab:tab2)). Most potential predictors were rarely selected and only `r coefs_print`, where selected at least 75 % of the time (Table \@ref(tab:tab2)).
+
+
+```{r auc, warning = FALSE}
+knitr::kable(table_auc, caption = "Area Under the Curve (AUC) as a measure of predictive power for the full model compared to simple models with standard comorbidity measures, as well as a reference model with age and sex. Age was included as either a main effect, or in the form of restricted cubic splines (rcs) with either 2 or 3 knots.")
+
+```
+
+
+A model with those covariates, the "full" model, had an out-of-sample AUC of `r aucs$AUCtrain_est[[1]]`. The predictive power did not improve with age modeled by restricted cubic splines (Table \@ref(tab:auc) and Figure \@ref(fig:aucci)). The full model led to better predictions compared to a simplified model with only age and sex, or any of the conventional comorbidity indices (CCI, ECI and RxRiskV). The full model is further described in Table \@ref(tab:fullmodel). 
+
+
+```{r aucci, fig.cap = "Area Under the Curve (AUC) as a measure of predictive power for the full model compared to simple models with standard comorbidity measures, as well as a reference model with age and sex. Age was included as either a main effect, or in the form of restricted cubic splines (rcs) with 2 or 3 knots. Confidence intervals based on 1,000 non-paramteric bootstrap replicates."}
+
+knitr::include_graphics("../../graphs/auc_ci.png")
+
+```
+
+
+```{r fullmodel}
+knitr::kable(table_full_model_coefs, caption = "Estimated odds ratios for variables in the full model based on full averages from 1,000 bootstrap samples.")
+```
+
+ROC curves for all models compared to the full model are displayed in Figure \@ref(fig:rocs). Each models ability separate survivors from death are further illustrated in Figure \@ref(fig:sep).
+
+```{r rocs, fig.cap = "ROC curves for each model compared to the full main effects model."}
+knitr::include_graphics("../../graphs/rocs.png")
+```
+
+
+```{r sep, fig.cap = "Separation"}
+knitr::include_graphics("../../graphs/separation_auc.png")
 ```
 
 
 
-## A combination of age, gender, presence of heart infarction or renal disease, and ASA grade is the best predictor of mortality
-
-We found that the combination of age, gender, presence of heart infarction and renal disease, and ASA grade was the best predictor of both 90-day mortality (c=0.80) and one-year mortality (Figure 2 and Supplementary Figure 1). Introduction of socioeconomic variables such as education level and marital status into the multivariable regression model only marginally increased its predictive power (data where?). Adding information on BMI to the model did not strengthen the predictive power (Supplementary Table 1). 
-The Elixhauser score was better at predicting 90-day mortality than any of its separate dimensions, with a c-statistic of 0.62 for the model containing all items of the Elixhauser score (see Table 3A and Figure 2).
-When examining different dimensions of the CCI we found that the model containing all items of the CCI performed better in predicting 90-day and one-year mortality than the separate dimensions did individually. The original weighting was somewhat better at predicting 90-day mortality than the weighting according to Quan (c=0.64 vs. 0.61; see Table 3B and Figure 2.)
-The prescription-based RxRiskV Score was better at predicting 90-day mortality than the diagnosis-based comorbidity measures (CCI and Elixhauser Score), with a c-statistic of 0.66. The model containing all items included in the RxRiskV Score was better at predicting 90-day mortality than the separate items investigated one at a time (See Table 3C and Figure 2).
-The ASA classification alone had a better predictive strength for 90-day mortality (c=0.70) than the more complex comorbidity measures CCI, Elixhauser score, and RxRiskV score (See Figure 2).
 
 
 # Discussion
+
+We found that a univariable main effects logistic regression model with `r coefs_print` was superior to predict death within 90 days after insertion of elective THA. Some covariates are not statistically significant themselves (\@ref(tab:fullmodel)) but are still relevant due to unobserved heteregeneity  [@Mood2010]. 
+
+It is well known that male sex is associated with earlier deaths. It is also well known that the remaining life span will decrease with incresed age. It is however not obvious that this relation must be striclty linear. We therefore allowed for a more flexible relation based on restricted cubic splines, but found that a linear relationship was indeed most sufficient.  
+
+ASA class was the only covariate chosen by all stepwise regression procedures. This might not be surprising due to its definition. It is interesting to note however that a univariable model with ASA grade alone, yielded the lowest predictive power of all models compared. An out-of-sample point estimate of its AUC was < 0.5 (\@ref(tab:fullmodel) and \@ref(fig:rocs), meaning that predictions based solely on ASA would be worse than random. This shows the important of validation, due to the risk of overfitting, as well as the importance of multivariable adjustment. ASA class is routinely assessed pre-operatively in most developed countries. It is however known to have a high degree of internal variability [@Haynes1995]. It has previously been compared to the CCI, but not with respect to mortality after THA [@Whitmore2014; @Kork2015]. 
+It has been argued that a prescription-based measure would be more reliable than a diagnosed based measure [@Iezzoni1997; @Johnson2006]. We did confirm that estimation of AUC were more stable for the RxRiskV index compared to CCI and ECI (as seen by the width of the confidence intervals in figure \@ref(fig:aucci)), although point estimates of the latter was marginaly higher. This reflects that both coverage and completeness from the prescription register is better compared to the national patient regiseter. The first hold records of all medications prescribed, the second only contains information that the doctor deemed  relevant at the patient encounter. 
+
+
+
+# Further discussion from Garland not yet adjusted to new models
+
 
 A set of easily accessible data is a better predictor of early mortality after major surgery than complex coding algorithms 
 In this nationwide cohort study we intended to compare the performance of a set of easily accessible data that are routinely collected in daily clinical practice with complex comorbidity coding algorithms (ie CCI, Elixhauser Score and RxRiskV). The best predictive strength was found for a relatively simple model including age, gender, presence of cardiac infarction or renal disease during the last 12 months prior to THA surgery, and ASA grade (c=0.81). Thios simple model was also better than the above mentioned comorbidity measures at predicting  one-year mortality (Supplementary Figure 1 and Supplementary Table 3).
@@ -150,30 +189,17 @@ Obesity is generally known to be associated with a higher risk of morbidity and 
 Risk prediction may be useful in the process of patient selection prior to surgery, in the preoperative risk management including a review of current medications, and in perioperative anaesthesia management. A number of risk prediction tools of various complexity for adverse outcomes after total joint replacements have been introduced but none has been broadly accepted [@Manning2016]. In the context of trauma surgery outcome prediction tools are common, and it is seems possible to reduce the number of items without losing predictive power [@Gerdin2016]. Our results indicate that the risk of early postoperative mortality after THA could be assessed by a relatively simple prediction model.
 
 
-## Strengths and limitations
-
 A strength of this study is its nationwide design with a large cohort of primary THA patients with a reasonable number of events, rendering estimation relatively precise. Our sources of data are highly valid, and the proportion of missing data in our cohort was low [@Soderman2000; @shpr2014; @Soderman2001; @Ludvigsson2011]. Limitations to this study are the potential biases at different levels that are commonly associated with observational data, and the risk of coding errors as expected when dealing with patient administrative data. Selection bias is also an issue in this study, since patients who died on the table during attempted THA surgery may not have been reported to the SHAR, but, judging from clinical experience, such events are extremely uncommon in a population of patients scheduled for elective THA surgery for osteoarthritis. The much higher expected frequency of fatal events during THA surgery on hip fracture patients was one of the main reasons to exclude this group from the present analyses.
 It is important to distinguish between explanatory observational research and attempts at predicting individual events such as early mortality after surgical interventions. The combination of parameters in the best-performing model described in the present study may serve as a predictor of mortality on an individual level, but the described combination of parameters would need to be validated in a different sample of individuals. Since this has not yet been done we cannot extrapolate our findings to prediction models in a clinical setting, but aim at performing such additional studies
 Our results indicate that in research on mortality after a very common surgical intervention a less complex comorbidity measure consisting of easily accessible data that are routinely collected in daily clinical practice is superior to some of the commonly used diagnose- or prescription-based coding algorithms. It would be interesting to evaluate the ability of our novel set of parameters to predict adverse events and revision rates.
 
-
-## Conclusion
-
 Our results derived from a nationwide cohort study indicate that a less data demanding comorbidity measure, the combination of age, gender, presence of heart infarction or renal disease and ASA grade, serves is better at predicting early postoperative mortality after THA than comorbidity measures based on more complex coding algorithms. 
+
+
 
 # Contribution of authors
 
-AG, NH: initiated the study and managed the ethical review board application. EB, SN and AG performed the statistical analyses. GG: Assisted in preparing the review board application. AG and EB drafted the manuscript. AG, EB, SN, NH and GG took part in designing the study and editing the manuscript. 
+AG and NH initiated the study and managed the ethical review board application. EB, AS, SN, and AG performed the statistical analyses. AG and EB drafted the manuscript. All athours edited and finalized the manuscript.
 
-
-# What this paper adds-box
-
-## What is already known on this subject: 
-
-A higher comorbidity burden is associated with increased early mortality after major surgery. Established comorbidity measures rely on complex coding algorithms of data on ICD- and/or prescription codes, and thus they are cumbersome instruments in research and impossible to use in clinical practice.
-
-## What this study adds:
-
-The combination of age, gender, presence of heart infarction or renal disease, and ASA grade was a better predictor of mortality after primary THA than the more complex comorbidity measures Charlson Comorbidity Index, Elixhauser Score and RxRiskV. Thus, a five-item instrument that is easily available in a clinical setting could both simplify research on mortality after major surgery and be developed into a simple risk prediction tool.
 
 # Bibliography

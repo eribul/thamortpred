@@ -2,7 +2,10 @@
 memory.limit(1e10)
 set.seed(132456798)
 future::plan("multiprocess")
-options('na.action' = "na.fail")
+options(
+  digits = 2,
+  na.action = "na.fail"
+)
 
 # Add any project specific configuration here.
 add.config(
@@ -11,6 +14,6 @@ add.config(
 
 # Add project specific configuration that can be overridden from load.project()
 add.config(
-  N_bots         = 10e3,
+  N_bots         = 1e3,
   apply.override = TRUE
 )
