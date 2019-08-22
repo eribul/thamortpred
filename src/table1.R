@@ -1,35 +1,25 @@
 library(ProjectTemplate)
 load.project()
 
-fctrs <- c(
-  "P_Sex",
-  "P_ASA",
-  "ECI",
-  "CCI",
-  "RxRiskV"#,
-  #"P_SurgYear"
-)
+fctrs <- c("P_Sex", "P_ASA", "ECI", "CCI")
 
 dft1 <-
   df %>%
   rename(
     CCI = CCI_index_quan_original,
-    ECI = ECI_index_sum_all,
-    RxRiskV = Rx_index_index
+    ECI = ECI_index_sum_all
   ) %>%
   mutate(
     CCI     = replace(CCI, CCI == 4, "4+"),
-    ECI     = replace(ECI, ECI == 3, "3+"),
-    RxRiskV = replace(RxRiskV, RxRiskV == 7, "7+")
+    ECI     = replace(ECI, ECI == 3, "3+")
   ) %>%
   select(
     death90f,
     one_of(predictors),
     -P_SurgYear,
-    CCI, ECI, RxRiskV,
+    CCI, ECI,
     starts_with("c_"),
-    starts_with("ECI_"),
-    starts_with("Rx_")
+    starts_with("ECI_")
   )
 
 t1 <-

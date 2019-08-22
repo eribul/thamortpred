@@ -75,6 +75,6 @@ evaluate <- function(model, nms, rec) {
 
       auc       = map(obspred, roc_auc, obs, pred),
       auc       = map_dbl(auc, ".estimate"),
-      roc_curve = map(obspred, roc_curve, obs, pred)
+      roc_curve = map(obspred, roc_curve, obs, pred, options = list(transpose = TRUE))
     )
 }

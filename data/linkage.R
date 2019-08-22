@@ -6,7 +6,6 @@ df_shpr_orig <-
   select(
     LopNr,
     P_Side,
-    opnr,
     DateOfDeath,
     P_TypeOfHospital,
     P_ProstType,
@@ -21,17 +20,17 @@ df_shpr_orig <-
     P_FemStemCemMix
   ) %>%
   filter(between(P_SurgDate, "2008-01-01", "2015-12-31")) %>%
-  left_join(tbl(con, "elix_1yr_before")) %>%
-  left_join(tbl(con, "charlson_1yr_before")) %>%
-  left_join(tbl(con, "rxriskv_modified_1yr_before")) %>%
-  left_join(lisa) %>%
+  left_join(tbl(con, "operations_factors_opnr"), c("LopNr", "P_Side")) %>%
+  left_join(tbl(con, "elix_1yr_before"), c("LopNr", "P_Side")) %>%
+  left_join(tbl(con, "charlson_1yr_before"), c("LopNr", "P_Side")) %>%
+  left_join(lisa, c("LopNr", "P_Side")) %>%
   collect() %>%
 
   mutate_if(is.character, na_if, "NA") %>%
   mutate_at(vars(DateOfDeath, P_SurgDate), as.Date, format = "%Y-%m-%d") %>%
   mutate_at(vars(LopNr, P_ASA, P_Age), as.integer) %>%
   mutate_at(vars(P_BMI), as.numeric) %>%
-  mutate_at(vars(matches("elix|charlson|rxriskv"), -contains("index")), as.logical) %>%
+  mutate_at(vars(matches("elix|charlson"), -contains("index")), as.logical) %>%
   mutate_if(is.character, as.factor)
 
 

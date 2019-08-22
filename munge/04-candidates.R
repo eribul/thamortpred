@@ -4,7 +4,7 @@
 # Screen all comorbidity measures as well as other factors for
 # predictors to include in combined model
 important_factors <-
-  tibble(preds = c("ECI", "CCI", "Rx", "c_")) %>%
+  tibble(preds = c("ECI", "CCI", "c_")) %>%
   mutate(data = map(preds, getdata)) %>%
   add_row(
     preds = "general",

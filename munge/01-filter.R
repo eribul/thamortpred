@@ -28,24 +28,26 @@ df_shpr <-
   ungroup()
 
 # Endast första höft
-df_shpr <- filter(df_shpr, opnr == 1); N()                                       # 80805
+df_shpr <- filter(df_shpr, opnr == 1); N()                                       # 77075
 
 # Ignorera om ytterligare THA inom 90 dagar efter första
-df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 90); N()         # 79888
+df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 90); N()         # 76158
 
 # Endast cementfria
 df_shpr <- filter(df_shpr,
                   P_AcetCupCemMix != "Cementfritt",
-                  P_FemStemCemMix != "Cementfritt"); N()                          # 53718
+                  P_FemStemCemMix != "Cementfritt"); N()                          # 50569
 
-df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() # 53718
-df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 53718
+df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() # 50569
+df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 50569
 
-df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 50761
-df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       # 49956
-df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 49611
-df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 49611
-df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 49235
+df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 47709
+df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       # 46960
+
+# Dessa skulle vi ju ev kunna imputera ist!
+df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 46621
+df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 46621
+df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 46272
 
 # Indikerar nya data för ny peroid
 df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")

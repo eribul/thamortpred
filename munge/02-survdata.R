@@ -38,7 +38,6 @@ df <-
     # truncate comorbidity indices
     charlson_icd10_index_quan_original = pmin(charlson_icd10_index_quan_original, 4),
     elix_icd10_index_sum_all           = pmin(elix_icd10_index_sum_all, 3),
-    rxriskv_modified_atc_index_index   = pmin(rxriskv_modified_atc_index_index, 7),
   ) %>%
 
   # Remove variables not needed for analysis
@@ -57,12 +56,9 @@ df <-
     -bilateral,
     -P_ProstType,
     -contains("index"),
-    rxriskv_modified_atc_index_index,
     elix_icd10_index_sum_all,
-    # charlson_icd10_index_quan_updated,
     charlson_icd10_index_quan_original
   ) %>%
   # Shorter names
   rename_all(~ gsub("charlson_icd10", "CCI", .)) %>%
-  rename_all(~ gsub("rxriskv_modified_atc", "Rx", .)) %>%
   rename_all(~ gsub("elix_icd10", "ECI", .))

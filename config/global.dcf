@@ -22,7 +22,8 @@ libraries:
   writexl,
   MuMIn,
   parallel,
-  rFSA
+  rFSA,
+  gtools
 as_factors: TRUE
 attach_internal_libraries: FALSE
 cache_loaded_data: TRUE

@@ -5,19 +5,18 @@ nms <- paste(setdiff(candidates, "P_Age"), collapse = "|")
 # Object with models to compare and evaluate
 models <-
   tribble(
-    ~name,                ~preds,                                                ~ modavg,
-    "full",                paste0(nms, "|P_Age"),                                TRUE,
-    "full (rcs 2)",        paste0(nms, "|P_Age_ns_[12]"),                        TRUE,
-    "full (rcs 3)",        paste0(nms, "|P_Age_ns_[123]"),                       TRUE,
-    "full-cancer",       paste(setdiff(candidates, "c_cancer"), collapse = "|"), TRUE,
-    "simpl",               paste(setdiff(candidates, "P_ASA"), collapse = "|"),  TRUE,
-    "ASA",                 "P_ASA",                                              FALSE,
-    "CCI",                 "CCI_index_quan_original",                            FALSE,
-    "ECI",                 "ECI_index_sum_all",                                  FALSE,
-    "RxRiskV",             "Rx_index_index",                                     FALSE,
-    "age + sex (main)",    "P_Sex|P_Age",                                        FALSE,
-    "age + sex (rcs 2)",   "P_Sex|P_Age_ns_[12]",                                FALSE,
-    "age + sex (rcs 3)",   "P_Sex|P_Age_ns_[123]",                               FALSE
+    ~name,               ~preds,                                                ~ modavg,
+    "full",              paste0(nms, "|P_Age"),                                TRUE,
+    "full (rcs 2)",      paste0(nms, "|P_Age_ns_[12]"),                        TRUE,
+    "full (rcs 3)",      paste0(nms, "|P_Age_ns_[123]"),                       TRUE,
+    # "full-cancer",       paste(setdiff(candidates, "c_cancer"), collapse = "|"), TRUE,
+    # "simpl",             paste(setdiff(candidates, "P_ASA"),  collapse = "|"), TRUE,
+    "ASA",               "P_ASA",                                              FALSE,
+    "CCI",               "CCI_index_quan_original",                            FALSE,
+    "ECI",               "ECI_index_sum_all",                                  FALSE,
+    "age + sex (main)",  "P_Sex|P_Age",                                        FALSE,
+    "age + sex (rcs 2)", "P_Sex|P_Age_ns_[12]",                                FALSE,
+    "age + sex (rcs 3)", "P_Sex|P_Age_ns_[123]",                               FALSE
   ) %>%
   mutate(
 

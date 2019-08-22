@@ -1,0 +1,45 @@
+---
+title: "Preliminära resultat av BRLasso"
+author: "Erik Bulow"
+date: '2019-08-22'
+output: 
+  pdf_document:
+    df_print: kable
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+load("../cache/table1.RData")
+table1
+```
+
+
+```{r}
+knitr::include_graphics("../graphs/brlasso_roc.png")
+```
+
+
+```{r}
+knitr::include_graphics("../graphs/brlasso_auc_ci.png")
+```
+
+
+```{r}
+knitr::include_graphics("../graphs/brlasso_separation_auc.png")
+```
+
+```{r}
+load("../cache/brlasso_tbl_auc.RData")
+brlasso_tbl_auc
+```
+
+
+```{r}
+load("../cache/brlasso_tbl_coefs.RData")
+brlasso_tbl_coefs
+```
