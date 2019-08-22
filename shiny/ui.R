@@ -1,29 +1,31 @@
 library(shiny)
 library(ggplot2)
 
-dataset <- diamonds
 
 fluidPage(
-
-  titlePanel("Diamonds Explorer"),
+  titlePanel("Will you survive 90 days after your surgery?"),
 
   sidebarPanel(
+    sliderInput(
+      'age',
+      'Age',
+      min   = 35,
+      max   = 98,
+      value = 72,
+      step  = 1,
+      round = TRUE
+    ),
 
-    sliderInput('sampleSize', 'Sample Size', min=1, max=nrow(dataset),
-                value=min(1000, nrow(dataset)), step=500, round=0),
-
-    selectInput('x', 'X', names(dataset)),
-    selectInput('y', 'Y', names(dataset), names(dataset)[[2]]),
-    selectInput('color', 'Color', c('None', names(dataset))),
-
-    checkboxInput('jitter', 'Jitter'),
-    checkboxInput('smooth', 'Smooth'),
-
-    selectInput('facet_row', 'Facet Row', c(None='.', names(dataset))),
-    selectInput('facet_col', 'Facet Column', c(None='.', names(dataset)))
+    checkboxInput('sex',    'Male sex'),
+    checkboxInput('asa',    'ASA >= 3'),
+    checkboxInput('kidney', 'Kidney disease?'),
+    checkboxInput('heart',  'Heart condition?'),
+    checkboxInput('cns',    'CNS?')
   ),
 
   mainPanel(
-    plotOutput('plot')
+    textOutput(
+      "textout"
+    )
   )
 )
