@@ -1,13 +1,13 @@
-version: 0.9.0
-data_loading: FALSE
-data_loading_header: TRUE
+version:                   0.9.0
+data_loading:              FALSE
+data_loading_header:       TRUE
 data_ignore:
-cache_loading: TRUE
-recursive_loading: FALSE
-munging: FALSE
-logging: FALSE
-logging_level: INFO
-load_libraries: TRUE
+cache_loading:             TRUE
+recursive_loading:         FALSE
+munging:                   FALSE
+logging:                   FALSE
+logging_level:             INFO
+load_libraries:            TRUE
 libraries:
   tidyverse,
   future,
@@ -24,8 +24,8 @@ libraries:
   parallel,
   rFSA,
   gtools
-as_factors: TRUE
+as_factors:                TRUE
 attach_internal_libraries: FALSE
-cache_loaded_data: TRUE
-sticky_variables: NONE
-tables_type: tibble
+cache_loaded_data:         TRUE
+sticky_variables:          NONE
+tables_type:               tibble

@@ -1,3 +1,5 @@
+con <- shar_linkage_con()
+
 # General settings
 memory.limit(1e10)
 set.seed(132456798)
@@ -17,5 +19,6 @@ add.config(
 # Add project specific configuration that can be overridden from load.project()
 add.config(
   N_bots         = 100,
+  Bmax           = 5,     # No of external reruns for BRLasso
   apply.override = TRUE
 )

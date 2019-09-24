@@ -15,8 +15,13 @@ dft1 <-
   ) %>%
   select(
     death90f,
-    one_of(predictors),
-    -P_SurgYear,
+    P_Age,
+    P_Sex,
+    P_BMI,
+    P_ASA,
+    P_TypeOfHospital,
+    education,
+    civil_status,
     CCI, ECI,
     starts_with("c_"),
     starts_with("ECI_")
@@ -30,6 +35,8 @@ t1 <-
     data = dft1,
     test = FALSE
   )
+
+cahce("t1")
 
 table1 <-
   t1 %>%
@@ -45,4 +52,4 @@ table1 <-
   ) %>%
   select(what, level, alive, dead)
 
-cache_all(c("t1", "table1"))
+cache("table1")
