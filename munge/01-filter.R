@@ -1,55 +1,200 @@
 
-N <- function() c(n_distinct(df_shpr$LopNr), nrow(df_shpr))                       # pats   hips
+# Define filter steps -----------------------------------------------------
 
-# Endast 2008-2015 enligt data/linkage.R
+# Make tibble with one row per filter step and columns:
+# step: Number identifying inclusion box.
+#       Does not need to be unique if several exlusions are combined.
+# incl: Description of included cases
+# excl: Description of cases to exclude
+# expr: quosure defining filter step
+# data: The data set to be filtered. Only required for initial step (first row).
 
-# Endast primäroperationer - preselektion
-df_shpr <-
-  df_shpr_orig %>%
-  distinct(LopNr, P_Side, .keep_all = TRUE)
+filters <-
+  bind_rows(
+    tibble(
+      step = 0,
+      incl = "all",
+      data = list(df_shpr_orig)
+    ),
 
-# Endats THA
-df_shpr <- filter(df_shpr, P_ProstType == "Totalprotes"); N()                     # 112818 127671
+    tibble(
+      step = 1,
+      excl = "Hemi- and surface prosthesis",
+      incl = "THA 2008-2015",
+      expr = list(quo(
+        P_ProstType == "Totalprotes" &
+        is.na(P_KVA1) |
+          P_KVA1 != "NFB62 - Primär total ytersättningspr"
+      ))
+    ),
 
-# Endast OA
-df_shpr <- filter(df_shpr, P_DiaGrp == "Primär artros"); N()                      # 90137 102698
+    tibble(
+      step = 2,
+      excl = "Other diagnoses than OA",
+      incl = "THA due to OA",
+      expr = list(quo(P_DiaGrp == "Primär artros"))
+    ),
 
+    tibble(
+      step = 3,
+      excl = "First THA for bilateral cases",
+      incl = "Patients with OA",
+      expr = list(quo(op_last == 1))
+    ),
 
-# Indikera opnr och tid mellan operationer för de som har två
-df_shpr <-
-  df_shpr %>%
-  group_by(LopNr) %>%
-  mutate(
-    bilateral = any(opnr > 1),
-    time_between = if_else(!bilateral, NA_integer_,
-                           as.integer(max(P_SurgDate) - min(P_SurgDate))
+    tibble(
+      step = 4,
+      excl = "Uncemented/hybrid/reverse hybrid",
+      incl = "Patients with OA\\l and cemented THA",
+      expr = list(quo(P_AcetCupCemMix != "Cementfritt" &
+                 P_FemStemCemMix != "Cementfritt"))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "Age < 18 or > 100",
+      incl = "Total study population",
+      expr = list(quo(between(P_Age, 18, 100)))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "BMI > 50 or missing",
+      incl = "Total study population",
+      expr = list(quo(P_BMI <= 50))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "ASA = 4, 5 or missing",
+      incl = "Total study population",
+      expr = list(quo(P_ASA <= 3))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "Missing education",
+      incl = "Total study population",
+      expr = list(quo(!is.na(education)))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "Missing civil status",
+      incl = "Total study population",
+      expr = list(quo(!is.na(civil_status)))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "Missing type of hospital",
+      incl = "Total study population",
+      expr = list(quo(!is.na(P_TypeOfHospital)))
     )
+
+  )
+
+
+# Filter out cases row by row --------------------------------------------------
+for (r in 2:nrow(filters)) {
+  filters$data[[r]] <- filter(filters$data[[r - 1]], !!filters$expr[[r]])
+}
+
+# Save final data set as df
+df <- filters$data[[r]]
+cache("df")
+
+
+# Format table with flowchart data ---------------------------------------------
+
+filters <-
+  filters %>%
+  mutate(
+    N        = map_int(data, ~ n_distinct(.$LopNr)),
+    N_s      = prettyNum(N, big.mark = ",", preserve.width = "none"),
+    N_excl   = lag(N) - N,
+    N_excl_s = prettyNum(N_excl, big.mark = ",", preserve.width = "none")
   ) %>%
-  ungroup()
+  filter(N_excl > 0) %>%
+  group_by(step) %>%
+  mutate(
+    excl_text =
+      if (n() == 1) {
+        sprintf("%s\\l(N = %s)\\l", excl, N_excl_s)
+      } else {
+        sprintf(
+          "Exclusion of (N = %s):\\l  - %s\\l",
+          format(sum(N_excl), big.mark = ","),
+          paste(sprintf("%s (N = %s)", excl, N_excl_s), collapse = "\\l  - ")
+        )
+      },
+    incl_text  = sprintf("%s\\l (N = %s)\\l", incl, N_s)
+  ) %>%
+  ungroup() %>%
+  mutate(excl_next = lead(excl_text)) %>%
+  select(step, incl_text, excl_next) %>%
+  distinct(excl_next, .keep_all = TRUE)
 
-# Endast första höft
-df_shpr <- filter(df_shpr, opnr == 1); N()                                       # 77075
 
-# Ignorera om ytterligare THA inom 90 dagar efter första
-df_shpr <- filter(df_shpr, is.na(time_between) | time_between > 90); N()         # 76158
+# Define nodes for graph --------------------------------------------------
 
-# Endast cementfria
-df_shpr <- filter(df_shpr,
-                  P_AcetCupCemMix != "Cementfritt",
-                  P_FemStemCemMix != "Cementfritt"); N()                          # 50569
+nodes <-
+  filters %>%
+  pivot_longer(-step) %>%
+  filter(!is.na(value)) %>%
+  unite("node", step, name, remove = FALSE) %>%
+  add_rowindex() %>%
+  rename(
+    id    = .row,
+    label = value,
+    rank  = step
+  ) %>%
+  mutate(
+    shape     = "rectangle",
+    width     = if_else(startsWith(name, "incl"), 1.5, 2.5),
+    color     = "Black",
+    fillcolor = "White",
+    fontcolor = "Black"
+  )
 
-df_shpr <- filter(df_shpr, is.na(P_KVA1) | P_KVA1 != "NFB62 - Primär total ytersättningspr"); N() # 50569
-df_shpr <- filter(df_shpr, between(P_Age, 18, 100)); N()                          # 50569
 
-df_shpr <- filter(df_shpr, P_BMI <= 50); N()                                      # 47709
-df_shpr <- filter(df_shpr, P_ASA <= 3); N()                                       # 46960
+# Define edges for graph --------------------------------------------------
 
-# Dessa skulle vi ju ev kunna imputera ist!
-df_shpr <- filter(df_shpr, !is.na(education)); N()                                # 46621
-df_shpr <- filter(df_shpr, !is.na(civil_status)); N()                             # 46621
-df_shpr <- filter(df_shpr, !is.na(P_TypeOfHospital)); N()                         # 46272
+incl_edges <-
+  nodes %>%
+  filter(startsWith(name, "incl"))
 
-# Indikerar nya data för ny peroid
-df_shpr <- mutate(df_shpr, new = P_SurgDate >= "2013-01-01")
+excl_edges <-
+  nodes %>%
+  filter(startsWith(name, "excl"))
 
-cache("df_shpr")
+edges <-
+  tibble(
+    from = incl_edges$id,
+    to1 = lead(incl_edges$id),
+    to2 = c(excl_edges$id, NA)
+  ) %>%
+  pivot_longer(-from, values_to = "to") %>%
+  select(-name) %>%
+  arrange(from, to) %>%
+  filter(!is.na(to)) %>%
+  {create_edge_df(
+    .$from, .$to,
+    color    = "black",
+    penwidth = 2,
+    len      = 1
+  )}
+
+
+# Make graph --------------------------------------------------------------
+
+graph <-
+  create_graph(
+    nodes,
+    edges
+  ) %>%
+  add_global_graph_attrs("layout", "dot", "graph") %>% # Apply cluster ranking
+  add_global_graph_attrs("fixedsize", "FALSE", "node") # Nice edge height
+
+export_graph(graph, "graphs/flowchart.png", "png", width = 1024)
+# render_graph(graph)

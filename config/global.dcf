@@ -4,7 +4,7 @@ data_loading_header:       TRUE
 data_ignore:
 cache_loading:             TRUE
 recursive_loading:         FALSE
-munging:                   FALSE
+munging:                   TRUE
 logging:                   FALSE
 logging_level:             INFO
 load_libraries:            TRUE
@@ -23,7 +23,9 @@ libraries:
   MuMIn,
   parallel,
   rFSA,
-  gtools
+  gtools,
+  DiagrammeR,
+  DiagrammeRsvg
 as_factors:                TRUE
 attach_internal_libraries: FALSE
 cache_loaded_data:         TRUE
