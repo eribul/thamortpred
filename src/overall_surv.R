@@ -16,7 +16,8 @@ cache("surv90d")
 
 summary(fit, c(c(30, 90) / 365.241, 1:5), scale = 365.241)
 
-survminer::ggsurvplot(
+p <-
+  survminer::ggsurvplot(
   fit,
   risk.table = TRUE,
   censor = FALSE,
@@ -26,4 +27,5 @@ survminer::ggsurvplot(
   break.time.by = 365.241
 )
 
-ggsave("graphs/km.png")
+ggpubr::ggexport(p, filename = "graphs/km.png")
+ggsave(filename = "graphs/km.png")
