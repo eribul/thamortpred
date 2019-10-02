@@ -4,7 +4,7 @@ data_loading_header:       TRUE
 data_ignore:
 cache_loading:             TRUE
 recursive_loading:         FALSE
-munging:                   TRUE
+munging:                   FALSE
 logging:                   FALSE
 logging_level:             INFO
 load_libraries:            TRUE
@@ -25,7 +25,8 @@ libraries:
   rFSA,
   gtools,
   DiagrammeR,
-  DiagrammeRsvg
+  DiagrammeRsvg,
+  rlang
 as_factors:                TRUE
 attach_internal_libraries: FALSE
 cache_loaded_data:         TRUE

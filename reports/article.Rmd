@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on Swedish and English register data"
-author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Adrian Sayers^5,6^, Szilard Nemes^2,4^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Szilard Nemes^2,4^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^, ... Erik L, ...
 date: '2019-03-12'
 bibliography: P:/library.bib
 output: 
@@ -15,9 +15,12 @@ options(
   knitr.kable.NA    = '',
   repos = list(CRAN = "https://cran.rstudio.com/")
 )
-knitr::opts_chunk$set(echo = FALSE, root.dir = '..')
-library(ProjectTemplate)
-load.project()
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+
+# Load all files
+walk(file.path("../cache", dir("../cache", ".RData")), load, .GlobalEnv)
 ```
 
 # Affiliation and contact
@@ -30,7 +33,7 @@ load.project()
 6. ...
 
 **Correspondence:** 
-AG: anne.l.garland@gmail.com, Phone: +46 498 26 80 00, Postal: Orthopeadic Department, Visby Hospital, St Göransgatan 10, 621 84 Visby, Sweden  
+AG: anne.l.garland@gmail.com, Phone: +46 498 26 80 00, Postal: Orthopeadic Department, Visby Hospital, St Goransgatan 10, 621 84 Visby, Sweden  
 EB: erik.bulow@registercentrum.se  
 SN: szilard.nemes@registercentrum.se  
 NH: nils.hailer@surgsci.uu.se 
@@ -42,7 +45,12 @@ NH: nils.hailer@surgsci.uu.se
 
 **PATIENTS AND METHODS:** We studied `r nrow(df)` patients with THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` from the Swedish Hip Arthroplasty Register, linked to the national population register, the National Patient Register and the longitudinal integration database for health insurance and labour market studies from Statistics Sweden. We used a bootstrap ranking procedure using a LASSO-type penalty to develop a prediction model for patient deaths within 90 days after surgery. Predictive power was assessed by the area under the reciever operating characteristic curve (AUC). The final model was applied to British data for external validation.
 
-**RESLUTS:** The unadjusted cumulative 90-day survival was `r surv90d`. Best predictive performance for 90-day mortality was found for a model combining `r coefs_print` (AUC = `r with(aucs, AUCtrain_est[name == "full"])`). This mdoel was superior to the established but complex Charlson comorbidity index (AUC = `r with(aucs, AUCtrain_est[name == "CCI"])`), and the Elixhauser comorbidity score (AUC = `r with(aucs, AUCtrain_est[name == "ECI"])`).
+```{r}
+get_auc <- function(mod) subset(brlasso_tbl_auc, Model == mod, "AUC", drop = TRUE)
+```
+
+
+**RESLUTS:** The unadjusted cumulative 90-day survival was `r surv90d`. Best predictive performance for 90-day mortality was found for a model combining `r coefs_print` (AUC = `r get_auc("BRLasso any")`). This mdoel was superior to the established but complex Charlson comorbidity index (AUC = `r get_auc("CCI")`), and the Elixhauser comorbidity score (AUC = `r get_auc("ECI")`). A web calculater to aid estimation of similar probabilities is available at https://erikbulow.shinyapps.io/thamortpred/.
   
 **CONCLUSION:** We found a relatively simple prediction model of 90 day mortality after total hip arthroplasty. This model requires less data and is easier to calculate compared to previously well-known comorbidity indices.
 
@@ -57,43 +65,43 @@ Comorbidity data have also been used in several universal and arthroplasty-speci
 
 
 ```{r flowchart, fig.cap = "Flowchart depicting inclusion criteria and number of patients included in the development phase of the model."}
-knitr::include_graphics("../../graphs/fig1.png")
+knitr::include_graphics("../graphs/flowchart.png")
 ```
 
 Patients recorded in the Swedish Hip Arthroplasty Register (SHAR) with cemented primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` were included in the development phase of the study (Figure \@ref(fig:flowchart)).
-Only the first THA was accounted for in bilaterally operated patients and patients were excluded if a second THA was inserted within 90 days after the first. Hence, the ninety-day mortality were not influenced by any subsequent THA surgery. 
-Follow-up started on the day of surgery and ended at death, emigration, or December 31st `r max(df$P_SurgYear)`, whichever came first. 
+Only the last operated hip was accounted for in patients with bilateral THA [@Bulow2019a]. Follow-up started on the day of surgery and ended at death, emigration, or December 31st `r max(df$P_SurgYear)`, whichever came first. 
 
 Data linkage, based on the unique identity numbers assigned to all Swedish residents [@Ludvigsson2009], were used to collect data from a variaty of sources, as previsouly described by @Cnudde2016.
 
-Age, sex, body mass index (BMI), ASA class, type of hospital (university/county/rural/private) and year of surgery were collected from SHAR, with a completeness of 96-98% [@shpr2017]. Data on education level (low/middle/high) and civil status, were collected from the longitudinal integration database for health insurance and labour market studies from Statistics Sweden [@Ludvigsson2019]. The Swedish National Patient Register was used for  comorbidity data during one year before surgery. The register contains all relevant diagnoses coded by ICD-10, as well as admissions and discharge dates for in- and outpatient visits in all private and public hospitals [@Ludvigsson2011]. We used medical data from the national prescription register where all prescriptions are classified by the Anatomic Therapeutic Chemical classification system (ATC). Death dates were linked from the national population register.
+Age, sex, body mass index (BMI), ASA class, type of hospital (university/county/rural/private) and year of surgery were collected from SHAR, with a completeness of 96-98% [@shpr2018]. Data on education level (low/middle/high) and civil status, were collected from the longitudinal integration database for health insurance and labour market studies from Statistics Sweden [@Ludvigsson2019]. The Swedish National Patient Register was used for  comorbidity data during one year before surgery. The register contains all relevant diagnoses coded by ICD-10, as well as admissions and discharge dates for in- and outpatient visits in all private and public hospitals [@Ludvigsson2011]. Death dates were linked from the national population register.
 
-Comorbidity was recognized by individual ICD-10 and ATC codes grouped into 17 categories according to CCI [@Charlson1987; @Deyo1992; @Quan2005], 31 categories according to ECI and 42 categories according to the RxRiskV [@Fishman2003; @Sloan2003] classification. RxRiskV medications prescribed for inflammatory pain was excluded since those are also sold over-the-counter in grocery stores, yielding questionable completeness in the prescription register. Patients with no hospital visits or no prescriptions were assumed to have no comorbidity.
+Comorbidity was recognized by individual ICD-10 grouped into 17 categories according to CCI [@Charlson1987; @Deyo1992; @Quan2005] and 31 categories according to ECI [@Elixhauser1998; @???Quan2005]. Patients with no recorded hospital visits during one year before surgery, were assumed to have no comorbidity.
 
-Some comorbidities were identified by more than one classification and some distinct comorbidities were closely related (such as hypertension with and without complications, or abuse of either drugs or alcohol). We identified 16 broader categories in addition to 5 standalone ECI classes and 14 RxRiskV classes that were kept unchanged. Groups were merged according to clinical relevance as to be recognized in a patient-doctor meeting without access to external register data (see supplementary data).
+```{r tabcategorization}
+knitr::kable(
+  tab_categorization, 
+  caption = "Categorization of individual Charlson (CCI) and Elixhauser (ECI) comorbidities into broader comorbidities.")
+```
+
+
+Some comorbidities were identified by both CCI and ECI, and some distinct comorbidities were closely related (such as hypertension with and without complications, or abuse of either drugs or alcohol). We identified `r nrow(tab_categorization)` broader categories (Table \@ref(tab:tabcategorization)) in addition to 5 standalone ECI classes that were kept unchanged (`r glue::glue_collapse(ECI_keep_text, ", ", last = " and ")`). Groups were merged according to clinical relevance as to be recognized in a patient-doctor meeting without access to external register data. Comorbidities recorded for at least one patient who died within 90 days, and one who did not, were included in the modelling process described below. 
 
 
 ## Statistics
 
 We used the Kaplan-Meier estimator to assess unadjusted cumulative survival.
 
-Further analysis was based on logistic regression since no censoring occoured within the 90 day study period.   
+Further analysis were based on logistic regression since no censoring occoured within the 90 day study period. We used a modelling procedure described by @Guo2015 as a bootstrap ranking procedure with a logistic LASSO-type penalty. 
+Numeric variables (age and BMI) were normalized before modelling to have mean = 0 and standard deviation = 1. 
+1,000 bootstrap samples were drawn from the initial data set [@Austin2004]. We used 10-fold cross validation for every boot-strap sample with a broad range of potential penalty values ($\lambda$:s) in a logistic least absolute shrinkage and selection operator (LASSO) model. We then only kept the $\lambda$:s minimizing the mean cross-validated deviances. Those $\lambda$:s were used to estimate coefficients for each of the 1,000 bootstrap samples. Absolute values from those estimates were used as a measure of variable importance. Piecewise linear regression was then used to detect a break point at witch a significant drop in variable importance were observed. Potential predictors with variable importance above this break point were considered important and kept as model candidates. The whole process was repeated ten times. 
 
-Univariable models were applied to all predictors individually to estimate odds ratios for descriptive purposes.
+Covariates that were selected each of the ten times were used in a main effects model of multivariable logistic regression without penalty, and without pre-normalization of numeric variables. We will call this modell "BRL all", where BRL stands for bootstrap ranking LASSO. A similar model, including any variable selected at least one out of ten times will be called "BRL any". Univariable models with the ASA score, CCI and ECI were used for comparion, as well as a multivariable model with age and sex. Each model including age where fitted three times, once with age as a main effect and twice with restricted cubic splines, either by two or three knots. 
 
-All potential predictors were then partioned into four groups where there were assumed to be no colinearity among variables: 1) the 17 combined comorbidities, 2) the 5 ECI comorbidities, 3) the 14 RxRiskV comorbidities, and 4) age, sex, BMI, ASA, type of hospital, year of surgery, education and civil status. 
+Each of those models were used to predict the probability of death within 90 days for each patient. Sensitivity and specificity were estimated to form reciever operating characteristic (ROC) curves and the area under those curves (AUC) were used as a measure of predicitve power for each model. Models with a lower 95 % confidence limit [@Delong1988] exceeding 0.7, were considered good. 
 
-1,000 bootstrap samples were drawn from the initial data set. Early mortality is very rare for patients with elective THA however. Downsampling stratified on the outcome was therefore applied to each sample to include only as many survivals as deaths. This gave us balanced samples and managable computations. [@King2001; @Courvoisier2011; @Austin2017a].
+Odds ratios for the model with highest AUC were estimated with 95 % confidence intervals based on interpolations of profile traces [@Ripley2002].
 
-A step-wise linear regression procedure based on the Aikake Information Criteria (AIC) was applied to each bootstrap sample to identify important predictors from each of the four groups of variables [@Sauerbrei1999; @Zellner2004; @Lukacs2010]. Variables that were kept in the final model for at least 75 % of all bootstrap samples were selected as candidates for further consideration.   
-
-A full main effects model were made to include all previously selected candidate predictors. Two modified versions were considered as well, where age was modeled by resttricted cubic spline with either 2 or 3 knots. Three simplified models with age and sex only, were used for comparison, as well as four univariable regression models with ASA, CCI, ECI and RxRiskV alone.  
-
-We then took another 1,000 downsampled bootsrtap samples to estimate coefficients for each model. Model averaging based on the information criteria was used for the full main effects model and its variants. Hence, an automated model selection procedure evaluating all possible subsets of the included main effects, yielding averaged coeffients estimates based on variable importance.
-
-Each model, now with their coefficient estimates fixed, were then evaluated by their predictive power based on their area under the reciever operation characteristics (ROC) curve (AUC). Point estimates as well as 95 % confidence intervals were estimated by emperical bootstrap, once again with 1,000 resamples but this time without downsampling. Sensitivity and specificity from each bootstrap sample were subjected to a local polynomial regression fit (loess) to illustrate an averaged reciever operation characteristics (ROC) curve for each model. 
-
-We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr, pROC, MuMIn and rFSA [@Lambert2018].
+We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr and pROC. We also build an online web calculator using the shiny package.
 
 ## Ethical approval
 
@@ -101,79 +109,83 @@ Ethical approval for this study was obtained from the Regional Ethical Review Bo
 
 
 
-
-
-
-
-
-
 # Results
 
-There were `r nrow(df)` patients (Figure \@ref(fig:flowchart)), `r paste(range(df$P_Age), collapse = " - ")` years old, whereof `r round(mean(df$P_Sex == "Female") * 100)` % were female. `r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` patients died within 90 days and no one was censored before that. The unadjusted cummulative 90-day survival was `r surv90d`. 
+There were `r format(nrow(df), big.mark = ", ")` patients (Figure \@ref(fig:flowchart)), `r paste(range(df$P_Age), collapse = " - ")` years old, whereof `r round(mean(df$P_Sex == "Female") * 100)` % were female. `r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` patients died within 90 days and no one was censored before that. The unadjusted cummulative 90-day survival was `r surv90d`. 
 
-Some characteristics of the study population are presented in Table \@ref(tab:tab1). `r mean(df$Rx_index_index != 0) * 100` % of all patients had at least one pre-surgery comorbidity according to RxRiskV, but only `r mean(df$CCI_index_quan_original != 0) * 100` % and `r mean(df$ECI_index_sum_all  != 0) * 100` % according to ECI and CCI. The proportion of patients with ASA class 3 was `r mean(df$P_ASA == 3) * 100` %. Most individual comorbidities were more common among patients who died. 
+Some characteristics of the study population are presented in Table \@ref(tab:tab1). `r mean(df$CCI_index_quan_original != 0) * 100` % of all patients had at least one pre-surgery comorbidity according to CCI, and `r mean(df$ECI_index_sum_all  != 0) * 100` % according to ECI. The proportion of patients with ASA class 3 was `r mean(df$P_ASA == 3) * 100` %. Most individual comorbidities were more common among patients who died. 
 
 ```{r tab1}
-prestext(table1) %>% 
-  knitr::kable(caption = "Baseline demographic information on the study population 2008-2012. CCI/ECI = Charlson/Elixhauser Comorbidity Index. Individual comorbidities without prefixes were based on combinations of different comorbidity classifications. Prefix ECI and Rx(RiskV) indicate classification specific comorbidities.")
+knitr::kable(
+  table1, 
+  caption = "Baseline demographics. CCI/ECI = Charlson/Elixhauser comorbidity indices. Comorbidities prefixed with ECI are defined by the Elixhauser classification. Remaining comorbidities are based on the previously described combination of CCI and ECI. Comorbidities recorded for at least one patient who survived 90 days, and one who did not, were modelled as potential predictors.")
 ```
 
+There were `r nrow(comb_lgl)` comorbidities that were not recorded for any patient who died: `r comb_lgl_text`. Corresponding variables were excluded from the modelling process.
 
-Odds ratios from univariable logistic regresison models are presented in Table \@ref(tab:tab2). Higher age, ASA, CCI, ECI and RxRiskV, as well as being male or widow(er), or having cancer, gout, kidney disease or heart infarct, increase the risk of death within 90 days after surgery. Private hospitals tend to operate healthier patients and the odds of death decrease slightly by year of surgery.
-
-
-```{r tab2}
-prestext(t2_univariable) %>% 
-  knitr::kable(caption = "Unadjusted odds ratios (OR) for 90-day mortality with 95 % confidence intervals (CI). Individual comorbiditities are only presented if selected in at least 75 % of all bootstrap samples (selected). Variables included in the final model are marked with 'FM' in model column.")
-```
-
-ASA class was the only variable included in the final models by all stage-wise regression procedures from each of the 1,000 bootstrap samples (100 % in column "selected" in Table \@ref(tab:tab2)). Most potential predictors were rarely selected and only `r coefs_print`, where selected at least 75 % of the time (Table \@ref(tab:tab2)).
-
+There were no observed differences for two versus three knots in models with age modelled by restricted cubic splines. We will therefore only present results for three knots. No use of splines however improved the observed AUCs compared to simpler main effect models. The "BRL any" model had an estimated AUC (95 % CI) of `r get_auc("BRL any")`. This model was significantly better than the "BRL all" model with `r get_auc("BRL all")`. Univariable models with either ASA, CCI or ECI performed relatively poor. The model with age and sex was better but still with an AUC not significantly higher than 0.7 (Table \@ref(tab:auc)). 
 
 ```{r auc, warning = FALSE}
-knitr::kable(table_auc, caption = "Area Under the Curve (AUC) as a measure of predictive power for the full model compared to simple models with standard comorbidity measures, as well as a reference model with age and sex. Age was included as either a main effect, or in the form of restricted cubic splines (rcs) with either 2 or 3 knots.")
+knitr::kable(
+  brlasso_tbl_auc, 
+  caption = "Area Under the Curve (AUC) as a measure of predictive power for the 'BRL any' model compared to 'BRL all', a model including the independent variables included in all of the bootstrao ranking models, a simpler model with age and sex, as well as univariable models with ASA score and the Charlson (CCI) or Elixhauser (ECI) comorbidity indices. Age was included as either a main effect, or in the form of restricted cubic splines (RCS) with three knots.")
 
 ```
 
+ROC curves for some of the models are displayed in Figure \@ref(fig:rocs). The "BRL any" model is superior to all other models, although some of the others are intertwined in some areas of the plot. 
 
-A model with those covariates, the "full" model, had an out-of-sample AUC of `r aucs$AUCtrain_est[[1]]`. The predictive power did not improve with age modeled by restricted cubic splines (Table \@ref(tab:auc) and Figure \@ref(fig:aucci)). The full model led to better predictions compared to a simplified model with only age and sex, or any of the conventional comorbidity indices (CCI, ECI and RxRiskV). The full model is further described in Table \@ref(tab:fullmodel). 
 
+```{r rocs, fig.cap = "ROC curves for some of the models. The 'BRL any' model is distinguished from other models, which are partially over-lapping."}
+knitr::include_graphics("../graphs/brlasso_roc.png")
+```
 
-```{r aucci, fig.cap = "Area Under the Curve (AUC) as a measure of predictive power for the full model compared to simple models with standard comorbidity measures, as well as a reference model with age and sex. Age was included as either a main effect, or in the form of restricted cubic splines (rcs) with 2 or 3 knots. Confidence intervals based on 1,000 non-paramteric bootstrap replicates."}
+AUCs and 95 % confidence intervals are illustrated for the same models in \@ref(fig:aucci)). 
 
-knitr::include_graphics("../../graphs/auc_ci.png")
+```{r aucci, fig.cap = "Area Under the Curve (AUC) as a measure of predictive power for the 'BRL any' model compared to a simpler model with age and sex, as well as univariable models with ASA score and the Charlson (CCI) or Elixhauser (ECI) comorbidity indices."}
+
+knitr::include_graphics("../graphs/brlasso_auc_ci.png")
+```
+
+The ability of model "BRL any" to distinguish patients who died within 90 days is illustrated in Figure \@ref(fig:sep). We can see that patients who did die within 90 days (blue color) had, on average, higher predicted probabilities to do so. 
+
+```{r sep, fig.cap = "Patients who died within 90 days (blue) were, on average, estimated to have a higher probability to do so."}
+knitr::include_graphics("../graphs/brlasso_separation_auc.png")
+```
+
+Estimated coefficients and correspondnig odds ratios for the "BRL any" model is presented in Table \@ref(tab:brlany).
+
+```{r brlany}
+
+knitr::kable(
+  rename(brlasso_tbl_coefs, X = X_text),
+  caption = 'Estimated coefficients and odds ratios with 95 % confidence intervals for the "BRL any" model.',
+  escape = FALSE
+)
 
 ```
 
+The resulting "BRL any" model can predict the probability of death ($p$) within 90 days for new patients as: `r coefs_form` where $X_i$ indicate independent variables as notated in table \@ref(tab:brlany).
+Note however that this formula is only valid for patients within the observed age range (`r paste(range(df$P_Age), collapse = " - ")` years). 
 
-```{r fullmodel}
-knitr::kable(table_full_model_coefs, caption = "Estimated odds ratios for variables in the full model based on full averages from 1,000 bootstrap samples.")
-```
-
-ROC curves for all models compared to the full model are displayed in Figure \@ref(fig:rocs). Each models ability separate survivors from death are further illustrated in Figure \@ref(fig:sep).
-
-```{r rocs, fig.cap = "ROC curves for each model compared to the full main effects model."}
-knitr::include_graphics("../../graphs/rocs.png")
+```{r}
+get_risk <- function(who) preds[preds$id == who, "p", drop = TRUE]
 ```
 
 
-```{r sep, fig.cap = "Separation"}
-knitr::include_graphics("../../graphs/separation_auc.png")
-```
+A `r min(df$P_Age)` yer old woman with ASA = 1 and none of the important comorbidities would have a `r get_risk("baseline")` risk to die. If she was instead `r quantile(df$P_Age, .25)` year old (the first age quantlie), her risk would have increased to `r get_risk("healthy_female")`. An older and sicker man, `r quantile(df$P_Age, .75)` years old (the third age quantile) with ASA = 3 and a previsous heart condition would have a risk of `r get_risk("sicker_man")`. The perhaps unrealistic case of a `r max(df$P_Age)` year old man with ASA = 3 and all listed comorbidities would have a theoretical risk as high as `r get_risk("high_risk")`. Note however that this extreme case relies on extrapolation and is highly unreliable, since no such person was actually observed in the data. 
 
+We have provided a web calculater to aid estimation of similar probabilities (https://erikbulow.shinyapps.io/thamortpred/).
 
 
 
 
 # Discussion
 
-We found that a univariable main effects logistic regression model with `r coefs_print` was superior to predict death within 90 days after insertion of elective THA. Some covariates are not statistically significant themselves (\@ref(tab:fullmodel)) but are still relevant due to unobserved heteregeneity  [@Mood2010]. 
+We found that a multivariable main effects logistic regression model with `r coefs_print` was able to predict death within 90 days after insertion of elective THA. Some covariates ni the model were not statistically significant by themselves but were still relevant due to unobserved heteregeneity [@Mood2010]. 
 
-It is well known that male sex is associated with earlier deaths. It is also well known that the remaining life span will decrease with incresed age. It is however not obvious that this relation must be striclty linear. We therefore allowed for a more flexible relation based on restricted cubic splines, but found that a linear relationship was indeed most sufficient.  
+It is well known that male sex is associated with earlier deaths. It is also well known that the remaining life span will decrease with incresed age. It is however not obvious that this relation must be striclty linear. We therefore allowed for a more flexible relation based on restricted cubic splines, but found that a linear relationship was equally good.  
 
-ASA class was the only covariate chosen by all stepwise regression procedures. This might not be surprising due to its definition. It is interesting to note however that a univariable model with ASA grade alone, yielded the lowest predictive power of all models compared. An out-of-sample point estimate of its AUC was < 0.5 (\@ref(tab:fullmodel) and \@ref(fig:rocs), meaning that predictions based solely on ASA would be worse than random. This shows the important of validation, due to the risk of overfitting, as well as the importance of multivariable adjustment. ASA class is routinely assessed pre-operatively in most developed countries. It is however known to have a high degree of internal variability [@Haynes1995]. It has previously been compared to the CCI, but not with respect to mortality after THA [@Whitmore2014; @Kork2015]. 
-It has been argued that a prescription-based measure would be more reliable than a diagnosed based measure [@Iezzoni1997; @Johnson2006]. We did confirm that estimation of AUC were more stable for the RxRiskV index compared to CCI and ECI (as seen by the width of the confidence intervals in figure \@ref(fig:aucci)), although point estimates of the latter was marginaly higher. This reflects that both coverage and completeness from the prescription register is better compared to the national patient regiseter. The first hold records of all medications prescribed, the second only contains information that the doctor deemed  relevant at the patient encounter. 
-
+ASA class is routinely assessed pre-operatively in most developed countries. It is however known to have a high degree of internal variability [@Haynes1995]. It has previously been compared to the CCI, but not with respect to mortality after THA [@Whitmore2014; @Kork2015]. 
 
 
 # Further discussion from Garland not yet adjusted to new models
@@ -199,7 +211,7 @@ Our results derived from a nationwide cohort study indicate that a less data dem
 
 # Contribution of authors
 
-AG and NH initiated the study and managed the ethical review board application. EB, AS, SN, and AG performed the statistical analyses. AG and EB drafted the manuscript. All athours edited and finalized the manuscript.
+AG and NH initiated the study and managed the ethical review board application. EB, EL and SN performed the statistical analyses. AG and EB drafted the manuscript. All athours edited and finalized the manuscript.
 
 
 # Bibliography

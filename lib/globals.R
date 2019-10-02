@@ -6,9 +6,9 @@ set.seed(132456798)
 future::plan("multiprocess")
 
 options(
-  digits = 2,
+  digits    = 2,
   na.action = "na.fail",
-  scipen = 999
+  scipen    = 999
 )
 
 # Add any project specific configuration here.
@@ -19,6 +19,6 @@ add.config(
 # Add project specific configuration that can be overridden from load.project()
 add.config(
   N_bots         = 100,
-  Bmax           = 5,     # No of external reruns for BRLasso
+  Bmax           = 10,     # No of external reruns for BRLasso
   apply.override = TRUE
 )

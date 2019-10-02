@@ -36,6 +36,14 @@ comb_lgl <-
 
 cache("comb_lgl")
 
+comb_lgl_text <-
+  comb_lgl$name %>%
+  {gsub("c_", "", .)} %>%
+  {gsub("_", " ", .)} %>%
+  {gsub("aids hiv", "AIDS/HIV", .)} %>%
+  glue_collapse(", ", last = " and ")
+
+cache("comb_lgl_text")
 
 # Same for factor variables -----------------------------------------------
 

@@ -1,5 +1,0 @@
-Known bug for integration between pROC and yardstick!
-Reverse to previsous version of pROC (< 1.14) or wait for those issues to be resolved:
-
-https://github.com/xrobin/pROC/issues/54
-https://github.com/tidymodels/yardstick/pull/110

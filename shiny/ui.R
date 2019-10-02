@@ -1,31 +1,56 @@
 library(shiny)
-library(ggplot2)
+library(shinythemes)
+library(tidyverse)
 
+source("misc.R")
 
 fluidPage(
-  titlePanel("Will you survive 90 days after your surgery?"),
+  titlePanel("Probability to survive at least 90 days after THA surgery?"),
+
+  helpText("Bla bla bla ..."),
 
   sidebarPanel(
     sliderInput(
-      'age',
+      'P_Age',
       'Age',
       min   = 35,
-      max   = 98,
+      max   = 99,
       value = 72,
       step  = 1,
       round = TRUE
     ),
 
-    checkboxInput('sex',    'Male sex'),
-    checkboxInput('asa',    'ASA >= 3'),
-    checkboxInput('kidney', 'Kidney disease?'),
-    checkboxInput('heart',  'Heart condition?'),
-    checkboxInput('cns',    'CNS?')
+    radioButtons(
+      "P_Gender",
+      "Sex",
+      choices = c("Male", "Female"),
+      selected = "Female",
+      inline = TRUE,
+    ),
+
+    radioButtons(
+      "P_ASA",
+      "ASA class",
+      choices = 1:3,
+      selected = 1,
+      inline = TRUE,
+    ),
+
+    checkboxGroupInput(
+      "checkboxes",
+      "Do you have any of the following:",
+      choices = coefs$coef_present[coefs$checkbox],
+    )
+
   ),
 
   mainPanel(
-    textOutput(
-      "textout"
+    tabsetPanel(
+      type = "tabs",
+      tabPanel("Prediction", htmlOutput("textout")),
+      tabPanel("About", htmlOutput("about"))
     )
-  )
+  ),
+
+  theme = shinytheme("superhero")
 )

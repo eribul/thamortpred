@@ -51,9 +51,6 @@ df <-
     -P_SurgDate,
     -P_DiaGrp,
     -P_KVA1,
-    -time_between,
-    -new,
-    -bilateral,
     -P_ProstType,
     -contains("index"),
     elix_icd10_index_sum_all,
@@ -62,3 +59,4 @@ df <-
   # Shorter names
   rename_all(~ gsub("charlson_icd10", "CCI", .)) %>%
   rename_all(~ gsub("elix_icd10", "ECI", .))
+

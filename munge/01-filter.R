@@ -101,8 +101,8 @@ for (r in 2:nrow(filters)) {
 }
 
 # Save final data set as df
-df <- filters$data[[r]]
-cache("df")
+df_shpr <- filters$data[[r]]
+cache("df_shpr")
 
 
 # Format table with flowchart data ---------------------------------------------

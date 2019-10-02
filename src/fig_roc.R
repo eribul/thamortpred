@@ -1,5 +1,4 @@
-library(ProjectTemplate)
-load.project()
+suppressMessages({library(ProjectTemplate); load.project()})
 
 
 fig_roc <-

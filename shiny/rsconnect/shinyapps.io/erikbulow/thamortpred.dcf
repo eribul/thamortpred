@@ -5,8 +5,8 @@ account: erikbulow
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 783458
-bundleId: 2344232
+bundleId: 2458521
 url: https://erikbulow.shinyapps.io/thamortpred/
-when: 1566462315.86517
+when: 1569927229.19457
 asMultiple: FALSE
 asStatic: FALSE

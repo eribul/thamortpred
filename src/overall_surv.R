@@ -1,5 +1,5 @@
-library(ProjectTemplate)
-load.project()
+suppressMessages({library(ProjectTemplate); load.project()})
+
 
 # This is just to calculate over-all survival as background info
 

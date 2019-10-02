@@ -1,5 +1,4 @@
-library(ProjectTemplate)
-load.project()
+suppressMessages({library(ProjectTemplate); load.project()})
 
 fctrs <- c("P_Sex", "P_ASA", "ECI", "CCI")
 
@@ -36,7 +35,7 @@ t1 <-
     test = FALSE
   )
 
-cahce("t1")
+cache("t1")
 
 table1 <-
   t1 %>%
