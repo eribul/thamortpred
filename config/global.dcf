@@ -9,24 +9,27 @@ logging:                   FALSE
 logging_level:             INFO
 load_libraries:            TRUE
 libraries:
-  tidyverse,
+  bookdown,
+  broom,
+  DataExplorer,
   future,
-  furrr,
-  tidymodels,
+  ggpubr,
+  glmnet,
+  glue,
+  knitr,
   pROC,
-  tableone,
-  binom,
-  survival,
-  data.table,
+  rmarkdown,
+  rsample,
+  rsconnect,
+  scales,
+  shiny,
+  shinythemes,
+  SiZer,
+  splines,
   survminer,
-  writexl,
-  MuMIn,
-  parallel,
-  rFSA,
-  gtools,
-  DiagrammeR,
-  DiagrammeRsvg,
-  rlang
+  tableone,
+  tidyverse,
+  zoo
 as_factors:                TRUE
 attach_internal_libraries: FALSE
 cache_loaded_data:         TRUE
