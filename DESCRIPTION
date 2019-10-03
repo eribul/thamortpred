@@ -17,13 +17,16 @@ Depends:
    broom,
    DataExplorer,
    future,
+   furrr,
    ggpubr,
+   givitiR,
    glmnet,
    glue,
    knitr,
    pROC,
    ProjectTemplate,
    rmarkdown,
+   rms,
    rsample,
    rsconnect,
    scales,
@@ -34,6 +37,7 @@ Depends:
    survminer,
    tableone,
    tidyverse,
+   tidymodels,
    zoo
 Encoding: UTF-8
 LazyData: true

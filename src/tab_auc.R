@@ -6,7 +6,8 @@ brlasso_tbl_auc <-
   arrange(desc(AUC_est)) %>%
   transmute(
     Model,
-    AUC   = sprintf("%.2f (%.2f-%.2f)", AUC_est, AUC_lo, AUC_hi),
+    AUC      = sprintf("%.2f (%.2f-%.2f)", AUC_est, AUC_lo, AUC_hi),
+    AUC.corr = sprintf("%.2f (%.2f-%.2f)", AUC_est.corr, AUC_lo.corr, AUC_hi.corr)
     # good  = if_else(AUC_lo > .7, "*", "")
   )
 
