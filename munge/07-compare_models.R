@@ -15,6 +15,7 @@ all_models_tmp <-
     ~Model,              ~tab, ~fig, ~fit,
     "BRL all",           TRUE,  FALSE, glmdf(form(best_coefs_all)),
     "BRL any",           TRUE,  TRUE,  glmdf(form(best_coefs_any)),
+    "BRL any-cancer",    TRUE,  FALSE,  glmdf(form(setdiff(best_coefs_any, "c_cancer_TRUE."))),
     "BRL any (RCS)",     TRUE,  FALSE, glmdf(fns3(best_coefs_any)),
     "BRL 75%",           FALSE, FALSE, glmdf(form(best_coefs_75)),
     "BRL 75% (RCS)",     FALSE, FALSE, glmdf(fns3(best_coefs_75)),

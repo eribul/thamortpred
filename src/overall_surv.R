@@ -8,7 +8,7 @@ fit <- survfit(Surv(stime, status) ~ 1, df)
 surv90d <-
   with(
     summary(fit, 90),
-    sprintf("%.2f (95 %% CI: %.2f - %.2f)",
+    sprintf("%.1f %% (95 %% CI: %.1f - %.1f)",
     surv * 100, lower * 100, upper * 100)
   )
 cache("surv90d")
