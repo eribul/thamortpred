@@ -7,8 +7,7 @@ brlasso_tbl_auc <-
   transmute(
     Model,
     AUC      = sprintf("%.2f (%.2f-%.2f)", AUC_est, AUC_lo, AUC_hi),
-    AUC.corr = sprintf("%.2f (%.2f-%.2f)", AUC_est.corr, AUC_lo.corr, AUC_hi.corr)
-    # good  = if_else(AUC_lo > .7, "*", "")
+    `AUC corrected for optimism` = sprintf("%.2f (%.2f-%.2f)", AUC_est.corr, AUC_lo.corr, AUC_hi.corr)
   )
 
 cache("brlasso_tbl_auc")

@@ -8,13 +8,11 @@ fit <- survfit(Surv(stime, status) ~ 1, df)
 surv90d <-
   with(
     summary(fit, 90),
-    sprintf("%.1f %% (95 %% CI: %.1f - %.1f)",
-    surv * 100, lower * 100, upper * 100)
+    sprintf("%.2f %% (95 %% CI: %.2f - %.2f)",
+    (1 - surv) * 100, (1 - upper) * 100, (1 - lower) * 100)
   )
 cache("surv90d")
 
-
-summary(fit, c(c(30, 90) / 365.241, 1:5), scale = 365.241)
 
 p <-
   survminer::ggsurvplot(

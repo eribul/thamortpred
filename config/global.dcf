@@ -3,7 +3,7 @@ data_loading:              FALSE
 data_loading_header:       TRUE
 data_ignore:
 cache_loading:             TRUE
-recursive_loading:         FALSE
+recursive_loading:         TRUE
 munging:                   FALSE
 logging:                   FALSE
 logging_level:             INFO
@@ -12,18 +12,23 @@ libraries:
   bookdown,
   broom,
   DataExplorer,
+  DiagrammeR,
+  DiagrammeRsvg,
   future,
   furrr,
   ggpubr,
+  gridExtra,
   givitiR,
   glmnet,
   glue,
   knitr,
   pROC,
+  rlang,
   rmarkdown,
   rms,
   rsample,
   rsconnect,
+  rsvg,
   scales,
   shiny,
   shinythemes,

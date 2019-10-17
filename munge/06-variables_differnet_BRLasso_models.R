@@ -3,33 +3,33 @@
 brlasso_tbl_selected <-
   best_coefs_tmp %>%
   unnest(coefs) %>%
-  count(variable, sort = TRUE)
+  count(variable, sort = TRUE) %>%
+
+  # Should not be needed if everything reruned:
+  mutate(
+    variable =
+      case_when(
+        variable == "ECI_obesity_TRUE." ~ "c_obesity_TRUE.",
+        variable == "c_cns_TRUE." ~ "c_cns_disease_TRUE.",
+        TRUE ~ variable
+      )
+  )
 
 cache("brlasso_tbl_selected")
 
 # List of variables selected in at least 75 % of the cases
-best_coefs_75 <-
+best_coefs_reduced <-
   brlasso_tbl_selected %>%
-  filter(n >= round(config$Bmax * .75)) %>% # Urspr föreslogs intersect (variabler som tas varje gång)
+  filter(n >= round(config$Bmax * .33)) %>% # Urspr föreslogs intersect (variabler som tas varje gång)
   select(variable) %>%
   pluck(1)
 
-cache("best_coefs_75")
+cache("best_coefs_reduced")
 
 # All variables ever selected
-best_coefs_any <-
+best_coefs <-
   brlasso_tbl_selected %>%
   select(variable) %>%
   pluck(1)
 
-cache("best_coefs_any")
-
-# All variables selected each time (as original article proposed)
-best_coefs_all <-
-  brlasso_tbl_selected %>%
-  filter(n == config$Bmax) %>%
-  select(variable) %>%
-  pluck(1)
-
-cache("best_coefs_all")
-
+cache("best_coefs")

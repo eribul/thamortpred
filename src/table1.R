@@ -1,16 +1,12 @@
 suppressMessages({library(ProjectTemplate); load.project()})
 
-fctrs <- c("P_Sex", "P_ASA", "ECI", "CCI")
-
 dft1 <-
   df %>%
-  rename(
-    CCI = CCI_index_quan_original,
-    ECI = ECI_index_sum_all
-  ) %>%
   mutate(
-    CCI     = replace(CCI, CCI == 4, "4+"),
-    ECI     = replace(ECI, ECI == 3, "3+")
+    Charlson   = replace(CCI_index_quan_original, CCI_index_quan_original == 4, "4+"),
+    Elixhauser = replace(ECI_index_sum_all, ECI_index_sum_all == 3, "3+"),
+    death90f   = factor(death90f, c("dead", "alive"),
+                        c("Died within 90 days", "Survived at least 90 days"))
   ) %>%
   select(
     death90f,
@@ -21,21 +17,28 @@ dft1 <-
     P_TypeOfHospital,
     education,
     civil_status,
-    CCI, ECI,
+    Charlson,
+    Elixhauser,
     starts_with("c_"),
-    starts_with("ECI_")
-  )
+  ) %>%
+  setNames(clean_names(names(.))) %>%
+  rename(`ASA grade` = ASA)
 
 t1 <-
   tableone::CreateTableOne(
-    strata = "death90f",
-    vars = setdiff(names(dft1), "death90f"),
-    factorVars = fctrs,
+    strata = "Death90f",
+    vars = setdiff(names(dft1), "Death90f"),
+    factorVars = c("Sex", "ASA grade", "Elixhauser", "Charlson"),
     data = dft1,
     test = FALSE
   )
 
 cache("t1")
+
+zero <- function(x) {
+  gsub("0 ( 0.0)", "0", x, fixed = TRUE) %>%
+  {gsub("0.0", "<0.1", .)}
+}
 
 table1 <-
   t1 %>%
@@ -44,11 +47,12 @@ table1 <-
   ) %>%
   as_tibble(rownames = "what") %>%
   mutate(
-    what = gsub("= TRUE|P_|c_|TypeOf|P_Surg|index", "", what),
-    what = gsub("_", " ", what),
-    level = ifelse(startsWith(what, " "), what, ""),
-    what = ifelse(level == "", what, "")
+    level = trimws(ifelse(startsWith(what, " "), what, "")),
+    level = paste0(toupper(substr(level, 1, 1)), substring(level, 2)),
+    what = trimws(ifelse(level == "", gsub(" = TRUE", "", what), ""))
   ) %>%
-  select(what, level, alive, dead)
+  mutate_at(vars(`Died within 90 days`,
+                 `Survived at least 90 days`), zero) %>%
+  select(what, level, `Died within 90 days`, `Survived at least 90 days`)
 
 cache("table1")

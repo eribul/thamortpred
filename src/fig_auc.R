@@ -23,7 +23,7 @@ fig_auc_ci <-
     legend.title = element_blank(),
     legend.position = "bottom"
   ) +
-  ylab("AUC with 95 % confidence intervals (De-Long)") +
+  ylab("AUC with 95% CI") +
   scale_y_continuous(breaks = seq(0, 1, .05))
 
 options(digits = digs$digits)

@@ -22,18 +22,20 @@ function(input, output) {
         mutate(P_Gender = ifelse(P_Gender == "Male", "Man", "Kvinna")
       )
 
-      p <- (1 - predict(fit_brl_any_lean, inp, "response")) * 100
+      p <- (1 - predict(fit_brl_reduced_lean, inp, "response")) * 100
+      p_txt <- sprintf("%s %%", prettyNum(p, digits = 2))
 
-      p <-
-        if (p > 99) {
-          "Almost 100 %"
-        } else if (p < 90) {
-          "We do not know!"
-        } else {
-          sprintf("%s %%", prettyNum(p, digits = 0))
-        }
+      certainty <-
+        if (p > 97) "Around"
+        else if (p > 94) "Not too far from"
+        else if (p > 90) "We are very unsure but probably at least"
+        else if (p > 80) "We do not know but hopefully at least"
+        else             "We really have no idea but hopefully at least"
+
+      p <- sprintf("%s %.2f %%", certainty, p)
 
       h1(p)
+
     })
 
   output$about <-
@@ -48,7 +50,7 @@ function(input, output) {
           p('My first paragraph, with some ',
             strong('bold'),
             ' text.'),
-          div(id='myDiv', class='simpleDiv',
+          div(id = 'myDiv', class = 'simpleDiv',
               'Here is a div with some attributes.')
         )
       )

@@ -19,6 +19,6 @@ add.config(
 # Add project specific configuration that can be overridden from load.project()
 add.config(
   N_bots         = 100,
-  Bmax           = 10,     # No of external reruns for BRLasso
+  Bmax           = 100,     # No of external reruns for BRLasso
   apply.override = TRUE
 )

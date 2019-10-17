@@ -30,7 +30,7 @@ fluidPage(
 
     radioButtons(
       "P_ASA",
-      "ASA class",
+      "ASA grade",
       choices = 1:3,
       selected = 1,
       inline = TRUE,

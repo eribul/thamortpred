@@ -1,0 +1,26 @@
+---
+title: "Prediction-modelling from wheat to bread"
+author: "Erik Bülow"
+institute: "The Swedish Hip Arthroplasty Register"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+background-image: url(https://i.pinimg.com/originals/77/ff/d7/77ffd7a8dbccd96cc579b5554bed07ff.jpg)
+
+---
+class: inverse, center, middle
+
+# Get Started
+
+---
