@@ -16,6 +16,7 @@ pred_probs <- obspred$pred * 100
 cache("pred_probs")
 
 
+
 # Histogram ---------------------------------------------------------------
 
 fig_separation_hist <-
@@ -26,9 +27,8 @@ fig_separation_hist <-
       # y = ..density..,
       fill = `Observed survival`
     ),
-    alpha = .3, position = "identity"
+    alpha = .5, position = "identity"
   ) +
-  geom_density(aes(col = `Observed survival`)) +
   theme_minimal() +
   theme(
     legend.position = "none",
@@ -38,14 +38,13 @@ fig_separation_hist <-
   ) +
   xlab("") +
   ylab("Count") +
-  # scale_y_continuous(breaks = NULL) +
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
     limits = c(.0001, .1),
     labels = scales::percent
   ) +
-  scale_y_continuous(
-    breaks = seq(0, 6000, 1000),
+  scale_y_sqrt(
+    breaks = c(0, 100, 500, 1000, 2000, 3000, 4000, 5000), #seq(0, 6000, 1000),
     labels = function(x) format(x, big.mark = ",")
   ) +
   expand_limits(x = 0)
@@ -61,7 +60,7 @@ fig_separation_density <-
       y = ..density..,
       fill = `Observed survival`
     ),
-    alpha = .3, position = "identity"
+    alpha = .5, position = "identity"
   ) +
   geom_density(aes(col = `Observed survival`)) +
   theme_minimal() +
@@ -70,11 +69,12 @@ fig_separation_density <-
     legend.title = element_blank(),
     panel.grid = element_blank(),
     axis.text.x = element_text(angle = 30),
-    axis.ticks = element_line(size = 1)
+    axis.ticks = element_line(size = 1),
+    axis.ticks.y = element_line(color = "white"),
+    axis.text.y = element_text(color = "white", size = 17)     # To align with upper panel
   ) +
   xlab("Predicted probability of death (log-scale)") +
   ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
     limits = c(.0001, .1),

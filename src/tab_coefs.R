@@ -12,7 +12,7 @@ brlasso_tbl_coefs <-
     math = sprintf("\\text{%s} \\\\ ", term) %>% {gsub("\\text{(intercept)} \\\\ ", "", ., fixed = TRUE)},
     beta = log(estimate),
     OR   = sprintf("%.2f (%.2f-%.2f)", estimate, conf.low, conf.high),
-    p    = pvalue_format()(p.value)
+    p    = pvalue_format(.01)(p.value)
   ) %>%
   mutate_at(vars(OR, p), ~ if_else(term == "(intercept)", "", .))
 

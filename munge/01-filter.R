@@ -59,14 +59,28 @@ filters <-
 
     tibble(
       step = 5,
-      excl = "BMI > 50 or missing",
+      excl = "BMI missing",
+      incl = "Total study population",
+      expr = list(quo(!is.na(P_BMI)))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "BMI > 50",
       incl = "Total study population",
       expr = list(quo(P_BMI <= 50))
     ),
 
     tibble(
       step = 5,
-      excl = "ASA = 4, 5 or missing",
+      excl = "ASA missing",
+      incl = "Total study population",
+      expr = list(quo(!is.na(P_ASA)))
+    ),
+
+    tibble(
+      step = 5,
+      excl = "ASA > 3",
       incl = "Total study population",
       expr = list(quo(P_ASA <= 3))
     ),

@@ -19,13 +19,13 @@ knitr::include_graphics("../graphs/brlasso_auc_ci.png")
 
 ##### PAGE BREAK
 
-```{r sep, fig.cap = "Most patients survived more than 90 days after THA, wherefore the blue bars totally dominate the histogram (upper panel). A standardized density plot however reveals that patients who died within 90 days (pink) were, on average, estimated to have a higher probability to do so (lower panel). There were very few observations with covariate patterns resultnig in death probabilities higher than 3%."}
+```{r sep, fig.cap = "Most patients survived more than 90 days after THA, wherefore the blue bars totally dominate the histogram (upper panel; note the square-root scale on the y-axis, that was necessary to distinguish the pink bars from the horisontal line). A normalized density plot however reveals that patients who died within 90 days (pink) were, on average, estimated to have a higher probability to do so (lower panel). There were very few observations with covariate patterns resultnig in death probabilities higher than 3%."}
 knitr::include_graphics("../graphs/brlasso_separation_auc.png")
 ```
 
 ##### PAGE BREAK
 
-```{r calibration, fig.cap = "Calibration belts at 80% and 95% (light and dark grey). The predicted probabilities do not deviate from the observed ones by any statistical significance. The risk of over-estimation is however clear above 3%."}
+```{r calibration, fig.cap = "Calibration belts based on deciles of fitted probabilities and loess smoothers at 80% and 95% confidence levels (light and dark grey). The predicted probabilities do not deviate much from the observed ones up to approximately 3%. A predicted risk of 6% however could correspond to observed probabilities between 2 and 8% (the width of the 95% belt). The higher the predicted probability gets, the more it over-estimates the observed probabilities."}
 knitr::include_graphics("../graphs/calibration_belt.png")
 ```
 

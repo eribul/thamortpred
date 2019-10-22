@@ -9,10 +9,18 @@ fns3 <- function(coefs) {
 
 
 glmdf <- function(f){
-  list(
-    glm = glm(f, data = df, family = binomial()),
-    lrm = rms::lrm(as.formula(f), data = df, x = TRUE, y = TRUE)
-  )
+  glm <-  glm(f, data = df, family = binomial())
+
+  # I tried to use LASSO to avoid over-estimation but found that best penalty-terms were virtually 0 for all models.
+  # I describe this as a sensitivity analysis, but I will not use it any further.
+  lambda <- purrr::possibly(glmnet::cv.glmnet, list(lambda.min = 0))(
+    model.matrix(as.formula(f), df)[, -1, drop = FALSE],
+    df$death90f,
+    family = "binomial"
+  )$lambda.min
+  lrm <-  rms::lrm(as.formula(f), data = df, x = TRUE, y = TRUE, penalty = lambda)
+
+  list(glm = glm, lrm = lrm)
 }
 
 all_models_tmp <-
@@ -23,11 +31,11 @@ all_models_tmp <-
     "BRL reduced without cancer (age as main effect)", TRUE,  FALSE, glmdf(form(setdiff(best_coefs_reduced, "c_cancer_TRUE."))),
     "BRL (age as main effect)",                        TRUE,  TRUE,  glmdf(form(best_coefs)),
     "BRL (age as RCS)",                                TRUE,  FALSE, glmdf(fns3(best_coefs)),
-    "Charlson",                                        TRUE,  TRUE,  glmdf(death90f ~ CCI_index_quan_original),
-    "Elixhauser",                                      TRUE,  TRUE,  glmdf(death90f ~ ECI_index_sum_all),
-    "ASA",                                             TRUE,  TRUE,  glmdf(death90f ~ P_ASA),
-    "Age and sex (age as main effect)",                TRUE,  TRUE,  glmdf(death90f ~ P_Age + P_Gender),
-    "Age and sex (age as RCS)",                        TRUE,  FALSE, glmdf(death90f ~ splines::ns(P_Age, 3) + P_Gender)
+    "Charlson",                                        TRUE,  TRUE,  glmdf("death90f ~ CCI_index_quan_original"),
+    "Elixhauser",                                      TRUE,  TRUE,  glmdf("death90f ~ ECI_index_sum_all"),
+    "ASA",                                             TRUE,  TRUE,  glmdf("death90f ~ P_ASA"),
+    "Age and sex (age as main effect)",                TRUE,  TRUE,  glmdf("death90f ~ P_Age + P_Gender"),
+    "Age and sex (age as RCS)",                        TRUE,  FALSE, glmdf("death90f ~ splines::ns(P_Age, 3) + P_Gender")
   ) %>%
   mutate(
     glm = map(fit, pluck, "glm"),

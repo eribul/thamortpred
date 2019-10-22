@@ -12,9 +12,7 @@ people <-
         P_ASA             = factor(1),
         c_obesity         = FALSE,
         P_Gender          = "Kvinna",
-        P_Age             = min(df$P_Age),
-        c_anemia          = FALSE,
-        c_heart_condition = FALSE,
+        P_Age             = min(df$P_Age)
       ),
 
     healthy_female =
@@ -25,9 +23,7 @@ people <-
         P_ASA             = factor(1),
         c_obesity         = FALSE,
         P_Gender          = "Kvinna",
-        P_Age             = 67,
-        c_anemia          = FALSE,
-        c_heart_condition = FALSE,
+        P_Age             = 67
       ),
 
     sicker_man =
@@ -38,9 +34,7 @@ people <-
         P_ASA             = factor(3),
         c_obesity         = FALSE,
         P_Gender          = "Man",
-        P_Age             = 78,
-        c_anemia          = FALSE,
-        c_heart_condition = TRUE,
+        P_Age             = 78
       ),
 
     sickest_man =
@@ -51,9 +45,7 @@ people <-
         P_ASA             = factor(3),
         c_obesity         = FALSE,
         P_Gender          = "Man",
-        P_Age             = max(df$P_Age),
-        c_anemia          = FALSE,
-        c_heart_condition = TRUE,
+        P_Age             = max(df$P_Age)
       ),
     .id = "id"
   ) %>%
