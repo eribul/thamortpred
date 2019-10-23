@@ -47,10 +47,10 @@ fluidPage(
   mainPanel(
     tabsetPanel(
       type = "tabs",
-      tabPanel("Prediction", htmlOutput("textout")),
-      tabPanel("About", htmlOutput("about"))
+      tabPanel("Prediction", htmlOutput("p_certainty"), htmlOutput("p")),
+      tabPanel("About", h1("hej"))
     )
   ),
 
-  theme = shinytheme("superhero")
+  theme = "shpr.css"
 )

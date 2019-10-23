@@ -16,3 +16,19 @@ coefs <-
   ) %>%
   select(-coef) %>%
   distinct(coef_name, .keep_all = TRUE)
+
+# Make tibble with patient data
+pred <- function(input) {
+  inp <- vector("list", nrow(coefs))
+  names(inp) <- coefs$coef_name
+  inp <- imap(inp, ~ if (.y %in% names(input)) input[[.y]])
+
+  inp[coefs$coef_present %in% input$checkboxes] <- TRUE
+
+  patdata <-
+    map(inp, ~ if (is.null(.)) FALSE else .) %>%
+    as_tibble(inp) %>%
+    mutate(P_Gender = ifelse(P_Gender == "Male", "Man", "Kvinna"))
+
+  (1 - predict(fit_brl_reduced_lean, patdata, "response")) * 100
+}
