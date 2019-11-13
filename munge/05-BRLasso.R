@@ -1,5 +1,5 @@
 # Perform calculations (time consuming)
-system.time(
+profvis::profvis({
   best_coefs_tmp <-
     tibble(B = seq_len(config$Bmax)) %>%
     mutate(
@@ -7,6 +7,6 @@ system.time(
       breaks    = map_dbl(coefs_all, break_p),
       coefs     = map2(coefs_all, breaks, ~slice(.x, seq_len(.y)))
     )
-)
+})
 
 cache("best_coefs_tmp")
