@@ -25,6 +25,8 @@ categorization <-
     old = parse_exprs(old)
   )
 
+cache("categorization")
+
 # Do it!
 c_cols <- bind_cols(pmap(categorization, ~transmute(df, !!.x := !!.y)))
 

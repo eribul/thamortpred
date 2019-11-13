@@ -5,10 +5,10 @@ fit_export <- fit_brl_reduced$glm
 
 fit_export$data <-
   select(
-    fit_brl_reduced_export$data,
-    one_of(gsub("TRUE|[23]|Man", "",names(coef(fit_brl_reduced_export))[-1]))
-  ) %>%
-  head()
+    fit_export$data,
+    one_of(gsub("TRUE|[23]|Man", "",names(coef(fit_export))[-1]))
+  ) # %>%
+  # head()
 
 cache("fit_export")
 
