@@ -139,11 +139,22 @@ ROC <- pROC::roc(obspred, "obs", "pred", direction = "<")
 # Estimate CI for AUC based on bootstrapping
 # Use parallel processing to speed up the process
 doParallel::registerDoParallel()
-AUCci <- pROC::ci.auc(ROC, method = "bootstrap", boot.stratified = FALSE, parallel = TRUE)
+AUCci <- 
+  pROC::ci.auc(
+    ROC, 
+    method          = "bootstrap", 
+    boot.stratified = FALSE, 
+    parallel        = TRUE
+  )
 
 # Check calibration. Note that devel should actually be "internal" for this example but I use
 # "external", since that's what you will use for the UK data. 
-calibration <- givitiR::givitiCalibrationBelt(obspred$obs, obspred$pred, devel = "external")
+calibration <- 
+  givitiR::givitiCalibrationBelt(
+    obspred$obs, 
+    obspred$pred, 
+    devel = "external"
+  )
 ```
 
 ## Results
@@ -208,3 +219,121 @@ AUCci3
 plot(ROC3)
 plot(calibration3, xlim = c(0, 0.03), ylim = c(0, 0.06))
 ```
+
+# Export data to Sweden
+
+## ROC 
+
+If it would be OK to export coordinates for ROC-plots I would recommend this code to extract only the minimal data needed:
+
+```{r}
+
+roc_plot_coords <- 
+  data.frame(
+    specificities = ROC$specificities, 
+    sensitivities = ROC$sensitivities
+  )
+
+roc3_plot_coords <- 
+  data.frame(
+    specificities = ROC3$specificities, 
+    sensitivities = ROC3$sensitivities
+  )
+
+```
+
+## AUC with CI
+
+The text output from `AUCci` and `AUCci3` should be enough. Hence, the same character string that gets printed above (but now stored in an object).
+```{r}
+AUCci_print  <- capture.output(AUCci)
+AUCci3_print <- capture.output(AUCci3)
+```
+
+## Export objects
+
+Save objects above to file `export.RData` (in the current working directory).
+
+```{r}
+save(
+  roc_plot_coords,
+  roc3_plot_coords,
+  AUCci_print,
+  AUCci3_print,
+  file = "export.RData"
+)
+```
+
+
+## Calibration plots
+
+### Help function
+
+This is a simple help function to make a clean calibration belt plot and save it as TIFF (in the curent working directory): 
+
+```{r}
+makeplot <- function(x, file_name = deparse(substitute(x))) {
+  tiff(
+    paste0(file_name, ".tiff"), 
+    1024, 1024, pointsize = 36, 
+    compression = "lzw"
+  )
+  
+  tcks <- seq(.0, .1, .01)
+  
+  plot(
+    x,
+    xlim             = c(0, .06),
+    ylim             = c(0, .08),
+    xlab             = "Predicted probabilities [%]",
+    ylab             = "Observed  probabilities [%]",
+    main             = NULL,
+    table            = FALSE,
+    polynomialString = FALSE,
+    pvalueString     = FALSE,
+    nString          = FALSE,
+    mar              = c(5, 4, 0, 0) + 0.1,
+    xaxt             = "n",
+    yaxt             = "n"
+  )
+  abline(v = .03, lty = "dashed", col = "darkgreen", lwd = 3)
+  axis(1, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
+  axis(2, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
+  
+  dev.off()
+}
+```
+### Make and save figures
+
+```{r}
+makeplot(calibration)
+makeplot(calibration3)
+```
+
+## ROC plots
+
+If it not possible to export data for ROC-plot, here is some code to make a figure and save it as TIFF (in the current working directory) instead:
+
+```{r}
+
+roc_plot_coords %>% 
+  ggplot(aes(1 - specificities, sensitivities)) +
+  geom_path(size = 2) +
+  geom_abline(intercept = 0, slope = 1, color = "grey", linetype = 2) +
+  theme_minimal() +
+  theme(
+    legend.position = c(1, 0),
+    legend.justification = c(1, 0),
+    legend.title = element_blank()
+  )
+
+ggsave(
+  "roc.tiff", 
+  height = 10, 
+  width = 10, 
+  unit = "cm", 
+  dpi = 900, 
+  compression = "lzw"
+)
+```
+
