@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Erik Lenguerrand^5^, Ashley Blom^6^, Mark Wilkinson^7^, Adrian Sayers^8^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Erik Lenguerrand^5^, Ashley Blom^5^, Mark Wilkinson^6^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
 date: '`r Sys.Date()`'
 bibliography: P:/library.bib
 csl: the-lancet.csl
@@ -31,10 +31,8 @@ source("../lib/clean_names.R")
 2.	Swedish Hip Arthroplasty Register, Gothenburg, Sweden
 3.	Department of Orthopaedics, Visby Hospital, Visby, Sweden
 4.	Department of Orthopaedics, Institute of Clinical Sciences, The Sahlgrenska Academy, University of Gothenburg, Gothenburg, Sweden
-5. Translational Health Sciences, Bristol Medical School, University of Bristol, England.
-6. ...
-7. ...
-8. ...
+5. Translational Health Sciences, Bristol Medical School, University of Bristol, UK.
+6. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
 
 
 
@@ -48,7 +46,7 @@ anne.garland@surgsci.uu.se, Phone: +46 498 26 80 00, Postal: Orthopedic Departme
 
 **OBJECTIVE:** Shared decision making is essential before total hip arthroplasty (THA) surgery. Comorbidities are associated with an increased risk of 90-day morbidity and mortality, but diagnosis code-based instruments such as the Charlson or Elixhauser comorbidity indices are impossible to use in a clinical setting, and the American Society for Anesthesiologists (ASA) grade is imprecise. We searched for a simple model to predict early mortality after THA. 
 
-**PATIENTS AND METHODS:** We studied `r format(nrow(df), big.mark = ",")` Swedish patients operated with a cemented THA due to primary osteoarthritis and linked data from several national registries in order to collect information on demographics and comorbidities. Bootstrap ranking procedures were used together with logistic LASSO regression to develop prediction models for death within 90 days. Predictive accuracy was assessed by the areas under the receiver operating characteristic curve (AUC). The final model was externally validated on a data-set from the National Joint Registry of England and Wales .
+**PATIENTS AND METHODS:** We studied `r format(nrow(df), big.mark = ",")` Swedish patients operated with a cemented THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")`, linked data from several national registries in order to collect information on demographics and comorbidities. Bootstrap ranking procedures were used together with logistic LASSO regression to develop prediction models for death within 90 days. Predictive accuracy was assessed by the areas under the receiver operating characteristic curve (AUC). The final model was externally validated on a data-set from the National Joint Registry of England and Wales .
 
 ```{r}
 get_auc <- function(mod) {
