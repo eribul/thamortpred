@@ -1,3 +1,7 @@
+# library(tidyverse)
+# library(DiagrammeR)
+# library(DiagrammeRsvg)
+
 
 # Define filter steps -----------------------------------------------------
 
@@ -6,8 +10,8 @@
 #       Does not need to be unique if several exlusions are combined.
 # incl: Description of included cases
 # excl: Description of cases to exclude
-# expr: quosure defining filter step
-# data: The data set to be filtered. Only required for initial step (first row).
+# expr: quosure defining filter step based on variable names from the data
+# data: The dataset to be filtered. Only required for initial step (first row).
 
 filters <-
   bind_rows(

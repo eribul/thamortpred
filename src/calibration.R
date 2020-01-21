@@ -8,9 +8,7 @@ png("graphs/tmp_calibration.png", 1024, 1024)
   for (i in seq_len(nrow(all_models_fig))) {
     plot(
       all_models_fig$lrm_calibrate[[i]],
-        main = all_models_fig$Model[[i]],
-        # xlim = c(0, 0.03),
-        # ylim = c(0, 0.03)
+        main = all_models_fig$Model[[i]]
     )
   }
 dev.off()
@@ -32,30 +30,43 @@ dev.off()
 
 # BRL 33 % model ----------------------------------------------------------
 
-tcks <- seq(.0, .1, .01)
+calplot <- function(x) {
+  tcks <- seq(.0, .1, .01)
+  plot(
+    x,
+    xlim = c(0, .06),
+    ylim = c(0, .08),
+    xlab = "Predicted probabilities [%]",
+    ylab = "Observed  probabilities [%]",
+    main = NULL,
+    table = FALSE,
+    polynomialString = FALSE,
+    pvalueString = FALSE,
+    nString = FALSE,
+    mar = c(5, 4, 0, 0) + 0.1,
+    xaxt = "n",
+    yaxt = "n"
+  )
+  abline(v = .03, lty = "dashed", col = "darkgreen", lwd = 3)
+  axis(1, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
+  axis(2, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
+}
+
 
 png("graphs/calibration_belt.png", 1024, 1024, pointsize = 36)
   all_models %>%
-    filter(Model == "BRL reduced (age as main effect)") %>% {
-      plot(
-        pluck(.$cal_belt, 1),
-        xlim = c(0, .06),
-        ylim = c(0, .08),
-        xlab = "Predicted probabilities [%]",
-        ylab = "Observed  probabilities [%]",
-        main = NULL,
-        table = FALSE,
-        polynomialString = FALSE,
-        pvalueString = FALSE,
-        nString = FALSE,
-        mar = c(5, 4, 0, 0) + 0.1,
-        xaxt = "n",
-        yaxt = "n",
+    filter(Model == "BRL reduced (age as main effect)") %>%
+    select(cal_belt) %>%
+    pluck(1, 1) %>%
+    calplot()
+dev.off()
 
-      )
-      abline(v = .03, lty = "dashed", col = "darkgreen", lwd = 3)
-      axis(1, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
-      axis(2, at = tcks, lab = sprintf("%.0f", tcks * 100), las = TRUE)
-    }
+
+# Re-calibrated from NJR --------------------------------------------------
+
+
+png("graphs/calibration_belt_njr.png", 1024, 1024, pointsize = 36)
+  njr_calibration3 %>%
+  calplot()
 dev.off()
 

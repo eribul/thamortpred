@@ -1,0 +1,12 @@
+# Table copied from Word-document and converted to CSV by:
+# https://tableconvert.com/?output=csv
+#
+What; Total (N=125,428);Deceased (N=654);Alive (N=124,774)
+Age (mean, SD);73.5(8.7);79.4(7.7);73.5(8.7)
+Male (n, %);43,181(34.4);311(47.6);42,870(34.4)
+ASA 1 (n, %);10,890(8.7);31(4.7);10,859(8.7)
+ASA 2 (n, %);89,388(71.3);312(47.7);89,076(71.4)
+ASA 3 (n, %);25,150(20.0);311(47.6);24,839(19.9)
+Cancer disease (n, %);3,055(2.4);52(8.0);3,003(2.4)
+CNS disease (n, %);7,075(5.6);77(11.8);6,998(5.6)
+Kidney disease (n, %);7,370(5.9);115(17.6);7,255(5.8)
