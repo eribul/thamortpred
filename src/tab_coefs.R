@@ -11,10 +11,10 @@ brlasso_tbl_coefs <-
     term = gsub("_", " ", term),
     math = sprintf("\\text{%s} \\\\ ", term) %>% {gsub("\\text{(intercept)} \\\\ ", "", ., fixed = TRUE)},
     beta = log(estimate),
-    OR   = sprintf("%.2f (%.2f-%.2f)", estimate, conf.low, conf.high),
+    `OR 95 % CI` = sprintf("%.2f (%.2f-%.2f)", estimate, conf.low, conf.high),
     p    = pvalue_format(.01)(p.value)
   ) %>%
-  mutate_at(vars(OR, p), ~ if_else(term == "(intercept)", "", .))
+  mutate_at(vars(`OR 95 % CI`, p), ~ if_else(term == "(intercept)", "", .))
 
 cache("brlasso_tbl_coefs")
 
@@ -37,16 +37,18 @@ coefs_print_string <- function(name) {
   basic_vars <-
     setdiff(all_vars, c_vars) %>%
     clean_names(firstupper = FALSE, lvls = FALSE) %>%
-    set_first("ASA grade") %>%
+    set_first("ASA class") %>%
     set_first("sex") %>%
     set_first("age")
 
-  c_vars <- clean_names(c_vars, FALSE)
+  c_vars <- clean_names(c_vars, FALSE) %>%
+    {gsub("CNS disease", "disease of the central nervous system", .)} %>%
+    {gsub("obesity", "diagnosed obesity", .)}
 
-  paste(
+  paste0(
     glue::glue_collapse(basic_vars, ", "),
-    "and the precense of",
-    glue::glue_collapse(c_vars, ", ", last = " and ")
+    ", the presence of ",
+    glue::glue_collapse(c_vars, ", ", last = ", and ")
   )
 }
 
@@ -71,6 +73,6 @@ coefs_form <-
   select(coefs) %>%
   pluck(1) %>%
   substr(1, nchar(.) - 4) %>%
-  {sprintf("$$\\begin{aligned} \\beta X = & %s \\end{aligned}.$$", .)}
+  {sprintf("$$\\begin{aligned} \\hat \\beta X = & %s \\end{aligned}.$$", .)}
 
 cache("coefs_form")

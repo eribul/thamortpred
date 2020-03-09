@@ -29,7 +29,8 @@ fig_separation_hist <-
     ),
     alpha = .5, position = "identity"
   ) +
-  theme_minimal() +
+  geom_vline(aes(xintercept = .05), color = "darkgreen", linetype = "dashed") +
+    theme_minimal() +
   theme(
     legend.position = "none",
     panel.grid = element_blank(),
@@ -37,7 +38,7 @@ fig_separation_hist <-
     axis.ticks = element_line(size = 1)
   ) +
   xlab("") +
-  ylab("Count") +
+  ylab(expression(paste(sqrt(n)))) +
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
     limits = c(.0001, .1),
@@ -73,7 +74,8 @@ fig_separation_density <-
     axis.ticks.y = element_line(color = "white"),
     axis.text.y = element_text(color = "white", size = 17)     # To align with upper panel
   ) +
-  xlab("Predicted probability of death (log-scale)") +
+  geom_vline(aes(xintercept = .05), color = "darkgreen", linetype = "dashed") +
+  xlab(expression(paste("Predicted probability of death [", log[10], "]"))) +
   ylab("Density") +
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
@@ -86,6 +88,7 @@ fig_separation_density <-
 # Combine plots -----------------------------------------------------------
 
 ggsave(
-  "graphs/brlasso_separation_auc.png",
-  gridExtra::grid.arrange(fig_separation_hist, fig_separation_density, nrow = 2)
+  "graphs/separation.png",
+  gridExtra::grid.arrange(fig_separation_hist, fig_separation_density, nrow = 2),
+  height = 15, width = 12, units = "cm"
 )

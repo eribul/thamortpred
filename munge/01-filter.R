@@ -48,10 +48,24 @@ filters <-
 
     tibble(
       step = 4,
-      excl = "Uncemented/hybrid/reverse hybrid",
+      excl = "Uncemented",
       incl = "Patients with OA\\l and cemented THA",
-      expr = list(quo(P_AcetCupCemMix != "Cementfritt" &
-                 P_FemStemCemMix != "Cementfritt"))
+      expr = list(quo(P_FemStemCemMix != "Cementfritt" |
+                      P_AcetCupCemMix != "Cementfritt"))
+    ),
+
+    tibble(
+      step = 4,
+      excl = "Hybrid",
+      incl = "Patients with OA\\l and cemented THA",
+      expr = list(quo(P_AcetCupCemMix != "Cementfritt"))
+    ),
+
+    tibble(
+      step = 4,
+      excl = "Reverse hybrid",
+      incl = "Patients with OA\\l and cemented THA",
+      expr = list(quo(P_FemStemCemMix != "Cementfritt"))
     ),
 
     tibble(
@@ -84,7 +98,7 @@ filters <-
 
     tibble(
       step = 5,
-      excl = "ASA > 3",
+      excl = "ASA class IV-V",
       incl = "Total study population",
       expr = list(quo(P_ASA <= 3))
     ),
@@ -106,7 +120,7 @@ filters <-
     tibble(
       step = 5,
       excl = "Missing type of hospital",
-      incl = "Total study population",
+      incl = "Training sample",
       expr = list(quo(!is.na(P_TypeOfHospital)))
     )
 
@@ -154,65 +168,7 @@ filters <-
   distinct(excl_next, .keep_all = TRUE)
 
 
-# Define nodes for graph --------------------------------------------------
-
-nodes <-
-  filters %>%
-  pivot_longer(-step) %>%
-  filter(!is.na(value)) %>%
-  unite("node", step, name, remove = FALSE) %>%
-  add_rowindex() %>%
-  rename(
-    id    = .row,
-    label = value,
-    rank  = step
-  ) %>%
-  mutate(
-    shape     = "rectangle",
-    width     = if_else(startsWith(name, "incl"), 1.5, 2.5),
-    color     = "Black",
-    fillcolor = "White",
-    fontcolor = "Black"
-  )
-
-
-# Define edges for graph --------------------------------------------------
-
-incl_edges <-
-  nodes %>%
-  filter(startsWith(name, "incl"))
-
-excl_edges <-
-  nodes %>%
-  filter(startsWith(name, "excl"))
-
-edges <-
-  tibble(
-    from = incl_edges$id,
-    to1 = lead(incl_edges$id),
-    to2 = c(excl_edges$id, NA)
-  ) %>%
-  pivot_longer(-from, values_to = "to") %>%
-  select(-name) %>%
-  arrange(from, to) %>%
-  filter(!is.na(to)) %>%
-  {create_edge_df(
-    .$from, .$to,
-    color    = "black",
-    penwidth = 2,
-    len      = 1
-  )}
-
-
 # Make graph --------------------------------------------------------------
 
-graph <-
-  create_graph(
-    nodes,
-    edges
-  ) %>%
-  add_global_graph_attrs("layout", "dot", "graph") %>% # Apply cluster ranking
-  add_global_graph_attrs("fixedsize", "FALSE", "node") # Nice edge height
-
-export_graph(graph, "graphs/flowchart.png", "png", width = 1024)
-# render_graph(graph)
+flowchart_shar <- flowchart(filters)
+cache("flowchart_shar")

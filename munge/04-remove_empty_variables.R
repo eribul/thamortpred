@@ -39,7 +39,8 @@ cache("comb_lgl")
 comb_lgl_text <-
   comb_lgl$name %>%
   clean_names(FALSE) %>%
-  glue_collapse(", ", last = " and ")
+  glue_collapse(", ", last = " and ") %>%
+  {gsub("AIDS/HIV", "acquired immunodeficiency syndrome by the human immunodeficiency virus (AIDS/HIV)", .)}
 
 cache("comb_lgl_text")
 

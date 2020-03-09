@@ -1,8 +1,8 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland^1,2,3^, Erik Bulow^2,4^, Erik Lenguerrand^5^, Ashley Blom^5^, Mark Wilkinson^6^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+author: Anne Garland`*`^1,2,3^, Erik Bulow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5^, Mark Wilkinson^6^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
 date: '`r Sys.Date()`'
-bibliography: P:/library.bib
+bibliography: library.bib
 csl: the-lancet.csl
 output: 
   bookdown::word_document2:
@@ -17,12 +17,18 @@ options(
   knitr.kable.NA    = '',
   repos = list(CRAN = "https://cran.rstudio.com/")
 )
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(
+  echo = FALSE,
+  out.width  = "100%", 
+  out.height = "100%"
+)
 library(tidyverse)
 
 # Load all files
 walk(file.path("../cache", dir("../cache", ".RData")), load, .GlobalEnv)
 source("../lib/clean_names.R")
+
+shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktion-av-90-dagarsmortalitet/p/SkyeTsTFB"
 ```
 
 # Affiliation and contact
@@ -34,135 +40,171 @@ source("../lib/clean_names.R")
 5. Translational Health Sciences, Bristol Medical School, University of Bristol, UK.
 6. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
 
+`*` Authors contributed equally.
 
-
-**Correspondence: [OR EB?]** 
-anne.garland@surgsci.uu.se, Phone: +46 498 26 80 00, Postal: Orthopedic Department, Visby Hospital, St Goransgatan 10, 621 84 Visby, Sweden  
+**Correspondence:** 
+erik.bulow@vgregion.se. 
+Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 45, Sweden  
 
 
 ##### PAGE BREAK
 
 # Abstract
 
-**OBJECTIVE:** Shared decision making is essential before total hip arthroplasty (THA) surgery. Comorbidities are associated with an increased risk of 90-day morbidity and mortality, but diagnosis code-based instruments such as the Charlson or Elixhauser comorbidity indices are impossible to use in a clinical setting, and the American Society for Anesthesiologists (ASA) grade is imprecise. We searched for a simple model to predict early mortality after THA. 
+**OBJECTIVE:** Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality. However, no prediction tools based on European populations are available, diagnosis code-based instruments such as the Charlson co-morbidity index are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) class is imprecise. We thus developed a simple model to predict 90-day mortality after elective THA.
 
-**PATIENTS AND METHODS:** We studied `r format(nrow(df), big.mark = ",")` Swedish patients operated with a cemented THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")`, linked data from several national registries in order to collect information on demographics and comorbidities. Bootstrap ranking procedures were used together with logistic LASSO regression to develop prediction models for death within 90 days. Predictive accuracy was assessed by the areas under the receiver operating characteristic curve (AUC). The final model was externally validated on a data-set from the National Joint Registry of England and Wales .
+**PATIENTS AND METHODS:** We studied `r format(nrow(df), big.mark = ",")` Swedish patients operated with a cemented THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` and used personal identity numbers to link data from the Swedish Hip Arthroplasty Register, the National Patient Register, the Longitudinal integrated database for health insurance and the population register. We used a bootstrap ranking procedure together with logistic LASSO regression to develop a prediction model for death within 90 days after surgery. The model was internally validated with bootstraping, and externally validated on a cohort of `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Registry for England and Wales. Model performance was assessed by the area under the receiver operation characteristics curve (AUC) for discrimination, and by calibration belt plots.
+
 
 ```{r}
 get_auc <- function(mod) {
-  subset(brlasso_tbl_auc, Model == mod, "AUC", drop = TRUE) %>% 
-    {gsub("(", "(95% CI: ",., fixed = TRUE)}
+  subset(
+    brlasso_tbl_auc, 
+    Model == mod & 
+      `Age as` %in% c(NA, "main effect"), 
+    "AUC", 
+    drop = TRUE
+  ) %>% 
+  {sprintf("(AUC = %s", gsub(" (", ", 95% CI: ",., fixed = TRUE))}
 }
+
 ```
 
 
-**RESLUTS:** The unadjusted cumulative 90-day mortality was `r surv90d`. Best predictive performance for 90-day mortality was found for a model combining `r coefs_print_reduced` (AUC = `r get_auc("BRL reduced (age as main effect)")`). This model was superior to the  Charlson (AUC = `r get_auc("Charlson")`) and Elixhauser (AUC = `r get_auc("Elixhauser")`) comorbidity measures. A web calculator to aid clinical usage was published at https://erikbulow.shinyapps.io/thamortpred/ **[Would it be possible to embedd it at shpr.se instead?]**.
+**RESLUTS:** The unadjusted cumulative 90-day mortality was `r surv90d` in Sweden and `r njr_surv` in England and Wales. We propose a simple main effects model combining `r coefs_print_reduced`. This model had good discriminatory ability both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`, rendering it superioir to traditional models based on the ASA class `r get_auc("ASA")`, the Charlson co-morbitiy index `r get_auc("Charlson")`, and the Elixhauser com-morbidity index `r get_auc("Elixhauser")`. Our model was well calibrated for predicted probabilities up to 5 %. A web calculator to aid clinical usage was published at `r shiny_url`.
   
-**CONCLUSION:** We found a relatively simple prediction model of 90-day mortality after THA. This model requires less data and is easier to use compared to previously well-known comorbidity indices.
+**CONCLUSION:** We found a relatively simple prediction model of 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions.
 
 
 ##### PAGE BREAK
 
 # Introduction
 
-Shared decision making has evolved into an integral part of patient-physician interactions prior to surgical interventions, and the weighing of risks against benefits is central to this process. In terms of gained quality of life and cost-utility, total hip arthroplasty (THA) is an enormously successful procedure, but the risk of adverse events in the short and long term is an essential part of preoperative discussions and various risk prediction models have been developed.[@Price2019]
+Shared decision making has evolved into an integral part of patient-physician interactions prior to surgical interventions, and the weighing of risks against benefits is central to this process. In terms of gained quality of life and cost-utility, total hip arthroplasty (THA) is an enormously successful procedure. 90-day mortality after THA performed due to osteoarthritis is low, ranging from 0.2% to 0.6% in large joint registry studies.[@Hunt2013; @Garland2017] The risk of short-term mortality is nevertheless an essential part of a preoperative discussion between patient and surgeon.
 
-90-day mortality after THA surgery performed due to osteoarthritis is low, ranging between 0.2% and 0.6% in large joint registry analyses where adjustment for comorbidities is possible.[@Hunt2013; @Garland2017]  
+Co-morbidity is associated with a shorter remaining life span, but the Charlson and Elixhauser co-morbidity indices poorly predict mortality after THA.[@Inacio2015; @Gordon2013; @Hofstede2016; @Garland2017; @Bulow2017; @Inacio2015] Additionally, these complex co-morbidity instruments are based on information from extensive in- or out-patient databases, each measure being defined by 1,178 and 1,516 individual codes respectively from the Swedish adaptation of the international classification of diseases version 10 (ICD-10). Each co-morbidity index also exists in numerous versions, making interpretation and comparisons difficult.[@Brusselaers2017; @Walraven2009] The use of these indices is therefore limited to research settings but are impossible to use under clinical circumstances.
 
-The presence of comorbidities is associated with a shorter remaining life span, but the Charlson and Elixhauser comorbidity indices poorly predict mortality after THA and total knee arthroplasty.[@Bulow2017; @Inacio2015] Additionally, these complex comorbidity instruments are based on the availability of extensive data-sets including in- and outpatient data coded by the 10th revision of the international classification of diseases (ICD-10), and each of the comorbidity indices exists in numerous versions.[@Brusselaers2017; @Walraven2009] Interpretation and comparison of different studies is therefore difficult.
+Pre-operative co-morbidity data have been used to develop clinically applicable prediction models for early mortality and adverse events such as surgical site infection in the context of THA surgery.[@Bozic2013a; @Harris2018; @Harris2018a; @Inacio2016; @Price2019; @Harris2019] Due to limited, often single-center based samples, a lack of reported calibration abilities, the absence of external validation and the use of extrapolation there is still no widely accepted model for the prediction of early mortality.[@Manning2016] Importantly, to our knowledge, no reported model has been developed or validated on a European population.
 
-Comorbidity data are used to construct universal or arthroplasty-specific risk prediction tools, but no model has so far been broadly accepted to predict mortality after  elective THA.[@Manning2016; @Bulow2017] In order to propel arthroplasty surgery into the age of precision medicine, easily applicable tools to predict short- and long-term complications are urgently needed. We aimed to define a model that accurately predicts the risk of 90-day postoperative mortality after THA.
+We therefore aimed to develop a parsimonious prediction model of 90-day postoperative mortality after THA with internal and external validation of discrimination and calibration, and to compare this to the accuracy of prediction models based on existing co-morbidity measures.
 
 
 
 # Patients and Methods
 
-Patients recorded in the Swedish Hip Arthroplasty Register (SHAR) with cemented THA due to osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` were used to develop, and internally validate, the prediction model (Figure \@ref(fig:flowchart)). Data from the National Joint Register in England and Wales (NJR) was later used for external validation. 
-Only the last operated hip was accounted for in patients with bilateral THA. [@Bulow2019a]  
-
-Data linkage, based on the 10-digit identity numbers assigned to all Swedish residents,[@Ludvigsson2009] were used to collect data from a variety of sources, as previously described.[@Cnudde2016]
-
-Age, sex, body mass index (BMI), the American Society for Anesthesiologists (ASA) grade, type of hospital (university/county/rural/private) and year of surgery were collected from the SHAR, which has a completeness of 96-98%.[@shpr2018] Data on education level (low = up to 9 years/middle = 10-12 years/high = at least 12 years) and civil status (married/un-married/divorced/widow[er]), were collected from the longitudinal integration database for health insurance and labor market studies from Statistics Sweden.[@Ludvigsson2019] The Swedish National Patient Register was used to assess comorbidities during the year preceding index surgery. This register contains all relevant diagnoses coded by ICD-10, as well as dates of admission and discharge for in- and outpatient episodes in all private and public hospitals.[@Ludvigsson2011] Death dates were linked from the national population register.
-
-Comorbidity was defined by individual ICD-10 codes grouped into 17 categories according to Charlson [@Charlson1987; @Deyo1992; @Quan2005] and 31 categories according to Elixhauser.[@Elixhauser1998; @Quan2005]
-
-Some comorbidities were identified by both Charlson and Elixhauser, and some distinct comorbidities were closely related (such as hypertension with and without complications, or abuse of either drugs or alcohol). We therefore combined individual categories to establish `r nrow(tab_categorization)` broader categories of comorbidity (Table \@ref(tab:tabcategorization)). Conditions were merged according to clinical relevance as to be recognized in a patient-doctor meeting without access to external register data. 
+We used data from the Swedish Hip Arthroplasty Register (SHAR) for model derivation and internal validation of discrimination and calibration. The best model was then validated externally on patients from England and Wales recorded in the National Joint Registry for England, Wales, Northern Ireland, the Isle of Man and the States of Guernsey (NJR). We focused on patients with cemented THA due to osteoarthritis. Cementation is the most common fixation technique used in Sweden, thus used as inclusion criteria to increase heterogeneity. Only the last operated hip was accounted for in patients with bilateral THA, since those are shown to better resemble unilateral THAs.[@Bulow2019a] (Figure \@ref(fig:flowchart)).
 
 
-## Statistics
+## Derivation cohort (Sweden)
 
-We used the Kaplan-Meier estimator to assess unadjusted mortality.
+The patient cohort was identified from the SHAR. The inclusion period started 2008 since this was the first year with the American Society for Anesthesiologists (ASA) class and Body Mass Index (BMI) systematically recorded. The last year was 2015, since we had access to co-morbidity from the national patient register up to this point. Deterministic data linkage was performed by 10-digit identity numbers, assigned to all Swedish residents at birth or immigration.[@Ludvigsson2009] We used data from a variety of sources, as previously described by Cnudde et al.[@Cnudde2016] Age, sex, BMI, ASA class, type of hospital (university/county/rural/private) and year of surgery were collected from the SHAR, with a completeness of 96-98%.[@shpr2018] Data on educational level (low = up to 9 years/middle = 10-12 years/high = at least 12 years) was recorded for more than 98 % of the population with 85 % accuracy in the longitudinal integration database for health insurance and labor market studies (LISA) from Statistics Sweden.[@Ludvigsson2019] Civil status (married/un-married/divorced/widow[er]), were also collected from LISA. The Swedish National Patient Register (NPR) was used to assess co-morbidity during the year preceding index surgery. This register contains all relevant diagnoses coded by ICD-10, as well as dates of admission and discharge for in- and outpatient episodes in all private and public hospitals. Completeness for NPR is above 99 % and 85-95 % of all diagnostic codes are valid.[@Ludvigsson2011] Death dates were linked from the national population register.
 
-Further analysis were based on logistic regression since no censoring occurred within the 90 day study period. We used a modelling procedure with bootstrap ranking and logistic least absolute shrinkage and selection operator (LASSO) model.[@Guo2015] 
-Numeric variables (age and BMI) were normalized before modelling to have mean = 0 and standard deviation = 1. 
+Patients with BMI either missing or above 50 were excluded, as were patients with ASA class missing or above III, as well as patients with unknown educational level or type of hospital.
 
-Comorbidities recorded for at least one patient who died within 90 days, and one who did not, were included in the modelling process. 1,000 bootstrap samples were drawn from the observed data set.[@Austin2004] We used 10-fold cross validation for every bootstrap sample with a broad range of potential penalty values ($\lambda$:s) in a logistic LASSO model. We then only kept $\lambda$:s minimizing the mean cross-validated deviances in each sample. Those $\lambda$:s were used to estimate model coefficients for each potential predictor. Absolute values from those estimates were used as a measure of variable importance. Piece-wise linear regression was  used to detect a break point where a significant drop in variable importance were observed. Potential predictors with variable importance above this break point were considered important and kept as model candidates. The whole process was repeated 100 times. 
 
-Covariates that were selected at least one out of the 100 times were used in a main effects model of multivariable logistic regression without penalty, and without pre-normalization of numeric variables. We will call this model "BRL" for bootstrap ranking LASSO. A reduced model with variables chosen at least 33 out of the 100 times, is called "BRL reduced". This model, but without cancer as a predictor, was also evaluated, since patients with cancer are sometimes treated differently [NEEDS CLARIFICATION!]. 
+## External validation cohort (England and Wales)
 
-Univariable models with the ASA grade, Charlson or Elixhauser comorbidity indices were used for benchmarking, as well as a multivariable model with age and sex. Each model including age was fitted three times, once with age as a main effect and twice with restricted cubic splines, either by two or three knots. 
+Similar inclusion criteria were applied to the validation cohort from England and Wales. We did not exclude patients based on BMI, educational level or civil status however, since those variables were not used in the final model. The validation cohort was created by linking NJR to the secondary uses service database from the National Health Service (NHS). This database includes co-morbidity recorded in the admitted patient care module of the hospital episode statistics (HES) database in England, and the patient episode database for Wales.[@Brophy2006; @Burns2012; @Sinha2013; @Simmonds2014; @Thorn2016] Out-patient deaths were linked from the Office of national statistics. Data linkage used NHS-numbers, as well as patient names, age, sex and address.[@Sayers2016] 
 
-Each of those models were used to predict the probability of death within 90 days for each patient. Sensitivity and specificity were estimated to form receiver operating characteristic (ROC) curves and the area under those curves (AUC) were used as a measure of predictive accuracy. Models with a lower 95% confidence limit above 0.7, were considered good. Those intervals were based on percentiles from 2,000 non-parametric bootstrap samples for internal validation. The bias-corrected Somers' $D_{xy}$ rank correlation was used to adjust those intervals for optimism based on 100 re-samples.[@Miller1991] Calibration bands were made to graphically assess model calibration.[@Nattino2016]
 
-Odds ratios for the final model were estimated with 95% confidence intervals based on interpolations of profile traces.[@Ripley2002]
+## Defining co-morbidity
 
-We also built an online web calculator available at https://erikbulow.shinyapps.io/thamortpred/.
+Co-morbidity was defined by individual ICD-10 codes grouped into 17 categories according to Charlson [@Charlson1987; @Deyo1992; @Quan2005] and 31 categories according to Elixhauser.[@Elixhauser1998; @Quan2005] Some co-morbidities were identified by both Charlson and Elixhauser, and some distinct co-morbidities were closely related (such as hypertension with and without complications, or abuse of either drugs or alcohol). We combined individual diagnostics groups to establish `r nrow(tab_categorization)` broader categories of co-morbidity (Table \@ref(tab:tabcategorization)). Conditions were merged according to clinical relevance as to be recognized in a patient-physician meeting without access to external register data. 
 
-We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr, pROC and shiny. All R-scripts and necessary configurations (but no personal data) is available at zenodo.org/XXX. A linked Binder environment is also available for interactive usage.
+
+
+## Statistical analysis for model development
+
+We used the Kaplan-Meier estimator to assess unadjusted mortality after cemented THA as background knowledge. Further analysis was based on logistic regression since no censoring occurred within the 90 day study period. We used a modelling procedure with bootstrap ranking and a logistic least absolute shrinkage and selection operator (LASSO).[@Guo2015; @Baranowski2020] Numeric variables (age and BMI) were normalized before modelling to have mean = 0 and standard deviation = 1. Co-morbidities recorded for at least one patient who died within 90 days, and one who did not, were included in the modelling process. 1,000 bootstrap samples were drawn from the observed data set.[@Austin2004] We used 10-fold cross validation for every bootstrap sample with a broad range of potential penalty values ($\lambda$:s) in a logistic LASSO model. We then only kept $\lambda$:s minimizing the mean cross-validated deviances in each sample. Those $\lambda$:s were used to estimate model coefficients for each potential predictor. The magnitude (absolute values) of those estimates were used as a measure of variable importance. Piece-wise linear regression was used to detect a break point where a significant drop in variable importance was observed. Potential predictors with variable importance above this break point were considered important and kept as model candidates. The whole process was repeated 100 times. Covariates that were selected at least once out of the 100 times were used in a main effects model of multivariable logistic regression without penalty, and without pre-normalization of numeric variables (main model). A reduced model with variables chosen at least 33 out of the 100 times was used as a simpler alternative for comparison. This model, without cancer as a predictor, was also evaluated separately, considering that medical indications for THA surgery may look different for patients with cancer compared to cancer free patients. Univariable models with the ASA class, Charlson or Elixhauser co-morbidity indices were used for benchmarking, as well as a multivariable model with age and sex. Each model including age was fitted three times, once with age as a main effect and twice with restricted cubic splines, either by two or three knots. Odds ratios for the final model were estimated with 95% confidence intervals.[@Ripley2002]
+
+
+## Statistical analysis for model validation
+
+Each model was used to predict the probability of death within 90 days for patients from the SHAR (internal validation). Sensitivity and specificity were estimated to form receiver operating characteristic (ROC) curves and the area under those curves (AUC) were used as a measure of discriminative ability.[@Fawcett2006] Models with a lower 95% confidence limit above 0.7, were considered good. Those intervals were based on percentiles from 2,000 non-parametric bootstrap samples. We used the bias-corrected Somers' $D_{xy}$ rank correlation based on 100 resamples to adjust for optimism.[@Miller1991] Calibration bands were made to graphically assess model calibration, comparing predicted probabilities and observed proportions.[@Nattino2016] The reduced model was then evaluated externally. An AUC with 95% confidence interval was calculated for the model as-is. Re-calibration of the model intercept was then performed to account for different mortality rates in Sweden compared to England and Wales. An updated over-all slope was also calculated to account for country-specific treatment differences.[@Steyerberg2004] Calibration for this re-calibrated model was illustrated in the same calibration belt plot as for the internal calibration.
+
+
+## Statistical tools 
+
+We built an online web calculator available at `r shiny_url` to be used in clinical practice.
+
+We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr, pROC and shiny. All R-scripts and necessary configurations (but no personal data) is available at zenodo.org/XXX **[Add!]**. A linked Binder environment is also available for interactive usage.
 
 ## Ethical approval
 
-Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (271-14 and 360-13).
-**[COI?]**
+Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (360-13).
 
 
 # Results
 
-After application of exclusion criteria, `r format(nrow(df), big.mark = ",")` patients (age `r paste(range(df$P_Age), collapse = " - ")`, `r round(mean(df$P_Sex == "Female") * 100)`% females) were included in the analysis (Figure \@ref(fig:flowchart)). `r with(df, sprintf("%d (%.2f%%)", sum(death90), mean(death90) * 100))` patients died within 90 days and no one was censored before that. The unadjusted risk of 90 day mortality was `r surv90d`. 
+## Study participants
 
-Characteristics of the study population are presented in Table \@ref(tab:tab1). `r round(mean(df$CCI_index_quan_original != 0) * 100)`% of all patients had at least one pre-surgery comorbidity according to Charlson and `r round(mean(df$ECI_index_sum_all  != 0) * 100)`% according to Elixhauser. The proportion of patients with ASA grade 3 was `r round(mean(df$P_ASA == 3) * 100)`%. Most comorbidities were more common among patients who died. 
+`r format(nrow(df), big.mark = ",")` patients (age `r paste(range(df$P_Age), collapse = " - ")`, `r round(mean(df$P_Sex == "Female") * 100)`% females) were included in the derivation cohort from SHAR (Figure \@ref(fig:flowchart) left panel). `r with(df, sprintf("%d (%.2f%%)", sum(death90), mean(death90) * 100))` of those patients died within 90 days and no one was censored before that. The unadjusted risk of 90-day mortality was therefore `r surv90d`. Further characteristics of the study population are presented in Table \@ref(tab:tab1). `r round(mean(df$CCI_index_quan_original != 0) * 100)`% and `r round(mean(df$ECI_index_sum_all  != 0) * 100)`% of the Swedish patients had at least one pre-surgery co-morbidity according to Charlson and Elixhauser. The proportion of patients with ASA class III was `r round(mean(df$P_ASA == 3) * 100)`%.
 
-There were `r nrow(comb_lgl)` comorbidities that were not recorded for any patient who died: `r comb_lgl_text`, and these variables were thus excluded from the modelling process.
+In addition, `r format(N_njr$tot, big.mark = ",")` patients were included for the external validation cohort (Figure \@ref(fig:flowchart) right panel). Their unadjusted risk of 90 day mortality was higher compared to the derivation cohort `r njr_surv`.
 
-The "BRL" model included `r coefs_print`. The "BRL reduced" model only used `r coefs_print_reduced` (Table \@ref(tab:brlprop)).
 
-We observed no relevant differences between models based on age described by restricted cubic splines with two versus three knots and therefore only present results for models based on three knots. The use of splines did however not improve the accuracy of the models when compared to simpler main effect models. The "BRL" model had an estimated AUC of `r get_auc("BRL (age as main effect)")`, and the reduced version performed equally good with AUC `r get_auc("BRL reduced (age as main effect)")`. Univariable models with ASA grade, Charlson or Elixhauser performed poorly with an AUC that was lower than 0.7. A model based on only age and sex performed slightly better but still with an AUC not statistically significantly above 0.7 (Table \@ref(tab:auc) and Figure \@ref(fig:rocs)). 
+## Model development and internal validation
 
-AUCs and 95% confidence intervals, with and without adjustments for optimism, are illustrated for some models in Figure \@ref(fig:aucci)). 
+There were `r nrow(comb_lgl)` co-morbidities that were not recorded for any patient who died in the Swedish derivation cohort: `r comb_lgl_text`. Those variables were therefore excluded as potential predictors prior to any statistical model derivation. The derived main model included `r coefs_print`. The reduced model, with covariates included at least 33 out of 100 times, were restricted to `r coefs_print_reduced` (Table \@ref(tab:brlprop)).
 
-The ability of the "BRL reduced" model to estimate probabilities of death within 90 days is illustrated in Figure \@ref(fig:sep). Patients who died had, on average, higher predicted probabilities to do so. The model calibration was good for probabilities up to 3%, while higher probabilities might be over-estimated (Figure \@ref(fig:calibration)). 
+There were no differences between models including age as a main effect, or as modeled by restricted cubic splines with either two or three knots. We will therefore focus on the simpler models with age as a main effect. Similarly, the correction for optimism only affected the third decimals of the AUC confidence intervals. We will therefore omit those. 
 
-Estimated coefficients and corresponding odds ratios for the "BRL reduced" model is presented in Table \@ref(tab:brlreduced).
+The main and reduced models were no different regarding discriminative power, `r sprintf("%s versus %s", gsub(")", "", get_auc("Main model"), fixed = TRUE), gsub("(", "", get_auc("Reduced model"), fixed = TRUE))`. We therefore considered the reduced model as superior due to simplicity. Traditional models performed poorly with 95 % confidence intervals not above 0.7: ASA class `r get_auc("ASA")`, the Charlson co-morbitiy index `r get_auc("Charlson")`, and the Elixhauser com-morbidity index `r get_auc("Elixhauser")` (Figure \@ref(fig:rocs) left panel and \@ref(fig:aucci)). 
+
+The ability of the reduced model to estimate probabilities of death within 90 days is further illustrated in Figure \@ref(fig:sep). Patients who died had, on average, higher predicted probabilities to do so. The model calibration was good for estimated probabilities up to 3% and acceptable up to 5%, although with predicted probabilities usually higher then observed proportions of deaths among patients with corresponding covariate patterns (Figure \@ref(fig:calibration)). 
+
+Estimated coefficients and corresponding odds ratios for the reduced model are presented in Table \@ref(tab:brlreduced).
+
+To omit cancer from the reduced model did not affect the AUC or calibration for estimated probabilities below 3%. It did lead to worse calibration outside this range however, wherefore we recommend including cancer as a predictor. 
+
+
+## External validation
+
+The discriminative ability for the reduced model was not statistically significantly different when applied to the external validation cohort `r get_auc("NJR (Reduced model)")` compared to the internal `r get_auc("Reduced model")` (Figure \@ref(fig:rocs) right panel and Figure \@ref(fig:aucci)). Calibration of the re-calibrated model was slightly worse compared to the internal calibration. Predicted probabilities between 0.5 % and 1.5 % were lower than observed and estimated 95 % confidence bands were wider. Over-all, calibration was still good however for predicted probabilities below 3% and acceptable below 5% (Figure \@ref(fig:calibration)).
+
 
 
 # Discussion
 
-We found that a multivariable main effects logistic regression model with `r coefs_print_reduced` was able to better predict 90-day mortality than more complex models such as the Charlson or Elixhauser comorbidity indices. 
+We found that a multivariable main effects logistic regression model with `r coefs_print_reduced` better discriminated patients who died within 90 days after THA, from patients who survived, compared to traditional models with only ASA class or the Charlson or Elixhauser co-morbidity indices.
 
-The resulting "BRL reduced" model can predict the probability of death within 90 days as: $p = 1 / [1 +\exp(-\beta X)]$ where `r coefs_form`
-This formula is valid for patients within the observed age range (`r paste(range(df$P_Age), collapse = " - ")` years) with observed combinations of diseases.
+The resulting (reduced) model predicts the probability of death within 90 days as: $\hat p = 1 / [1 +\exp(-\hat \beta X)]$ where $\hat \beta$ is the vector of estimated coefficients presented in table \@ref(tab:brlreduced).
+This formula is considered valid for patients aged `r paste(range(df$P_Age), collapse = " - ")` years and for predicted probabilities up to 5%.
 
 ```{r}
 get_risk <- function(who) people[people$id == who, "p", drop = TRUE]
 ```
 
-For example a `r min(df$P_Age)` year old woman with ASA grade = 1 and none of the important comorbidities would have a `r get_risk("baseline")` risk to die within 90 days of surgery. Another woman, `r quantile(df$P_Age, .25)` years old (the first age quantile), have an elevated risk of `r get_risk("healthy_female")`. A `r max(df$P_Age)` years old man (the maximum observed age) with ASA grade = 3 and cancer, would have a risk of `r get_risk("sickest_man")`. Note however that observed covariate patters with predicted probabilities above 3% were rare. Only `r mean(pred_probs > 3) * 100`% (`r sum(pred_probs > 3)` patients) had those (Figure \@ref(fig:sep)). Estimated mortality risks above 3% are therefore subject to extrapolation. Some risk calculators ignore this problem,[@Bozic2013a] but we think this should be acknowledged.
 
-Obesity in the "BRL reduced" model was not statistically significant by itself ($p =$ `r subset(brlasso_tbl_coefs, term == "Obesity", "p", drop = TRUE)`) but is relevant as a predictor due to unobserved heterogeneity.[@Mood2010] We note that the proportion of patients with BMI above 30, the definition of obesity (`r mean(df$P_BMI > 30, na.rm = TRUE) * 100`%) is much higher than the proportion of patients with ICD-10 = E66* (obesity) from the National Patient Register (`r mean(df$c_obesity) * 100`%). This proportion corresponds to patients with BMI of at least `r which.min(map_dbl(1:50, ~mean(df$P_BMI > ., na.rm = TRUE)) > mean(df$c_obesity))`. Thus, obesity might be indicated in the risk calculator only if the condition is severe. 
+## Practical usage
 
-The "BRL reduced" model without cancer had the same AUC as a model with cancer. The AUC value itself is a rank-based and scale-invariant measure that does not account for model calibration. Both models were however equally well calibrated as well, for estimated probabilities within the recommended range (0-3%). The model without cancer however performed worse for probabilities above 3%.
+Our model could be used in clinical practice, either by the formula above, or by a simple web calculator online (`r shiny_url`). For example a `r min(df$P_Age)` year old woman with ASA class I and none of the important co-morbidities would have a `r get_risk("baseline")` risk to die within 90 days of surgery. Another woman, `r quantile(df$P_Age, .25)` years old (the first age quantile), would have an elevated risk of `r get_risk("healthy_female")`. A `r max(df$P_Age)` years old man (the maximum observed age) with ASA class III and cancer, would have a risk of `r get_risk("sickest_man")`. Note however that covariate patters with observed probabilities above 5% were rare (`r mean(pred_probs > 5) * 100`%, n = `r sum(pred_probs > 5)`). Estimated mortality risks above 5% are therefore subject to extrapolation. The observed proportions of deaths for patients with similar characteristics is likely lower (as indicated by Figure \@ref(fig:calibration)). Some risk calculators ignore this problem,[@Bozic2013a; @Harris2019] but we think this should be acknowledged.
 
-It is known that male sex is associated with earlier deaths and that the remaining life span will decrease with increased age. It is less obvious that this relation must be linear. We used restricted cubic splines to allow a more flexible relation, but found that a linear relationship was equally good. Our model includes ASA grade, which is routinely assessed pre-operatively in most developed countries. It is however known to have a high degree of internal variability.[@Haynes1995] It has previously been compared to the Charlson comorbidity index, but not with respect to mortality after THA.[@Whitmore2014; @Kork2015] Patients with ASA grade 4-6 were excluded since those categories describe severe disease, moribund and brain-dead individuals. We suspect that patients with those ASA grades might be misclassified. Their true grade could either be lower, or they could have recieved THA due to a femoral hip fracture instead of osteoarthritis. 
 
-Comorbidity burden is also known to influence the outcome after THA.[@Inacio2015; @Gordon2013; @Hofstede2016; @Garland2017] Coding algorithms on the other hand are complex and not used in clinical settings since the administrative burden is too high. The Charlson classification comprise 1,178 ICD-10 codes and the Elixhauser 1,516. Those indices are therefore only used by researchers.
+## Model predictors
 
-Risk prediction may be useful in the process of patient selection prior to surgery, in the preoperative risk management including a review of current medications, and in perioperative anesthesia management. A number of risk prediction tools of various complexity for adverse events after total joint replacements have been introduced but none has been broadly accepted.[@Manning2016; @Price2019] In the context of trauma surgery, outcome prediction tools are common, and it seems possible to reduce the number of items without losing predictive accuracy.[@Gerdin2016] Our results indicate that the risk of early postoperative mortality after THA could be assessed by a relatively simple prediction model.
+Variables in our model were chosen based on statistical properties and not due to clinical relevance. Variables and estimated coefficients should therefore not be assigned any exact epidemiological and/or causal meaning per se.[@Breiman2001] We could nevertheless discuss some aspects of the relevant predictors.
 
-A strength of this study is the nationwide design with a large cohort of primary THA patients. We were able to use exact data linkage by the Swedish identity numbers and had no censoring. Our data sources are valid with low proportions of missing data.[@Soderman2000; @shpr2018; @Soderman2001; @Ludvigsson2011]
+Age and sex are well-known predictors of remaining life span. It is less obvious that this relation must be linear. We used restricted cubic splines to allow a more flexible relation, but found no difference in AUC compared to simpler main effect models. ASA class III has the largest estimated coefficient among all predictors, indicating large relative importance. This is clinically reasonable since a label of "severe systemic disease" should be based on a relevant patient assessment prior to surgery. Conditions were not too severe however since elective surgery was performed after this assessment. ASA class is nevertheless known to have a high degree of internal variability.[@Haynes1995] It has previously been compared to the Charlson co-morbidity index, but not with respect to mortality after THA.[@Whitmore2014; @Kork2015] Patients with ASA class IV-VI were excluded since those categories describe severe disease, moribund and brain-dead individuals. We suspect that patients with such conditions might have been misclassified. Their true class could either be lower, or they could have received THA due to a femoral hip fracture instead of osteoarthritis.
 
-The risk of coding errors might be a limitation to the study, especially so if coding routines change over time. It should also be remembered that the risk model does not study THA as an observed intervention. We merely followed the cohort who did already have THA. Hence, deaths within 90 days might occur for the patients regardless if THA is inserted or not. The proximity in time however, the maximum of 90 days from THA to death, is an indication that the operation might have influenced the deaths observed. The insertion of an elective THA is always preceded by a clinical judgement. Hence, no patient with a foreseen death near-by is given THA to begin with. We therefore believe that at least a non-significant proportion of deaths within 90 days are related to  THA. 
+Obesity was not statistically significant by itself ($p =$ `r subset(brlasso_tbl_coefs, term == "Obesity", "p", drop = TRUE)`) but was still relevant as a predictor due to unobserved heterogeneity.[@Mood2010] We noted that the proportion of patients with BMI above 30, the WHO definition of obesity is much higher (`r mean(df$P_BMI > 30, na.rm = TRUE) * 100`%) than the proportion of patients with ICD-10 = E66 (diagnosed obesity) from the National Patient Register (`r mean(df$c_obesity) * 100`%). This proportion corresponds to patients with BMI of at least `r which.min(map_dbl(1:50, ~mean(df$P_BMI > ., na.rm = TRUE)) > mean(df$c_obesity))`. Thus, the relevance of obesity might not be the condition itself, but rather all circumstances making the related diagnose appear in the national patient register. This might include unmeasured confounders related to patients, doctors, and local hospital guidelines or similar.
 
-We hope that the supplied web calculator and the transparent reporting of this model might lead to clinical usage that can be part of a pre-surgery discussion between doctors and patients in need of THA.
+
+## Strengths and limitations
+
+A strength of the study is the nationwide design with data from national registers in both Sweden, England and Wales. The Swedish registers are valid with low proportions of missing data.[@Soderman2000; @shpr2018; @Soderman2001; @Ludvigsson2011] Some concerns have been raised regarding validity of the hospital episodes statistics (HES) database from England and Wales however.[@Spencer2012; @Williams2002; @Brennan2012] A systematic review found that the overall median diagnostic accuracy (comparing ICD-codes from HES to individual case notes) was 80%.[@Burns2012] Both in- and outpatient co-morbidity data was available for Sweden, but only in-patient data for England and Wales. We did not have acces to any data from primary care or nursing homes in any of the counties.
+
+The linkage procedure between NJR and HES was previously described by 
+Smith et al.[@Smith2012] They found that privately founded patients were not included in HES. 17% of the patients had missing personal data or did not allow linkage, and 6% were not found in HES even if their data was available from NJR.
+
+In addition to data validity, the indication for different fixation techniques also differ in Sweden compared to England and Wales. Cementation is most commonly used in Sweden, but not so in England and Wales, where relatively younger patients are more likely operated without cement. To only include cemented THA therefore implies an over-representation of older and frailer patients from England and Wales compared to Sweden. Those patients might be more likely to die within 90 days. This was seen in the calibration plot where estimated probabilities below 1.5% underestimated the observed proportion of deaths in the external validation.
+
+It should be noted that the risk model does not study THA as an observed intervention. We merely followed the cohort who already had THA. Hence, deaths within 90 days might occur for those patients regardless if THA is inserted or not. The proximity in time however, the maximum of 90 days from THA to death, is an indication that the operation might have influenced the observed mortality. Insertion of an elective THA is always preceded by a clinical judgement. Hence, no patient with a foreseen death near-by is given elective THA. We therefore believe that at least a non-significant proportion of deaths within 90 days are related to the THA itself.
+
+
+## Conclusion
+
+Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. We hope that this model, with its accompanying web calculator, will facilitate a shared decision making between physicians and their patients in need of THA. 
 
 # Contribution of authors
 

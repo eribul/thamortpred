@@ -4,15 +4,21 @@ digs <- options("digits")
 options(digits = 2)
 
 
+# NJR ---------------------------------------------------------------------
+
 njr_AUC <-
   tibble(
-    Model   = "NJR (BRL reduced)",
+    Model   = "Reduced model (NJR)",
     AUC_lo  = njr_AUCci[1],
     AUC_est = njr_AUCci[2],
     AUC_hi  = njr_AUCci[3]
   )
 
-fig_auc_ci <-
+
+
+# Prepare data ------------------------------------------------------------
+
+data_auc_ci <-
   all_models %>%
   filter(fig) %>%
   select(Model, starts_with("AUC")) %>%
@@ -22,26 +28,36 @@ fig_auc_ci <-
   separate(name, c("AUC","level", "corr")) %>%
   mutate(
     corr = case_when(
-      startsWith(Model, "NJR") ~ "Validated",
-      is.na(corr)              ~ "Estimated",
+      Model == "Reduced model (NJR)" ~ "NJR",
+      is.na(corr)              ~ "SHAR",
       TRUE                     ~ "Adjusted for optimism"
-    )
+    ),
+    Model = model_names(Model)
   ) %>%
   pivot_wider(names_from = level) %>%
   mutate(Model = fct_reorder(Model, est)) %>%
-  ggplot(aes(Model, est, group = corr, color = corr)) +
-  geom_hline(yintercept = .7, color = "darkgreen", linetype = "dashed", size = 2) +
-  geom_pointrange(aes(ymin = lo, ymax = hi), size = 1.5, position = position_dodge(.5)) +
+  filter(corr %in% c("NJR", "SHAR"))
+
+annotates <-
+  data_auc_ci %>%
+  pivot_longer(c(lo, est, hi))
+
+# Figure ------------------------------------------------------------------
+
+ggplot(data_auc_ci, aes(Model, est, group = corr, color = corr)) +
+  geom_hline(yintercept = .7, color = "darkgreen", linetype = "dashed", size = 1) +
+  geom_pointrange(aes(ymin = lo, ymax = hi), size = 1) + #, position = position_dodge(.5)) +
+  geom_text(aes(Model, value, label = round(value, 2)), data = annotates, nudge_x = .3, size = 2) +
   coord_flip() +
   theme_minimal() +
   theme(
     axis.title.y = element_blank(),
     legend.title = element_blank(),
-    legend.position = "bottom"
+    legend.position = "none"
   ) +
   ylab("AUC with 95% CI") +
   scale_y_continuous(breaks = seq(0, 1, .05))
 
 options(digits = digs$digits)
 
-ggsave("graphs/brlasso_auc_ci.png", fig_auc_ci)
+ggsave("graphs/auc_ci.png", width = 10, height = 8, units = "cm")
