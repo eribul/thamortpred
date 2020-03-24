@@ -54,3 +54,4 @@ fig_roc <-
 
 
 ggsave("graphs/roc.png", fig_roc, height = 10, width = 15, units = "cm")
+ggsave("graphs/roc.tiff", fig_roc, height = 10, width = 15, units = "cm", dpi = 1200, compression = "lzw")

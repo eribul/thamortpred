@@ -87,8 +87,7 @@ fig_separation_density <-
 
 # Combine plots -----------------------------------------------------------
 
-ggsave(
-  "graphs/separation.png",
-  gridExtra::grid.arrange(fig_separation_hist, fig_separation_density, nrow = 2),
-  height = 15, width = 12, units = "cm"
-)
+figs <- gridExtra::grid.arrange(fig_separation_hist, fig_separation_density, nrow = 2)
+
+ggsave("graphs/separation.png", figs, height = 15, width = 12, units = "cm")
+ggsave("graphs/separation.tiff", figs, height = 15, width = 12, units = "cm", dpi = 1200, compression = "lzw")

@@ -44,9 +44,10 @@ annotates <-
 
 # Figure ------------------------------------------------------------------
 
-ggplot(data_auc_ci, aes(Model, est, group = corr, color = corr)) +
-  geom_hline(yintercept = .7, color = "darkgreen", linetype = "dashed", size = 1) +
-  geom_pointrange(aes(ymin = lo, ymax = hi), size = 1) + #, position = position_dodge(.5)) +
+p <-
+  ggplot(data_auc_ci, aes(Model, est, group = corr, color = corr)) +
+  geom_hline(yintercept = .7, color = "darkgreen", linetype = "dashed", size = .5) +
+  geom_pointrange(aes(ymin = lo, ymax = hi), size = .8) + #, position = position_dodge(.5)) +
   geom_text(aes(Model, value, label = round(value, 2)), data = annotates, nudge_x = .3, size = 2) +
   coord_flip() +
   theme_minimal() +
@@ -60,4 +61,5 @@ ggplot(data_auc_ci, aes(Model, est, group = corr, color = corr)) +
 
 options(digits = digs$digits)
 
-ggsave("graphs/auc_ci.png", width = 10, height = 8, units = "cm")
+ggsave("graphs/auc_ci.png", p, width = 10, height = 8, units = "cm")
+ggsave("graphs/auc_ci.tiff", p, width = 10, height = 8, units = "cm", dpi = 1200, compression = "lzw")

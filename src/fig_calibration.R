@@ -28,7 +28,8 @@ cbs <-
 
 # Make figure -------------------------------------------------------------
 
-ggplot(cbs, aes(x, ymin = L, ymax = U, fill = validation)) +
+p <-
+  ggplot(cbs, aes(x, ymin = L, ymax = U, fill = validation)) +
   geom_ribbon(alpha = .3) +
   geom_abline(aes(intercept = 0, slope = 1)) +
   theme_minimal() +
@@ -43,4 +44,5 @@ ggplot(cbs, aes(x, ymin = L, ymax = U, fill = validation)) +
     legend.title = element_blank()
   )
 
-ggsave("graphs/calibration.png", height = 10, width = 10 , units = "cm")
+ggsave("graphs/calibration.png", p, height = 10, width = 10 , units = "cm")
+ggsave("graphs/calibration.tiff", p, height = 10, width = 10 , units = "cm", dpi = 1200, compression = "lzw")

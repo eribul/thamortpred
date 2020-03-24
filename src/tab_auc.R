@@ -17,7 +17,7 @@ brlasso_tbl_auc <-
   arrange(desc(AUC_est)) %>%
   transmute(
     Model = model_names(Model, age = TRUE),
-    AUC      = sprintf("%.2f (%.2f-%.2f)", AUC_est, AUC_lo, AUC_hi),
+    AUC      = sprintf("%.2f (%.2f to %.2f)", AUC_est, AUC_lo, AUC_hi),
     #`AUC corrected for optimism` =
     #  sprintf("%.2f (%.2f-%.2f)", AUC_est.corr, AUC_lo.corr, AUC_hi.corr)
   ) %>%

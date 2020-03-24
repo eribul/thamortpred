@@ -1,3 +1,6 @@
+library(ProjectTemplate)
+load.project()
+
 njr_filters <-
   tibble(
     step = 1:5,
@@ -19,9 +22,7 @@ njr_filters <-
 
 flowchart_njr <- flowchart(njr_filters)
 
+gr <- combine_graphs(flowchart_shar, flowchart_njr)
+tt <- "SHAR (model development)                                        NJR (external validation)"
 
-combine_graphs(flowchart_shar, flowchart_njr) %>%
-  export_graph(
-    "graphs/flowchart.png", "png", width = 1024,
-    title = "SHAR (model development)                                        NJR (external validation)"
-  )
+export_graph(gr, "graphs/flowchart.png", "png", width = 1024, title = tt)
