@@ -1,6 +1,6 @@
 .form-control-feedback.fa {
   font-size: 18px;
-  padding-top: 5px
+  padding-top: 25px
 }
 
 @font-face {
@@ -4977,7 +4977,8 @@ textarea.input-group-sm>.input-group-btn>.btn {
   position: relative;
   min-height: 84px;
   margin-bottom: 20px;
-  border: 1px solid transparent
+  border: 1px solid transparent;
+  background-color: white;
 }
 
 @media (min-width:992px) {
@@ -5100,7 +5101,7 @@ textarea.input-group-sm>.input-group-btn>.btn {
   height: 84px;
   padding: 32px 15px;
   font-size: 18px;
-  line-height: 20px
+  line-height: 20px;
 }
 
 .navbar-brand:focus,

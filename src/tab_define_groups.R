@@ -1,7 +1,5 @@
 suppressMessages({library(ProjectTemplate); load.project()})
 
-firstupper <-
-
 tab_categorization <-
   categorization.Blad1 %>%
   mutate_all(zoo::na.locf) %>%
@@ -12,6 +10,8 @@ tab_categorization <-
     `Comorbidities by groups` = new,
     Charlson = CCI,
     Elixhauser = ECI
-  )
+  ) %>%
+  ungroup() %>%
+  mutate_all(~gsub("Aids/hiv", "AIDS/HIV", .))
 
 cache("tab_categorization")

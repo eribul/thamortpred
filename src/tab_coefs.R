@@ -42,8 +42,9 @@ coefs_print_string <- function(name) {
     set_first("age")
 
   c_vars <- clean_names(c_vars, FALSE) %>%
-    {gsub("CNS disease", "disease of the central nervous system", .)} %>%
-    {gsub("obesity", "diagnosed obesity", .)}
+    {gsub("CNS disease", "diseases of the central nervous system", .)} %>%
+    {gsub("obesity", "diagnosed obesity", .)} %>%
+    {gsub("heart infarct", "myocardial infarction", .)}
 
   paste0(
     glue::glue_collapse(basic_vars, ", "),

@@ -24,5 +24,16 @@ clean_names <- function(x, firstupper = TRUE, lvls = TRUE) {
 
   x <- ifelse(grepl("aids", x, ignore.case = TRUE), "AIDS/HIV", x)
   x <- ifelse(grepl("cns", x, ignore.case = TRUE), "CNS disease", x)
-  gsub("GRADE", "grade", x)
+  gsub("GRADE", "class", x, ignore.case = TRUE)
+}
+
+
+model_names <- function(x, age = FALSE) {
+  if (!age)
+    x <- gsub(" \\(age as main effect\\)", "", x)
+
+  x <- gsub("ASA", "ASA class", x)
+
+  gsub("BRL reduced", "Reduced model", x) %>%
+    {gsub("BRL", "Main model", .)}
 }

@@ -11,11 +11,13 @@ coefs <-
     coef_present =
       clean_names(coef) %>%
       {gsub(" = [23]", "", .)} %>%
-      {gsub("Obesity", "(Severe) obesity", .)}
+      {gsub("Obesity", "Diagnosed obesity", .)}
 
   ) %>%
   select(-coef) %>%
   distinct(coef_name, .keep_all = TRUE)
+
+OR <- exp(coef(fit_brl_reduced_lean))
 
 # Make tibble with patient data
 pred <- function(input) {

@@ -50,7 +50,10 @@ people <-
     .id = "id"
   ) %>%
   mutate(
-    p = sprintf("%s %%", prettyNum(predict(fit_brl_reduced$glm, ., "response") * 100))
+    p      = predict(fit_brl_reduced$glm, ., "response"),
+    p_perc = sprintf("%s %%", prettyNum(p * 100)),
+    p_prom = sprintf("%s \u2030", prettyNum(p * 1000)),
+    p      = ifelse(p < .01, p_prom, p_perc)
   )
 
 cache("people")

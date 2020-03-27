@@ -14,7 +14,7 @@ njr_filters <-
     excl_next = c(
       "Other diagnoses than OA\\l(N = 64,078)\\l",
       "First THA for bilateral cases\\l(N = 55,511)\\l",
-      "Exclusion of (N = 306,732):\\l  - Uncemented (N = )\\l  - Hybrid (N = )\\l  - Reverse hybrid (N = )\\l",
+      "Exclusion of (N = 306,732):\\l  - Uncemented (N = 202,198)\\l  - Hybrid (N = 90,326)\\l  - Reverse hybrid (N = 14,208)\\l",
       "Exclusion of (N = 28,049):\\l  - Comorbidity missing (N = 27,181)\\l  - ASA class IV-V (N = 868)\\l",
       NA
     )

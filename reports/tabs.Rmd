@@ -1,0 +1,51 @@
+##### PAGE BREAK
+
+```{r tabcategorization}
+tab_categorization %>%
+  ungroup() %>% 
+  mutate(
+    `Comorbidities by groups` = 
+      gsub("Heart infarct", "Myocardial infarction", `Comorbidities by groups`)
+  ) %>% 
+  knitr::kable(
+    caption = "Categorization of co-morbidities based on diagnostic groups according to Charlson and Elixhauser. (CNS = central nervous system.)")
+
+```
+
+##### PAGE BREAK
+
+```{r tab1}
+knitr::kable(
+  mutate(table1_combined_tot, what = gsub("Heart infarct", "Myocardial infarction", what)), 
+  caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anesthesiologists classification. CNS = central nervous system.")
+```
+
+##### PAGE BREAK
+
+```{r brlprop}
+t <- 
+  brlasso_tbl_selected %>% 
+  mutate(
+    variable = clean_names(variable),
+    variable = gsub("= 2", "II", variable),
+    variable = gsub("= 3", "III", variable),
+  )
+
+knitr::kable(
+  t, 
+  caption = "Variables selected by the bootstrap ranking procedure, and therefore kept in the main model. Variables chosen at least 33 times out of 100 were kept in the reduced model as well. ASA class II and III were kept in both models, since those are usually distinguished anyway. To simplify the models further would be possible by lumping class I and II together. Variables chosen more frequently are likely more important predictors. This is not necessarily true however since one of several strongly correlated variables might be chosen spuriously. (CNS = central nervous system.)")
+```
+
+##### PAGE BREAK
+
+```{r brlreduced}
+brlasso_tbl_coefs %>% 
+  select(-math) %>%
+  mutate(
+    term = gsub("= 2", "II", term),
+    term = gsub("= 3", "III", term)
+  ) %>% 
+knitr::kable(
+  caption = 'Estimated coefficients (beta) and odds ratios (OR) with 95 % confidence intervals for the reduced model.'
+)
+```
