@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland`*`^1,2,3^, Erik Bülow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5^, Mark Wilkinson^6^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+author: Anne Garland`*`^1,2,3^, Erik Bülow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5,6^, J. Mark Wilkinson^7^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
 csl: the-lancet.csl
@@ -38,7 +38,8 @@ shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktio
 3.	Department of Orthopaedics, Visby Hospital, Visby, Sweden
 4.	Department of Orthopaedics, Institute of Clinical Sciences, The Sahlgrenska Academy, University of Gothenburg, Gothenburg, Sweden
 5. Translational Health Sciences, Bristol Medical School, University of Bristol, UK.
-6. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
+6. The National Institute of Health Research Biomedical Research Centre Bristol
+7. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
 
 `*` Authors contributed equally.
 
@@ -84,9 +85,9 @@ Shared decision making has evolved into an integral part of patient-physician in
 
 Co-morbidity is associated with a shorter remaining life span, but the Charlson and Elixhauser co-morbidity indices poorly predict mortality after THA.[@Inacio2015; @Gordon2013; @Hofstede2016; @Garland2017; @Bulow2017; @Inacio2015] Additionally, these complex co-morbidity instruments are based on information from extensive in- or out-patient databases, each measure being defined by 1,178 and 1,516 individual International Classification of Diseases (ICD)-10 codes, respectively. Each co-morbidity index also exists in numerous versions, making interpretation and comparisons difficult.[@Brusselaers2017; @Walraven2009] The use of these indices is therefore limited to research settings but they are impossible to use under clinical circumstances.
 
-Pre-operative co-morbidity data have been used to develop clinically applicable prediction models for early mortality and adverse events such as surgical site infection in the context of THA surgery.[@Bozic2013a; @Bozic2013b; @Harris2018; @Harris2018a; @Inacio2016; @Price2019; @Harris2019] The first prediction model based on a European cohort was the patient decision support tool for joint remplacement in the UK (https://jointcalc.shef.ac.uk/), which is in the process of validation. Due to limited, often single-center based samples, a lack of reported calibration abilities, the absence of external validation, and the use of extrapolation, there is an urgent need for improved prediction models of early mortality.[@Manning2016]
+Pre-operative co-morbidity data have been used to develop clinically applicable prediction models for early mortality and adverse events such as surgical site infection in the context of THA surgery.[@Bozic2013a; @Bozic2013b; @Harris2018; @Harris2018a; @Inacio2016; @Price2019; @Harris2019] The first prediction model based on a European cohort was the patient decision support tool for joint remplacement in the UK (https://jointcalc.shef.ac.uk/). However, it remains unclear to what level the depth of co-morbidity characterization influences the accuracy of  mortality prediction models.
 
-We therefore aimed to develop a parsimonious prediction model of 90-day postoperative mortality after THA with internal and external validation of discrimination and calibration, and to compare this to the accuracy of prediction models based on existing co-morbidity measures.
+Here we aimed to develop a parsimonious prediction model of 90-day postoperative mortality after THA with internal and external validation of discrimination and calibration, and to compare this to the accuracy of prediction models based on existing co-morbidity measures.[@Manning2016]
 
 
 
@@ -131,7 +132,7 @@ We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Comp
 
 ## Ethical approval
 
-Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (360-13) and **XXXX in the UK (RSC2017/21 ???)**. Informed consent was not mandatory according to the Swedish patient data law from 2009.
+Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (360-13) and by the NJR in the UK (RSC2017/21). Informed consent was not mandatory according to the Swedish patient data law from 2009, and the UK law for pseudonymised data.
 
 # Indirect Patient and Public Involvement
 
@@ -230,12 +231,18 @@ Our results indicate that the risk of early postoperative mortality after cement
 
 # Contribution of authors
 
-**[ARE THOSE CORRECT?]** AG and NH initiated the study and managed the ethical review board application in Sweden. AB and MW conceptualized the external validation and managed the ethical review board application in the UK. 
+AG and NH initiated the study and managed the ethical review board application in Sweden. AB and JMW conceptualized the external validation and managed the ethical review board application in the UK. 
 EB developed the statistical model. EL and AS performed external validation with data from NJR. AG and EB drafted, and all authors edited and finalized the manuscript.
+
+
+# Exclusive licence
+
+We grant a worldwide licence to the publishers and its licensees in perpetuity, in all forms, formats and media (whether known now or created in the future), to i) publish, reproduce, distribute, display and store the Contribution, ii) translate the Contribution into other languages, create adaptations, reprints, include within collections and create summaries, extracts and/or, abstracts of the Contribution and convert or allow conversion into any format including without limitation audio, iii) create any other derivative work(s) based in whole or part on the on the Contribution, iv) to exploit all subsidiary rights to exploit all subsidiary rights that currently exist or as may exist in the future in the Contribution, v) the inclusion of electronic links from the Contribution to third party material where-ever it may be located; and, vi) licence any third party to do any or all of the above. 
+
 
 # Competing interests statement
 
-All authors have completed the ICMJE uniform disclosure form at www.icmje.org/coi_disclosure.pdf and declare **[... SUMMARIZE STATEMANT AFTER ALL COI:s RETURNED]**
+All authors have completed the ICMJE uniform disclosure form at www.icmje.org/coi_disclosure.pdf and declare no financial relationships with any organisations that might have an interest in the submitted work in the previous three years, and no other relationships or activities that could appear to have influenced the submitted work.
 
 
 

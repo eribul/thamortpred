@@ -72,7 +72,9 @@ table1 <-
   mutate(
     level = trimws(ifelse(startsWith(what, " "), what, "")),
     level = paste0(toupper(substr(level, 1, 1)), substring(level, 2)),
-    what = trimws(ifelse(level == "", gsub(" = TRUE", "", what), ""))
+    what  = trimws(ifelse(level == "", gsub(" = TRUE", "", what), "")),
+    what  = gsub("Peptiulcer", "Peptic ulcer", what),
+    what  = gsub("Rheumatidisease", "Rheumatic disease", what),
   ) %>%
   mutate_at(vars(`Died within 90 days`,
                  `Survived at least 90 days`), zero) %>%
@@ -113,7 +115,7 @@ t1_njr_1 <-
   ) %>%
   # Empty row before Charlson
   add_row(
-    what = "Elixhauser (%)",
+    what = "Charlson (%)",
     level = "",
     `Died within 90 days` = "",
     `Survived at least 90 days` = "",
@@ -122,7 +124,7 @@ t1_njr_1 <-
   ) %>%
   # Empty row before Elixhauser
   add_row(
-    what = "Charlson (%)",
+    what = "Elixhauser (%)",
     level = "",
     `Died within 90 days` = "",
     `Survived at least 90 days` = "",
@@ -157,3 +159,33 @@ t1_njr_2 <-
   ) %>%
   mutate_all(~ gsub("([0-9])(\\()", "\\1 \\2", ., perl = TRUE))
 
+
+# Combine all parts -------------------------------------------------------
+
+shar <-
+  table1 %>%
+  select(what, level, SHAR = Total) %>%
+  mutate(what = zoo::na.locf(na_if(what, "")))
+
+njr1 <-
+  t1_njr_1 %>%
+  select(what, level, NJR = Total) %>%
+  mutate(what = zoo::na.locf(na_if(what, "")))
+
+njr2 <-
+  t1_njr_2 %>%
+  select(what, NJR = Total)
+
+table1_combined_tot <-
+  shar %>%
+  left_join(njr1, c("what", "level")) %>%
+  left_join(njr2, "what") %>%
+  transmute(
+    what = if_else(duplicated(what), "", what),
+    level,
+    SHAR,
+    NJR = coalesce(NJR.x, NJR.y, "")
+  ) %>%
+  mutate_at(vars(SHAR, NJR), ~gsub("(\\d{1,3})(\\d{3})", "\\1,\\2", .))
+
+cache("table1_combined_tot")
