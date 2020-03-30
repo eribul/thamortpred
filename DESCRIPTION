@@ -13,6 +13,7 @@ Description: Predict 90-day mortality after elective THA using
     ranking logistic LASSO regression.
 License: What license it uses
 Depends: 
+  ProjectTemplate,
   bookdown,
   broom,
   DataExplorer,
