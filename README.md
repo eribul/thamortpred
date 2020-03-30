@@ -3,4 +3,4 @@
 
 # Prediction of mortality within 90 days after elective THA
 
-WIP.
+This repository contains R-script for a prediction model of mortality within 90 days after cemented total hip arthroplasty (THA) in Sweden. 
