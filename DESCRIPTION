@@ -14,6 +14,7 @@ Description: Predict 90-day mortality after elective THA using
 License: What license it uses
 Depends: 
   ProjectTemplate,
+  utils,
   bookdown,
   broom,
   DataExplorer,
