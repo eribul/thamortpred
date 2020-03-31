@@ -1,4 +1,8 @@
-con <- shar_linkage_con()
+# Internal data connection used at the Center of Registers
+# Not available and therefore not loaded in Binder
+if (!grepl("thamortpred", Sys.info()[["nodename"]])) {
+  con <- shar_linkage_con()
+}
 
 # General settings
 memory.limit(1e10)
