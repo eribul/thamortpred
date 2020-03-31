@@ -5,7 +5,7 @@ if (!grepl("thamortpred", Sys.info()[["nodename"]])) {
 }
 
 # General settings
-memory.limit(1e10)
+utils::memory.limit(1e10)
 set.seed(132456798)
 future::plan("multiprocess")
 
