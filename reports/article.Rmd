@@ -52,10 +52,64 @@ Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 
 
 # Abstract
 
-**OBJECTIVE:** Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality. However, diagnosis code-based co-morbidity instruments such as the Charlson index are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) classification is imprecise. We thus developed a parsimonious model to predict 90-day mortality after elective THA.
+**OBJECTIVES** We developed and validated a statistical model to predict 90-day mortality after total hip arthroplasty (THA) due to osteoarthritis.
 
-**PARTICIPANTS AND METHODS:** We studied `r format(nrow(df), big.mark = ",")` Swedish patients operated with a cemented THA due to primary osteoarthritis `r paste(range(df$P_SurgYear), collapse = " - ")` and used personal identity numbers for data linkage. We used a bootstrap ranking procedure together with logistic least absolute shrinkage and selection operator (LASSO) regression to develop a prediction model for death within 90 days after surgery. The model was internally validated by bootstrapping, and externally validated on a cohort of `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Registry for England and Wales. Model performance was assessed by the area under the receiver operation characteristics curve (AUC) for discrimination, and by calibration belt plots.
+**DESIGN** A multi-national observational registry study with prospective data collection and data linkage. We used a bootstrap ranking procedure together with logistic LASSO-regression, evaluated by the area under the receiver operation characteristics curve (AUC), and calibration belt plots.
 
+**SETTING** Patients operated `r paste(range(df$P_SurgYear), collapse = " - ")` and identified through the Swedish Hip Arthroplasty Register, including all private and public hospitals in Sweden, for model derivation and internal validation. Similar patients from England and Wales,  recorded in the National Joint Register, for external model validation.
+
+
+```{r}
+shar_tot <- nrow(df)
+shar_female <- df$P_Sex == "Female"
+age_shar <- sprintf("%.0f [%.0f - %.0f]", mean(df$P_Age), min(df$P_Age), max(df$P_Age))
+sex_shar <- 
+  sprintf(
+    "%.0f %% [%s of %s]", 
+    mean(shar_female) * 100, 
+    format(sum(shar_female), big.mark = ","), 
+    format(shar_tot, big.mark = ",")
+)
+deaths_shar <- 
+  sprintf(
+    "%.02f %% [%.0f of %s]", 
+    mean(df$death90) * 100, 
+    sum(df$death90), 
+    format(nrow(df), big.mark = ",")
+  )
+
+shar_summary <- sprintf(
+  "(mean [range] age %s; %s females; %s deaths within 90 days)",
+  age_shar, sex_shar, deaths_shar
+)
+
+extr <- function(col, reg) 
+  subset(table1_combined_tot, startsWith(what, col), reg, drop = TRUE)
+extr_perc <- function(...) 
+  gsub("([\\d,]*)( )(\\()(\\d*)(\\.\\d*)(\\))", "\\4 \\% \\[\\1 of", extr(...), perl = TRUE)
+
+njr_age_mean <- as.numeric(gsub("(.*) (.*)", "\\1", extr("Age", "NJR"), perl = TRUE))
+# Same range by design (to match Swedish cohort)
+njr_age <- sprintf("%.0f [%.0f - %.0f]", njr_age_mean, min(df$P_Age), max(df$P_Age))
+njr_sex <- sprintf("%s %s]", extr_perc("Sex", "NJR"), format(N_njr$tot, big.mark = ","))
+njr_deaths <- 
+  sprintf(
+    "%.02f %% [%.0f of %s]", 
+    (N_njr$death / N_njr$tot) * 100, 
+    N_njr$death, 
+    format(N_njr$tot, big.mark = ",")
+  )
+njr_summary <- sprintf(
+  "(mean [range] age %s; %s females; %s deaths within 90 days)",
+  njr_age, njr_sex, njr_deaths
+)
+```
+
+**PARTICIPANTS** `r format(nrow(df), big.mark = ",")` patients with cemented total hip arthroplasty (THA) due to osteoarthritis, and ASA class I-III, for model derivation and internal validation `r shar_summary`. An additional `r format(N_njr$tot, big.mark = ",")` patients for external validation `r njr_summary`.
+
+
+
+**MAIN OUTCOME MEASURES** Predicted probability of death due to any reason within 90 days after THA.
 
 ```{r}
 get_auc <- function(mod) {
@@ -71,10 +125,25 @@ get_auc <- function(mod) {
 
 ```
 
+**RESULTS** A simple main effects model combining `r coefs_print_reduced`, with good internal discrimination `r get_auc("Reduced model")`, as well as externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")`, and the Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5 %. A web calculator to aid clinical usage was published at `r shiny_url`.
 
-**RESULTS:** The unadjusted cumulative 90-day mortality was `r surv90d` in Sweden and `r njr_surv` in England and Wales. We propose a simple main effects model combining `r coefs_print_reduced`. This model had good discriminatory ability both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`, rendering it superior to traditional models based on the Charlson `r get_auc("Charlson")`, and the Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. Our model was well calibrated for predicted probabilities up to 5 %. A web calculator to aid clinical usage was published at `r shiny_url`.
-  
 **CONCLUSION:** We developed a parsimonious model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions.
+
+
+##### PAGE BREAK
+
+# Summary box
+
+What is already known: 
+
+- Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality.
+- Available diagnosis code-based co-morbidity instruments are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) classification is imprecise.
+
+What this study adds:
+
+- Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. 
+- The presented model, with its accompanying web calculator, could facilitate a shared decision-making between physicians and their patients in need of THA.
+
 
 
 ##### PAGE BREAK
@@ -229,9 +298,12 @@ It should be noted that the risk model does not study THA as an observed interve
 
 Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. We hope that this model, with its accompanying web calculator, will facilitate shared decision-making between physicians and their patients in need of THA. 
 
+
+##### PAGE BREAK
+
 # Contribution of authors
 
-AG and NH initiated the study and managed the ethical review board application in Sweden. AB and JMW conceptualized the external validation and managed the ethical review board application in the UK. 
+AG and NPH initiated the study and managed the ethical review board application in Sweden. AB and JMW conceptualized the external validation and managed the ethical review board application in the UK. 
 EB developed the statistical model. EL and AS performed external validation with data from NJR. AG and EB drafted, and all authors edited and finalized the manuscript.
 
 
@@ -258,20 +330,9 @@ Data is available upon request to the principal investigator.
 
 # Acknowledgement
 
-We would like to thank Szilard Nemes, previous senior statistician at the Swedish Hip Arthroplasty Register, for involvement in planning and interpreting the study.
+We thank the patients and staff of all the hospitals in England, Wales and Northern Ireland who have contributed data to the National Joint Registry. We are grateful to the Healthcare Quality Improvement Partnership (HQIP), the NJR Research Committee and staff at the NJR Centre for facilitating this work. We also thank all contributers to the Swedish Hip Arthroplasty Register (SHAR), especially Szilard Nemes, previous senior statistician, for his involvement in the study. The authors have conformed to the NJR's standard protocol for data access and publication. The views expressed represent those of the authors and do not necessarily reflect those of the National Joint Registry Steering Committee or the Healthcare Quality Improvement Partnership (HQIP) who do not vouch for how the information is presented.
 
 
-# Summary box
-
-What is already known: 
-
-- Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality.
-- Available diagnosis code-based co-morbidity instruments are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) classification is imprecise.
-
-What this study adds:
-
-- Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. 
-- The presented model, with its accompanying web calculator, could facilitate a shared decision-making between physicians and their patients in need of THA.
 
 
 

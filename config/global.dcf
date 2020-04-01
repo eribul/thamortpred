@@ -38,6 +38,7 @@ libraries:
   tableone,
   tidyverse,
   tidymodels,
+  utils,
   zoo
 as_factors:                TRUE
 attach_internal_libraries: FALSE
