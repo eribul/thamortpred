@@ -52,11 +52,11 @@ Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 
 
 # Abstract
 
-**OBJECTIVES** We developed and validated a statistical model to predict 90-day mortality after total hip arthroplasty (THA) due to osteoarthritis.
+**OBJECTIVES** To develop and validate a personalized model to predict 90-day mortality after total hip arthroplasty (THA).
 
-**DESIGN** A multi-national observational registry study with prospective data collection and data linkage. We used a bootstrap ranking procedure together with logistic LASSO-regression, evaluated by the area under the receiver operation characteristics curve (AUC), and calibration belt plots.
+**DESIGN** Prospective multi-national population-based study.
 
-**SETTING** Patients operated `r paste(range(df$P_SurgYear), collapse = " - ")` and identified through the Swedish Hip Arthroplasty Register, including all private and public hospitals in Sweden, for model derivation and internal validation. Similar patients from England and Wales,  recorded in the National Joint Register, for external model validation.
+**SETTING** Swedish Hip Arthroplasty Registry (SHAR) data for model derivation and internal validation, and data from the National Joint Registry (NJR) for England and Wales for external validation.
 
 
 ```{r}
@@ -105,11 +105,11 @@ njr_summary <- sprintf(
 )
 ```
 
-**PARTICIPANTS** `r format(nrow(df), big.mark = ",")` patients with cemented total hip arthroplasty (THA) due to osteoarthritis, and ASA class I-III, for model derivation and internal validation `r shar_summary`. An additional `r format(N_njr$tot, big.mark = ",")` patients for external validation `r njr_summary`.
+**PARTICIPANTS** `r format(nrow(df), big.mark = ",")` patients with cemented total hip arthroplasty (THA) due to osteoarthritis recorded in the SHAR, and `r format(N_njr$tot, big.mark = ",")` similarly selected patients recorded in the NJR.
 
 
+**MAIN OUTCOME MEASURES** Predicted probability of death for any reason within 90 days after primary THA, estimated using a bootstrap ranking procedure together with a least absolute shrinkage and selection operator (LASSO) logistic regression model and evaluated by areas under the curve (AUC).
 
-**MAIN OUTCOME MEASURES** Predicted probability of death due to any reason within 90 days after THA.
 
 ```{r}
 get_auc <- function(mod) {
@@ -125,9 +125,12 @@ get_auc <- function(mod) {
 
 ```
 
-**RESULTS** A simple main effects model combining `r coefs_print_reduced`, with good internal discrimination `r get_auc("Reduced model")`, as well as externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")`, and the Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5 %. A web calculator to aid clinical usage was published at `r shiny_url`.
+**RESULTS** 
 
-**CONCLUSION:** We developed a parsimonious model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions.
+We found a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
+
+
+**CONCLUSION:** We developed a personalized model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions, and a web-based calculator to aid clinical decision-making was published (`r shiny_url`).
 
 
 ##### PAGE BREAK
