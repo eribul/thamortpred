@@ -20,13 +20,13 @@ Uppgift om vilka patienter som eventuellt avled inom 90 dagar efter operation h�
 Det finns olika sorters höftproteser och alternativa orsaker till varför en patient får en höftprotes.
 Vår modell omfattar endast så kallade "totalproteser", det vill säga ledade proteser som delvis ersätter både höftben och ledskål.
 Så kallade halvproteser eller ytersättningsproteser omfattas alltså inte. 
-Vidare har vi endast utgått från patienter med höftledsartros. Detta är den vanligaste orsaken till operation med höftprotes men modellen kan alltså inte användas inför exempelvis operation efter lårbensfraktur.
-Vid insättning av protesen kan ortopeden också välja att använda bencement för stabilare fastsättning. Detta gäller majoriteten av insatta proteser i Sverige. Vi valde därför att titta specifikt på denna grupp. Vi vet i dagsläget inte hur pass väl modellen fungerar för patienter med cementfria proteser.
+Vidare har vi endast utgått från patienter med höftledsartros. Detta är den vanligaste orsaken till operation med höftprotes men modellen kan alltså inte användas inför exempelvis operation efter fraktur av lårbenshalsen.
+Vid insättning av protesen används ofta bencement. Detta gäller majoriteten av insatta proteser i Sverige. Vi valde därför att titta specifikt på denna grupp. Vi vet i dagsläget inte hur pass väl modellen fungerar för patienter med cementfria proteser.
 
 
 # Död inom 90 dagar
 
-Ingen lever för evigt och det är fullt möjligt att patienter med höftprotes dör av orsaker helt oberoende av själva protesoperationen. Vi har dock valt en ganska kort tidsperiod på 90 dagar för att ändå kunna anta att ett visst samband kan finnas.
+Ingen lever för evigt och det är fullt möjligt att patienter med höftprotes dör av orsaker helt oberoende av själva protesoperationen. Vi har dock valt en ganska kort tidsperiod på 90 dagar för att kunna anta att ett visst samband föreligger.
 
 Vi har fokuserat på risken att dö eftersom information om dödsfall är väldigt tillförlitlig tack vare vår svenska folkbokföring.
 Naturligtvis är detta långt ifrån den enda viktiga aspekten att beakta inför en eventuell operation!
@@ -40,7 +40,7 @@ Modellen fungerade nästan lika bra för dessa patienter.
 Vi fann att skattade sannolikheter upp till cirka 5 procent stämde bra överrens med observerade andelar av de patienter som faktiskt dör. 
 Behandling med totalprotes vid artros är dock en elektiv operation som erbjuds relativt friska patienter. 
 Vi har därför ett väldigt begränsat underlag avseende svårt sjuka patietner med hög risk att avlida inom 90 dagar efter operation.
-Därför redovisas inte skattade sannolikheter lägre än 95 procent.
+Därför redovisas inte skattade sannolikheter högre än 5 procent.
 
 Hur tillförlitlig en skattad sannolkhet än är så är det fortfarande bara en sannolikhet baserad på ett litet antal parametrar.
 Hur framtiden verkligen utfaller påverksa förstås också av helt andra faktorer än de vi lyckats inkludera i modellen!
