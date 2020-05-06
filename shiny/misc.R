@@ -47,7 +47,7 @@ pred <- function(input) {
     as_tibble(inp) %>%
     mutate(P_Gender = ifelse(P_Gender == "\u2642", "Man", "Kvinna"))
 
-  (1 - predict(fit_brl_reduced_lean, patdata, "response")) * 100
+  predict(fit_brl_reduced_lean, patdata, "response") * 100
 }
 
 

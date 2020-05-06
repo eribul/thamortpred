@@ -109,27 +109,27 @@ function(input, output, session) {
 # Estimated probability ---------------------------------------------------
 
   make_pred <- reactive(pred(input))
-  nnt       <- reactive(round(1 / (1 -  make_pred() / 100)))
+  nnt       <- reactive(round(1 / (make_pred() / 100)))
 
   output$p_certainty <-
     renderText({
       p <- make_pred()
       pre <- get_text(input$lang, "p_certainty_pre")
-      if      (p > 97) paste(pre, get_text(input$lang, "p_certainty_close"))
-      else if (p > 95) paste(pre, get_text(input$lang, "p_certainty_nottoofarfrom"))
+      if      (p < 3) paste(pre, get_text(input$lang, "p_certainty_close"))
+      else if (p < 5) paste(pre, get_text(input$lang, "p_certainty_nottoofarfrom"))
       else get_text(input$lang, "p_certainty_dono")
     })
 
   output$gauge <-
     renderGauge({
       p <- unname(round(make_pred(), 2))
-      if (p < 95) {
+      if (p > 5) {
         NULL
       } else {
         gauge(
           p,
-          min = 0, max = 100, symbol = " %",
-          gaugeSectors(success = c(95, 100), warning = c(90, 94))
+          min = 0, max = 5, symbol = " %",
+          gaugeSectors(success = c(0, 5), warning = c(5, 10))
         )
       }
     })
@@ -137,16 +137,16 @@ function(input, output, session) {
   # Numbers needed to treat
 
   output$text_nnt_title <- renderText({
-    if (make_pred() < 95) NULL
+    if (make_pred() > 5) NULL
     else get_text(input$lang, "nnt_title")
   })
 
   output$NNT <- renderUI({
-    if (make_pred() < 95) NULL
+    if (make_pred() > 5) NULL
     else HTML(gsub("nnt", nnt(), get_text(input$lang, "nnt")))})
 
   output$nntplot <- renderPlot({
-    if (make_pred() < 95) NULL
+    if (make_pred() > 5) NULL
     else {
     n <- nnt()
     nsqrt <- ceiling(sqrt(n))
