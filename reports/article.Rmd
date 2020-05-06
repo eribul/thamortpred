@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland`*`^1,2,3^, Erik Bülow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5,6^, J. Mark Wilkinson^7^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
+author: Anne Garland, PhD`*`^1,2,3^, Erik B�low, MSc`*`^2,4^, Erik Lenguerrand, MSc^5^, Prof Ashley Blom, PhD^5,6^, Prof J. Mark Wilkinson, PhD^7^, Adrian Sayers, MSc^5^, Prof Ola Rolfson, PhD^2,4^, Prof Nils P. Hailer, PhD^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
 csl: the-lancet.csl
@@ -31,7 +31,9 @@ source("../lib/clean_names.R")
 shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktion-av-90-dagarsmortalitet/p/SkyeTsTFB"
 ```
 
-# Affiliation and contact
+`*` Authors contributed equally.
+
+## Affiliations
 
 1.	Department of Orthopaedics, Institute of Surgical Sciences, Uppsala University Hospital, Uppsala, Sweden
 2.	The Swedish Hip Arthroplasty Register, Gothenburg, Sweden
@@ -41,11 +43,23 @@ shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktio
 6. The National Institute of Health Research Biomedical Research Centre Bristol
 7. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
 
-`*` Authors contributed equally.
+## Addrasses
 
-**Correspondence:** 
-erik.bulow@vgregion.se. 
-Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 45, Sweden  
+AG:
+EB: 
+EL:
+AB:
+JMW:
+AS:
+OR:
+NPH:
+
+
+## Correspondence 
+Erik B�low  
++46 70 08 234 28  
+erik.bulow@vgregion.se  
+Postal: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45, Sweden  
 
 
 ##### PAGE BREAK
