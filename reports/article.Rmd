@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland, PhD`*`^1,2,3^, Erik Bülow, MSc`*`^2,4^, Erik Lenguerrand, MSc^5^, Prof Ashley Blom, PhD^5,6^, Prof J. Mark Wilkinson, PhD^7^, Adrian Sayers, MSc^5^, Prof Ola Rolfson, PhD^2,4^, Prof Nils P. Hailer, PhD^1,2^
+author: Anne Garland, PhD`*`^1,2,3^, Erik B?low, MSc`*`^2,4^, Erik Lenguerrand, MSc^5^, Prof Ashley Blom, PhD^5,6^, Prof J. Mark Wilkinson, PhD^7^, Adrian Sayers, MSc^5^, Prof Ola Rolfson, PhD^2,4^, Prof Nils P. Hailer, PhD^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
 csl: the-lancet.csl
@@ -45,33 +45,21 @@ shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktio
 
 ## Addrasses
 
-AG:
-EB: 
-EL:
-AB:
-JMW:
-AS:
-OR:
-NPH:
+AG: Andersrogatan 5, SE-621 45 Visby, SWEDEN
+EB/OR: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45 Gothenbutg, SWEDEN 
+EL/AB/AS: Musculoskeletal Research Unit, University of Bristol, Beacon House, Queens Road, Bristol, BS8 1QU, UK
+JMW: Department of Oncology and Metabolism, The Medical School, Beech Hill Road, Sheffield, S10 2RX, UK
+NPH: Akademiska sjukhuset, 751 85 Uppsala, SWEDEN
 
 
 ## Correspondence 
-Erik Bülow  
-+46 70 08 234 28  
+Erik B?low  
++ 46 70 08 234 28  
 erik.bulow@vgregion.se  
-Postal: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45, Sweden  
+Postal: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45 Gothenburg, SWEDEN  
 
 
 ##### PAGE BREAK
-
-# Abstract
-
-**OBJECTIVES** To develop and validate a personalized model to predict 90-day mortality after total hip arthroplasty (THA).
-
-**DESIGN** Prospective multi-national population-based study.
-
-**SETTING** Swedish Hip Arthroplasty Registry (SHAR) data for model derivation and internal validation, and data from the National Joint Registry (NJR) for England and Wales for external validation.
-
 
 ```{r}
 shar_tot <- nrow(df)
@@ -117,15 +105,7 @@ njr_summary <- sprintf(
   "(mean [range] age %s; %s females; %s deaths within 90 days)",
   njr_age, njr_sex, njr_deaths
 )
-```
 
-**PARTICIPANTS** `r format(nrow(df), big.mark = ",")` patients with cemented total hip arthroplasty (THA) due to osteoarthritis recorded in the SHAR, and `r format(N_njr$tot, big.mark = ",")` similarly selected patients recorded in the NJR.
-
-
-**MAIN OUTCOME MEASURES** Predicted probability of death for any reason within 90 days after primary THA, estimated using a bootstrap ranking procedure together with a least absolute shrinkage and selection operator (LASSO) logistic regression model and evaluated by areas under the curve (AUC).
-
-
-```{r}
 get_auc <- function(mod) {
   subset(
     brlasso_tbl_auc, 
@@ -139,12 +119,16 @@ get_auc <- function(mod) {
 
 ```
 
-**RESULTS** 
-
-We found a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
 
 
-**CONCLUSION:** We developed a personalized model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions, and a web-based calculator to aid clinical decision-making was published (`r shiny_url`).
+# Abstract
+
+**Background: ** Mortality within 90 days after total hip arthroplasty (THA) due to osteoarthritis is low, but the risk of short-term mortality is nevertheless essential to discuss preoperative between patients and surgeons. We aimed to develop a parsimonious prediction model with internal and external validation of discrimination and calibration, and to compare it to prediction models based on existing co-morbidity indices.
+**Methods: **We performed a prospective multi-national population-based registry study. We included `r format(nrow(df), big.mark = ",")` patients with cemented THA due to osteoarthritis from the Swedish Hip Arthroplasty Register for model derivation and internal validation, as well as `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Register from England and Wales for external model validation. A model was developed using a bootstrap ranking procedure with a least absolute shrinkage and selection operator (LASSO) logistic regression model combined with piecewise linear regression. Discriminative ability was evaluated by the area under the receiver operating characteristics curve (AUC). Calibration belt plots were used for model calibration. 
+**Finindgs: ** We found a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
+**Interpretation: ** We developed a model of 90-day mortality after THA based on age, sex, and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions. We published a web-calculator to aid clinical decision-making (`r shiny_url`).
+**Funding: ** We had no external funding.
+
 
 
 ##### PAGE BREAK
