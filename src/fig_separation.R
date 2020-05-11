@@ -42,11 +42,11 @@ fig_separation_hist <-
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
     limits = c(.0001, .1),
-    labels = scales::percent
+    labels = scales::percent_format(decimal.mark = "\xB7")
   ) +
   scale_y_sqrt(
     breaks = c(0, 100, 500, 1000, 2000, 3000, 4000, 5000), #seq(0, 6000, 1000),
-    labels = function(x) format(x, big.mark = ",")
+    labels = function(x) format(x, big.mark = ",", decimal.mark = "\xB7")
   ) +
   expand_limits(x = 0)
 
@@ -80,7 +80,7 @@ fig_separation_density <-
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
     limits = c(.0001, .1),
-    labels = scales::percent
+    labels = scales::percent_format(decimal.mark = "\xB7")
   ) +
   expand_limits(x = 0)
 

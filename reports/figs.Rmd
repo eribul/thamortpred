@@ -12,7 +12,7 @@ knitr::include_graphics("../graphs/roc.png")
 
 ##### PAGE BREAK
 
-```{r aucci, fig.cap = "Area Under the Receiver Operation Characteristics Curve (AUC) as a measure of predictive discriminative ability with 95 % bootstrap confidence intervals. AUC above 0.7 were considered good. The reduced model was similar to the main model, and not statistically significantly inferior when used with external data from the NJR."}
+```{r aucci, fig.cap = "Area Under the Receiver Operation Characteristics Curve (AUC) as a measure of predictive discriminative ability with 95 % bootstrap confidence intervals. AUC above 0\xB77 were considered good. The reduced model was similar to the main model, and not statistically significantly inferior when used with external data from the NJR."}
 
 knitr::include_graphics("../graphs/auc_ci.png")
 ```
@@ -25,6 +25,6 @@ knitr::include_graphics("../graphs/separation.png")
 
 ##### PAGE BREAK
 
-```{r calibration, fig.cap = "This figure illustrates calibration between observed proportions and predicted probabilities with 95 % confidence intervals. Deviations above the diagonal line indicated that the model under-estimated the probability of death within 90 days. Such deviation was statistically significant for the external validation for predictions below 1.5 %. In contrast, with higher predicted probabilities, the model over-estimated the observed proportions of deaths."}
+```{r calibration, fig.cap = "This figure illustrates calibration between observed proportions and predicted probabilities with 95 % confidence intervals. Deviations above the diagonal line indicated that the model under-estimated the probability of death within 90 days. Such deviation was statistically significant for the external validation for predictions below 1\xB75 %. In contrast, with higher predicted probabilities, the model over-estimated the observed proportions of deaths."}
 knitr::include_graphics("../graphs/calibration.png")
 ```

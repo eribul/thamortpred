@@ -1,7 +1,7 @@
 # Internal data connection used at the Center of Registers
 # Not available and therefore not loaded in Binder
 if (!grepl("thamortpred", Sys.info()[["nodename"]])) {
-  con <- shar_linkage_con()
+#  con <- shar_linkage_con()
 }
 
 # General settings
@@ -12,7 +12,8 @@ future::plan("multiprocess")
 options(
   digits    = 2,
   na.action = "na.fail",
-  scipen    = 999
+  scipen    = 999,
+  OutDec    = "\xB7"
 )
 
 # Add any project specific configuration here.
