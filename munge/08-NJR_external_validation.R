@@ -42,7 +42,7 @@ njr_surv <-
     est = mean(death),
     lo = quantile(death, .025),
     hi = quantile(death, .975),
-    mort = sprintf("%0.2f %% (95 %% CI: %0.2f to %0.2f)", est * 100, lo * 100, hi * 100)
+    mort = sprintf("%0.2f %% (95 %% CI %0.2f - %0.2f)", est * 100, lo * 100, hi * 100)
   ) %>%
   select(mort) %>%
   pluck(1, 1)

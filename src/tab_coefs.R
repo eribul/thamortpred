@@ -10,7 +10,7 @@ brlasso_tbl_coefs <-
     term = clean_names(term),
     term = gsub("_", " ", term),
     math = sprintf("\\text{%s} \\\\ ", term) %>% {gsub("\\text{(intercept)} \\\\ ", "", ., fixed = TRUE)},
-    beta = log(estimate),
+    beta = round(log(estimate), 2),
     `OR 95 % CI` = sprintf("%.2f (%.2f-%.2f)", estimate, conf.low, conf.high),
     p    = pvalue_format(.01)(p.value)
   ) %>%

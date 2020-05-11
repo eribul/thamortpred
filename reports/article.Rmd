@@ -118,7 +118,7 @@ get_auc <- function(mod) {
     "AUC", 
     drop = TRUE
   ) %>% 
-  {sprintf("(AUC = %s", gsub(" (", ", 95 % CI: ",., fixed = TRUE))} %>% 
+  {sprintf("(AUC = %s", gsub(" (", ", 95 % CI ",., fixed = TRUE))} %>% 
   ud()
 }
 
