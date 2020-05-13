@@ -31,6 +31,7 @@ t <-
     variable = clean_names(variable),
     variable = gsub("= 2", "II", variable),
     variable = gsub("= 3", "III", variable),
+    variable = gsub("Heart infarct", "Myocardial infarction", variable)
   )
 
 knitr::kable(
