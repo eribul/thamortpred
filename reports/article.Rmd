@@ -48,7 +48,6 @@ erik.bulow@vgregion.se.
 Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 45, Sweden  
 
 
-##### PAGE BREAK
 
 # Abstract
 
@@ -133,23 +132,7 @@ We found a parsimonious main effects model combining age, sex, American Society 
 **CONCLUSION:** We developed a personalized model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions, and a web-based calculator to aid clinical decision-making was published (`r shiny_url`).
 
 
-##### PAGE BREAK
 
-# Summary box
-
-What is already known: 
-
-- Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality.
-- Available diagnosis code-based co-morbidity instruments are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) classification is imprecise.
-
-What this study adds:
-
-- Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. 
-- The presented model, with its accompanying web calculator, could facilitate a shared decision-making between physicians and their patients in need of THA.
-
-
-
-##### PAGE BREAK
 
 # Introduction
 
@@ -302,7 +285,6 @@ It should be noted that the risk model does not study THA as an observed interve
 Our results indicate that the risk of early postoperative mortality after cemented THA can be pre-operatively assessed by a parsimonious prediction model. We hope that this model, with its accompanying web calculator, will facilitate shared decision-making between physicians and their patients in need of THA. 
 
 
-##### PAGE BREAK
 
 # Contribution of authors
 
@@ -339,7 +321,6 @@ We thank the patients and staff of all the hospitals in England, Wales and North
 
 
 
-##### PAGE BREAK
 
 ```{r, child = "figs.Rmd"}
 ```
@@ -347,6 +328,5 @@ We thank the patients and staff of all the hospitals in England, Wales and North
 ```{r, child = "tabs.Rmd"}
 ```
 
-##### PAGE BREAK
 
 # Bibliography
