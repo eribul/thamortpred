@@ -184,10 +184,7 @@ Each model was used to predict the probability of death within 90 days for patie
 We built an online web calculator available at `r shiny_url` to be used in clinical practice.
 
 We used `r substr(R.version.string, 1, 15)` (R Foundation for Statistical   Computing, Vienna, Austria) with significant packages tidyverse, tidymodels, furrr, pROC and shiny. All R-scripts and necessary configurations (but no personal data) is available at http://doi.org/10.5281/zenodo.3732852. A linked Binder environment is also available for interactive usage.
-
-## Ethical approval
-
-Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (360-13) and by the NJR in the UK (RSC2017/21). Informed consent was not mandatory according to the Swedish patient data law from 2009, and the UK law for pseudonymised data.
+ta law from 2009, and the UK law for pseudonymised data.
 
 # Indirect Patient and Public Involvement
 
@@ -286,34 +283,40 @@ Our results indicate that the risk of early postoperative mortality after cement
 
 
 
-# Contribution of authors
+
+# Declarations
+
+## Ethics approval and consent to participate
+
+Ethical approval for this study was obtained from the Regional Ethical Review Board in Gothenburg (360-13) and by the NJR in the UK (RSC2017/21). Informed consent was not mandatory according to the Swedish patient da
+
+
+## Consent for publication
+
+All athours give consent to publish the article. 
+
+
+## Availability of data and materials
+
+The datasets generated and/or analysed during the current study are not publicly available due to the European general data protection regulation (GDPR) but are available from the corresponding author on reasonable request.
+
+## Competing interests
+
+The authors declare that they have no competing interests.
+
+
+## Funding
+
+Not applicable.
+
+
+# Authors' contributions
 
 AG and NPH initiated the study and managed the ethical review board application in Sweden. AB and JMW conceptualized the external validation and managed the ethical review board application in the UK. 
 EB developed the statistical model. EL and AS performed external validation with data from NJR. AG and EB drafted, and all authors edited and finalized the manuscript.
 
 
-# Exclusive licence
-
-We grant a worldwide licence to the publishers and its licensees in perpetuity, in all forms, formats and media (whether known now or created in the future), to i) publish, reproduce, distribute, display and store the Contribution, ii) translate the Contribution into other languages, create adaptations, reprints, include within collections and create summaries, extracts and/or, abstracts of the Contribution and convert or allow conversion into any format including without limitation audio, iii) create any other derivative work(s) based in whole or part on the on the Contribution, iv) to exploit all subsidiary rights to exploit all subsidiary rights that currently exist or as may exist in the future in the Contribution, v) the inclusion of electronic links from the Contribution to third party material where-ever it may be located; and, vi) licence any third party to do any or all of the above. 
-
-
-# Competing interests statement
-
-All authors have completed the ICMJE uniform disclosure form at www.icmje.org/coi_disclosure.pdf and declare no financial relationships with any organisations that might have an interest in the submitted work in the previous three years, and no other relationships or activities that could appear to have influenced the submitted work.
-
-
-
-# Transparency Statement
-
-NH, the principal investigator of this study, affirms that this is an accurate report with no relevant data or aspects omitted.
-
-
-# Data sharing statement
-
-Data is available upon request to the principal investigator.
-
-
-# Acknowledgement
+# Acknowledgements
 
 We thank the patients and staff of all the hospitals in England, Wales and Northern Ireland who have contributed data to the National Joint Registry. We are grateful to the Healthcare Quality Improvement Partnership (HQIP), the NJR Research Committee and staff at the NJR Centre for facilitating this work. We also thank all contributers to the Swedish Hip Arthroplasty Register (SHAR), especially Szilard Nemes, previous senior statistician, for his involvement in the study. The authors have conformed to the NJR's standard protocol for data access and publication. The views expressed represent those of the authors and do not necessarily reflect those of the National Joint Registry Steering Committee or the Healthcare Quality Improvement Partnership (HQIP) who do not vouch for how the information is presented.
 
