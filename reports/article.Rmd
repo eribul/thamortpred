@@ -44,31 +44,25 @@ shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktio
 `*` Authors contributed equally.
 
 **Correspondence:** 
-erik.bulow@vgregion.se. 
+erik.bulow@gu.se. 
 Postal: Svenska Höftprotesregistret, Registercentrum Västra Götaland, SE-413 45, Sweden  
-
-
-
-# Abstract
-
-**OBJECTIVES** To develop and validate a personalized model to predict 90-day mortality after total hip arthroplasty (THA).
-
-**DESIGN** Prospective multi-national population-based study.
-
-**SETTING** Swedish Hip Arthroplasty Registry (SHAR) data for model derivation and internal validation, and data from the National Joint Registry (NJR) for England and Wales for external validation.
 
 
 ```{r}
 shar_tot <- nrow(df)
 shar_female <- df$P_Sex == "Female"
-age_shar <- sprintf("%.0f [%.0f - %.0f]", mean(df$P_Age), min(df$P_Age), max(df$P_Age))
+
+age_shar <- 
+  sprintf("%.0f [%.0f - %.0f]", mean(df$P_Age), min(df$P_Age), max(df$P_Age))
+
 sex_shar <- 
   sprintf(
     "%.0f %% [%s of %s]", 
     mean(shar_female) * 100, 
-    format(sum(shar_female), big.mark = ","), 
-    format(shar_tot, big.mark = ",")
-)
+    format(sum(shar_female), big.mark = ",", decimal.mark = "\xB7"), 
+    format(shar_tot, big.mark = ",", decimal.mark = "\xB7")
+  )
+
 deaths_shar <- 
   sprintf(
     "%.02f %% [%.0f of %s]", 
@@ -84,10 +78,11 @@ shar_summary <- sprintf(
 
 extr <- function(col, reg) 
   subset(table1_combined_tot, startsWith(what, col), reg, drop = TRUE)
+
 extr_perc <- function(...) 
   gsub("([\\d,]*)( )(\\()(\\d*)(\\.\\d*)(\\))", "\\4 \\% \\[\\1 of", extr(...), perl = TRUE)
-
 njr_age_mean <- as.numeric(gsub("(.*) (.*)", "\\1", extr("Age", "NJR"), perl = TRUE))
+
 # Same range by design (to match Swedish cohort)
 njr_age <- sprintf("%.0f [%.0f - %.0f]", njr_age_mean, min(df$P_Age), max(df$P_Age))
 njr_sex <- sprintf("%s %s]", extr_perc("Sex", "NJR"), format(N_njr$tot, big.mark = ","))
@@ -102,15 +97,6 @@ njr_summary <- sprintf(
   "(mean [range] age %s; %s females; %s deaths within 90 days)",
   njr_age, njr_sex, njr_deaths
 )
-```
-
-**PARTICIPANTS** `r format(nrow(df), big.mark = ",")` patients with cemented total hip arthroplasty (THA) due to osteoarthritis recorded in the SHAR, and `r format(N_njr$tot, big.mark = ",")` similarly selected patients recorded in the NJR.
-
-
-**MAIN OUTCOME MEASURES** Predicted probability of death for any reason within 90 days after primary THA, estimated using a bootstrap ranking procedure together with a least absolute shrinkage and selection operator (LASSO) logistic regression model and evaluated by areas under the curve (AUC).
-
-
-```{r}
 get_auc <- function(mod) {
   subset(
     brlasso_tbl_auc, 
@@ -119,19 +105,24 @@ get_auc <- function(mod) {
     "AUC", 
     drop = TRUE
   ) %>% 
-  {sprintf("(AUC = %s", gsub(" (", ", 95 % CI: ",., fixed = TRUE))}
+  {sprintf("(AUC = %s", gsub(" (", ", 95 % CI ",., fixed = TRUE))}
 }
-
 ```
 
-**RESULTS** 
-
-We found a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
 
 
-**CONCLUSION:** We developed a personalized model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions, and a web-based calculator to aid clinical decision-making was published (`r shiny_url`).
+# Abstract
+
+**Background:** Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality. However, diagnosis code-based instruments such as the Charlson co-morbidity index are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) class is imprecise. We thus developed a simple model to predict 90-day mortality after elective THA.
+
+**Methods:** We performed a prospective multi-national population-based registry study. We included `r format(nrow(df), big.mark = ",")` patients with cemented THA due to osteoarthritis from the Swedish Hip Arthroplasty Register for model derivation and internal validation, as well as `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Register from England and Wales for external model validation. A model was developed using a bootstrap ranking procedure with a least absolute shrinkage and selection operator (LASSO) logistic regression model combined with piecewise linear regression. Discriminative ability was evaluated by the area under the receiver operating characteristics curve (AUC). Calibration belt plots were used for model calibration. 
+
+**Results:** We propose a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
+
+**Conclusions:** We developed a parsimonious model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions. We published a web-calculator to aid clinical decision-making (`r shiny_url`).
 
 
+**Keywords:** total hip arthroplasty, prediction model, orthopaedics, epidemiology, web calculator, validation.
 
 
 # Introduction
