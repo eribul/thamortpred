@@ -37,8 +37,8 @@ all_roc <-
 
 # Figure ------------------------------------------------------------------
 
-fig_roc <-
-  all_roc %>%
+fig_roc <- function(df) {
+  df %>%
   ggplot(aes(1 - specificity, sensitivity, col = Model)) +
   geom_path(size = 1) +
   geom_abline(intercept = 0, slope = 1, color = "grey", linetype = 2) +
@@ -48,10 +48,20 @@ fig_roc <-
     #legend.justification = c(1, 0),
     legend.title = element_blank()
   ) +
-  facet_wrap(~ step) +
+  # facet_wrap(~ step) +
   scale_x_continuous(labels = scales::percent) +
   scale_y_continuous(labels = scales::percent)
-
+}
 
 ggsave("graphs/roc.png", fig_roc, height = 10, width = 15, units = "cm")
 ggsave("graphs/roc.tiff", fig_roc, height = 10, width = 15, units = "cm", dpi = 1200, compression = "lzw")
+
+
+# Separate figs for BJJ
+filter(all_roc, step == "Model derivation") %>%
+  fig_roc()
+ggsave("graphs/roc_derivation.eps", height = 10, width = 15, units = "cm")
+
+filter(all_roc, step == "External validation") %>%
+  fig_roc()
+ggsave("graphs/roc_validation.eps", height = 10, width = 15, units = "cm")

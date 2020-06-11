@@ -37,7 +37,7 @@ fig_separation_hist <-
     axis.text.x = element_text(angle = 30),
     axis.ticks = element_line(size = 1)
   ) +
-  xlab("") +
+  xlab(expression(paste("Predicted probability of death [", log[10], "]"))) +
   ylab(expression(paste(sqrt(n)))) +
   scale_x_log10(
     breaks = c(.01, .1, 1, 3, 6, 10) / 100,
@@ -91,3 +91,8 @@ figs <- gridExtra::grid.arrange(fig_separation_hist, fig_separation_density, nro
 
 ggsave("graphs/separation.png", figs, height = 15, width = 12, units = "cm")
 ggsave("graphs/separation.tiff", figs, height = 15, width = 12, units = "cm", dpi = 1200, compression = "lzw")
+
+
+# Separate figs for BJJ
+ggsave("graphs/separation_hist.tiff", fig_separation_hist, height = 10, width = 10, units = "cm", dpi = 1200, compression = "lzw")
+ggsave("graphs/separation_dens.tiff", fig_separation_density, height = 10, width = 10, units = "cm", dpi = 1200, compression = "lzw")

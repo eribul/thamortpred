@@ -26,3 +26,7 @@ gr <- combine_graphs(flowchart_shar, flowchart_njr)
 tt <- "SHAR (model development)                                        NJR (external validation)"
 
 export_graph(gr, "graphs/flowchart.png", "png", width = 1024, title = tt)
+
+# Separate figs for BJJ:
+export_graph(flowchart_shar, "graphs/flowchart_shar.ps", "ps", width = 1024)
+export_graph(flowchart_njr, "graphs/flowchart_njr.ps", "ps", width = 1024)

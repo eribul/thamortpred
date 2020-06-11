@@ -142,20 +142,20 @@ We aimed to develop a parsimonious prediction model of 90-day postoperative mort
 
 # Participants and Methods
 
-We used data from the Swedish Hip Arthroplasty Register (SHAR) for model derivation and internal validation of discrimination and calibration. The best model was then validated externally on patients from England and Wales recorded in the National Joint Registry for England, Wales, Northern Ireland, the Isle of Man and the States of Guernsey (NJR). We focused on patients with cemented THA due to osteoarthritis. Cementation is the most common fixation technique used in Sweden, thus used as inclusion criteria to decrease heterogeneity. Only the last operated hip was accounted for in patients with bilateral THA, since those are more likely to resemble patients with unilateral THA (Figure \@ref(fig:flowchart)).[@Bulow2020]
+We used data from the Swedish Hip Arthroplasty Register (SHAR) for model derivation and internal validation of discrimination and calibration. The best model was then validated externally on patients from England and Wales recorded in the National Joint Registry for England, Wales, Northern Ireland, the Isle of Man and the States of Guernsey (NJR). We focused on patients with cemented THA due to osteoarthritis. Cementation is the most common fixation technique used in Sweden, thus used as inclusion criteria to decrease heterogeneity. Only the last operated hip was accounted for in patients with bilateral THA, since those are more likely to resemble patients with unilateral THA (Figure \@ref(fig:flowchartshar)).[@Bulow2020]
 
 
 ## Derivation cohort (Sweden)
 
 The patient cohort was identified from the SHAR. The inclusion period started 2008 since the American Society for Anesthesiologists (ASA) class and Body Mass Index (BMI) were systematically recorded from then on. The observation period ended 2015, since we had access to co-morbidity from the national patient register up to this point. Deterministic data linkage was performed by 10-digit identity numbers, assigned to all Swedish residents at birth or immigration. We used data from a variety of sources, as previously described.[@Cnudde2016] Age, sex, BMI, ASA class, type of hospital (university/county/rural/private) and year of surgery were collected from the SHAR, with a completeness of 96-98 %.[@Karrholm2018] Data on educational level (low = up to 9 years/middle = 10-12 years/high = at least 12 years) was recorded for more than 98 % of the population with 85 % accuracy in the longitudinal integration database for health insurance and labor market studies (LISA) from Statistics Sweden.[@Ludvigsson2019] Civil status (married/un-married/divorced/widow[er]), were also collected from LISA. The Swedish national patient register (NPR) was used to assess co-morbidity during the year preceding index surgery. This register contains all relevant diagnoses coded by ICD-10, as well as dates of admission and discharge for in- and outpatient episodes in all private and public hospitals. Completeness for NPR is above 99 % and 85-95 % of all diagnostic codes are valid.[@Ludvigsson2011] Death dates were linked from the national population register.
 
-Patients with missing information on BMI or a measurement above 50 were excluded, as were patients with missing information on ASA class or class IV and above, as well as patients with unknown educational level or type of hospital. `r format(nrow(df), big.mark = ",")` patients (mean age `r mean(df$P_Age)` years, range `r paste(range(df$P_Age), collapse = " - ")` and `r round(mean(df$P_Sex == "Female") * 100)` % females) were included (Figure \@ref(fig:flowchart) left panel).
+Patients with missing information on BMI or a measurement above 50 were excluded, as were patients with missing information on ASA class or class IV and above, as well as patients with unknown educational level or type of hospital. `r format(nrow(df), big.mark = ",")` patients (mean age `r mean(df$P_Age)` years, range `r paste(range(df$P_Age), collapse = " - ")` and `r round(mean(df$P_Sex == "Female") * 100)` % females) were included (Figure \@ref(fig:flowchartshar)).
 
 
 ## External validation cohort (England and Wales)
 
 Similar inclusion criteria were applied to the validation cohort from England and Wales. We excluded no patients based on missing information on BMI, educational level, or civil status however, since those variables were not used in the final model. 
-`r format(N_njr$tot, big.mark = ",")` patients were included (Figure \@ref(fig:flowchart) right panel).
+`r format(N_njr$tot, big.mark = ",")` patients were included (Figure \@ref(fig:flowchartnjr)).
 The validation cohort was created by linking NJR data to the secondary uses service database from the National Health Service (NHS). This database includes co-morbidity recorded in the admitted patient care module of the hospital episode statistics (HES) database in England, and the patient episode database for Wales.[@Thorn2016] Out-patient deaths were linked from the office of national statistics. Data linkage used NHS-numbers, as well as patient name, age, sex and address.[@Sayers2016] 
 
 
@@ -221,9 +221,9 @@ half_paran <- function(x)
 ```
 
 
-The main and reduced models were no different regarding discriminative power `r sprintf("%s versus %s", gsub(")", "", get_auc("Main model"), fixed = TRUE), gsub("(", "", get_auc("Reduced model"), fixed = TRUE))`. We therefore considered the reduced model as superior due to its simplicity. Traditional models performed poorly with 95 % confidence intervals not above 0.7: The Charlson co-morbitiy index had an AUC of `r half_paran("Charlson")` and the Elixhauser co-morbidity an AUC of `r gsub("\\)", ";", half_paran("Elixhauser"))` Figure \@ref(fig:rocs) left panel and Figure \@ref(fig:aucci)). 
+The main and reduced models were no different regarding discriminative power `r sprintf("%s versus %s", gsub(")", "", get_auc("Main model"), fixed = TRUE), gsub("(", "", get_auc("Reduced model"), fixed = TRUE))`. We therefore considered the reduced model as superior due to its simplicity. Traditional models performed poorly with 95 % confidence intervals not above 0.7: The Charlson co-morbitiy index had an AUC of `r half_paran("Charlson")` and the Elixhauser co-morbidity an AUC of `r gsub("\\)", ";", half_paran("Elixhauser"))` Figure \@ref(fig:rocvalidation) and Figure \@ref(fig:aucci)). 
 
-The ability of the reduced model to estimate probabilities of death within 90 days is further illustrated in Figure \@ref(fig:sep). Model calibration was good for estimated probabilities up to 3 % and acceptable up to 5 %, although with predicted probabilities usually higher than observed proportions (Figure \@ref(fig:calibration)). 
+The ability of the reduced model to estimate probabilities of death within 90 days is further illustrated in Figure \@ref(fig:separationhist) and \@ref(fig:separationdensity). Model calibration was good for estimated probabilities up to 3 % and acceptable up to 5 %, although with predicted probabilities usually higher than observed proportions (Figure \@ref(fig:calibration)). 
 
 Estimated model coefficients and corresponding odds ratios for the reduced model are presented in Table \@ref(tab:brlreduced).
 
@@ -232,7 +232,7 @@ Omitting cancer from the reduced model did not affect the AUC or calibration for
 
 ## External validation
 
-The discriminative ability for the reduced model was not statistically significantly different when applied to the external validation cohort `r get_auc("NJR (Reduced model)")` compared to the internal validation `r get_auc("Reduced model")` (Figure \@ref(fig:rocs) right panel and Figure \@ref(fig:aucci)). Calibration of the re-calibrated model was slightly inferior compared to the internal calibration. Predicted probabilities between 0.5 % and 1.5 % were lower than observed proportions and the estimated 95 % confidence bands were wider. Over-all, calibration was good for predicted probabilities below 3 % and acceptable below 5 % (Figure \@ref(fig:calibration)).
+The discriminative ability for the reduced model was not statistically significantly different when applied to the external validation cohort `r get_auc("NJR (Reduced model)")` compared to the internal validation `r get_auc("Reduced model")` (Figure \@ref(fig:rocvalidation) and Figure \@ref(fig:aucci)). Calibration of the re-calibrated model was slightly inferior compared to the internal calibration. Predicted probabilities between 0.5 % and 1.5 % were lower than observed proportions and the estimated 95 % confidence bands were wider. Over-all, calibration was good for predicted probabilities below 3 % and acceptable below 5 % (Figure \@ref(fig:calibration)).
 
 
 

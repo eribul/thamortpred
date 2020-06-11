@@ -63,3 +63,4 @@ options(digits = digs$digits)
 
 ggsave("graphs/auc_ci.png", p, width = 10, height = 8, units = "cm")
 ggsave("graphs/auc_ci.tiff", p, width = 10, height = 8, units = "cm", dpi = 1200, compression = "lzw")
+ggsave("graphs/auc_ci.eps", p, width = 10, height = 8, units = "cm")
