@@ -17,8 +17,7 @@ tab_categorization %>%
 ```{r tab1}
 table1_combined_tot %>% 
   mutate(what = gsub("Heart infarct", "Myocardial infarction", what)) %>% 
-  mutate_all(~gsub("\\.", "\xB7", .)) %>% 
-  knitr::kable(
+knitr::kable(
     caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anesthesiologists classification. CNS = central nervous system.")
 ```
 
@@ -43,7 +42,6 @@ knitr::kable(
 
 ```{r brlreduced}
 brlasso_tbl_coefs %>% 
-   mutate_all(~gsub("\\.", "\xB7", .)) %>% 
   select(-math) %>%
   mutate(
     term = gsub("= 2", "II", term),

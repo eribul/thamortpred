@@ -12,8 +12,7 @@ future::plan("multiprocess")
 options(
   digits    = 2,
   na.action = "na.fail",
-  scipen    = 999,
-  OutDec    = "\xB7"
+  scipen    = 999
 )
 
 # Add any project specific configuration here.
