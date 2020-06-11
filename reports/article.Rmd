@@ -125,16 +125,20 @@ get_auc <- function(mod) {
 
 # Abstract
 
-**Background: ** Shared individualized decision making prior to total hip arthroplasty (THA) includes discussions of the risk of mortality. However, diagnosis code-based instruments such as the Charlson co-morbidity index are impossible to use in clinical practice, and the American Society for Anesthesiologists (ASA) class is imprecise. We thus developed a simple model to predict 90-day mortality after elective THA.
+**Aims: ** To develop and externally validate a parsimonious statistical prediction model of 90-day mortality after elective Total Hip Arthroplasty (THA), and to provide a web-calculator for clinical usage.
 
-**Methods: **We performed a prospective multi-national population-based registry study. We included `r format(nrow(df), big.mark = ",")` patients with cemented THA due to osteoarthritis from the Swedish Hip Arthroplasty Register for model derivation and internal validation, as well as `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Register from England and Wales for external model validation. A model was developed using a bootstrap ranking procedure with a least absolute shrinkage and selection operator (LASSO) logistic regression model combined with piecewise linear regression. Discriminative ability was evaluated by the area under the receiver operating characteristics curve (AUC). Calibration belt plots were used for model calibration. 
+**Patients and methods: ** We included `r format(nrow(df), big.mark = ",")` patients with cemented THA due to osteoarthritis from the Swedish Hip Arthroplasty Register for model derivation and internal validation, as well as `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Register from England and Wales for external model validation. A model was developed using a bootstrap ranking procedure with a least absolute shrinkage and selection operator (LASSO) logistic regression model combined with piecewise linear regression. Discriminative ability was evaluated by the area under the receiver operating characteristics curve (AUC). Calibration belt plots were used for model calibration. 
 
-**Findings: ** We propose a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
+**Results: ** We propose a parsimonious main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity. The model had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
 
-**Interpretation: ** We developed a parsimonious model to predict 90-day mortality after elective cemented THA based on easily available demographic data and the presence of four defined co-morbidities. This may facilitate individualized risk assessment prior to one of the most common surgical interventions. We published a web-calculator to aid clinical decision-making (`r shiny_url`).
+**Concusion: ** We developed a parsimonious model which may facilitate individualized risk assessment prior to one of the most common surgical interventions. We published a web-calculator to aid clinical decision-making (`r shiny_url`).
 
-**Funding: ** We had no external funding.
 
+**Clinical relevance:**
+
+- We developed a parsimonious model for risk assessment of 90-day mortality after elective THA. 
+- The model considers age, sex, ASA class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity.
+- We published an on-line web-calculator (`r shiny_url`).
 
 ##### PAGE BREAK
 
