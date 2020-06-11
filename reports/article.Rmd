@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland`*`^1,2,3^, Erik Bulow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5,6^, J. Mark Wilkinson^7^, Adrian Sayers^5^, Ola Rolfson2,4^, Nils P. Hailer^1,2^
+author: Anne Garland`*`^1,2,3^, Erik Bulow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5,6^, J. Mark Wilkinson^7^, Adrian Sayers^5^, Ola Rolfson^2,4^, Nils P. Hailer^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
 csl: bjj.csl
@@ -194,9 +194,7 @@ There is a patient representative at SHAR to ensure that the patients' interests
 
 ## Study participants
 
-`r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` of the patients from SHAR died within 90 days and no one was censored before that. The unadjusted risk of 90-day mortality was therefore `r surv90d`. Further characteristics of the study population are presented in Table \@ref(tab:tab1). `r round(mean(df$CCI_index_quan_original != 0) * 100)` % and `r round(mean(df$ECI_index_sum_all  != 0) * 100)` % of the Swedish patients had at least one pre-surgery co-morbidity according to Charlson and Elixhauser. The proportion of patients with ASA class III was `r round(mean(df$P_ASA == 3) * 100)` %.
-
-Patients from NJR had an unadjusted risk of 90 day mortality of `r njr_surv`, which was higher compared to the derivation cohort from Sweden.
+`r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` of the patients from SHAR died within 90 days and no one was censored before that. The unadjusted risk of 90-day mortality was therefore `r surv90d`. Further characteristics of the study population are presented in Table \@ref(tab:tab1). Patients from NJR had an unadjusted risk of 90 day mortality of `r njr_surv`, which was higher compared to the derivation cohort from Sweden.
 
 
 ## Model development and internal validation
@@ -234,7 +232,7 @@ Omitting cancer from the reduced model did not affect the AUC or calibration for
 
 ## External validation
 
-The discriminative ability for the reduced model was not statistically significantly different when applied to the external validation cohort `r get_auc("NJR (Reduced model)")` compared to the internal validation `r get_auc("Reduced model")` (Figure \@ref(fig:rocs) right panel and Figure \@ref(fig:aucci)). Calibration of the re-calibrated model was slightly inferior compared to the internal calibration. Predicted probabilities between `r 0.5` % and `r 1.5` % were lower than observed proportions and the estimated 95 % confidence bands were wider. Over-all, calibration was good for predicted probabilities below 3 % and acceptable below 5 % (Figure \@ref(fig:calibration)).
+The discriminative ability for the reduced model was not statistically significantly different when applied to the external validation cohort `r get_auc("NJR (Reduced model)")` compared to the internal validation `r get_auc("Reduced model")` (Figure \@ref(fig:rocs) right panel and Figure \@ref(fig:aucci)). Calibration of the re-calibrated model was slightly inferior compared to the internal calibration. Predicted probabilities between 0.5 % and 1.5 % were lower than observed proportions and the estimated 95 % confidence bands were wider. Over-all, calibration was good for predicted probabilities below 3 % and acceptable below 5 % (Figure \@ref(fig:calibration)).
 
 
 
