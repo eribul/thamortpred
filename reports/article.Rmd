@@ -3,7 +3,7 @@ title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplifie
 author: Anne Garland, PhD`*`^1,2,3^, Erik Bulow, MSc`*`^2,4^, Erik Lenguerrand, MSc^5^, Prof Ashley Blom, PhD^5,6^, Prof J. Mark Wilkinson, PhD^7^, Adrian Sayers, MSc^5^, Prof Ola Rolfson, PhD^2,4^, Prof Nils P. Hailer, MD^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
-csl: the-lancet.csl
+csl: bjj.csl
 output: 
   bookdown::word_document2:
     reference_docx: article.dotx
@@ -290,7 +290,7 @@ Our model could be used in clinical practice, either by the formula above, or by
 
 Variables in our model were chosen based on statistical properties and not due to clinical relevance. Variables and estimated coefficients should therefore not be assigned any exact epidemiological and/or causal meaning per se. 
 
-Age and sex are well-known predictors of remaining life span, but it is less obvious that this relation must be linear. We used restricted cubic splines to allow a more flexible relation, but found no difference in AUC compared to simpler main effect models. ASA class III has the largest estimated coefficient among all predictors, indicating large relative importance. This is clinically reasonable since a label of "severe systemic disease" should be based on a relevant patient assessment prior to surgery. ASA class is nevertheless known to have a high degree of internal variability.[@Haynes1995] It has been compared to the Charlson co-morbidity index, but not with respect to mortality after THA. Patients with ASA class IV-VI were excluded since those categories describe severe disease, moribund and brain-dead individuals. We suspect that patients with such conditions might have been misclassified.
+Age and sex are well-known predictors of remaining life span, but it is less obvious that this relation must be linear. We used restricted cubic splines to allow a more flexible relation, but found no difference in AUC compared to simpler main effect models. ASA class III has the largest estimated coefficient among all predictors, indicating large relative importance. This is clinically reasonable since a label of "severe systemic disease" should be based on a relevant patient assessment prior to surgery. ASA class is nevertheless known to have a moderate or high degree of internal variability.[@Sankar2004] It has been compared to the Charlson co-morbidity index, but not with respect to mortality after THA. Patients with ASA class IV-VI were excluded since those categories describe severe disease, moribund and brain-dead individuals. We suspect that patients with such conditions might have been misclassified.
 
 Obesity was not statistically significant by itself ($p =$ `r subset(brlasso_tbl_coefs, term == "Obesity", "p", drop = TRUE) %>% ud()`) but was still relevant as a predictor due to unobserved heterogeneity. We noted that the proportion of patients registered in the SHAR with BMI above 30, the WHO definition of obesity, was much higher (`r round(mean(df$P_BMI > 30, na.rm = TRUE) * 100)` %) than the proportion of patients with a diagnosis code for obesity (ICD-10 = E66) recorded in the Swedish national patient register (`r round(mean(df$c_obesity) * 100, 1)` %). We believe this might be due to the fact that BMI is systematically recorded in the SHAR, but the diagnosis of obesity might not have been made during previous contacts with the healthcare system.
 
