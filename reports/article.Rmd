@@ -136,30 +136,6 @@ get_auc <- function(mod) {
 **Funding: ** We had no external funding.
 
 
-
-##### PAGE BREAK
-
-# Research in context
-
-
-## Evidence before this study
-
-We performed an initial ad hoc literature review based on Google Scholar, personal recommendations and relevant references. We then used 2Dsearch (https://2dsearch.com accessed 2020-05-11) to build a search query for a more systematic review: `(femur OR hip OR bone OR bones OR osteoarthritis OR rheumatoid OR rheumatism) AND (prognostic OR prediction OR forecast OR forecasting OR forecasts OR predict OR predicted OR predicting OR predictions OR predicts OR projections) AND (death OR mortality OR deaths OR survival OR survive) AND (replacement OR replaced OR replacements OR arthroplasty OR "Arthroplasty, Replacement" OR prosthesis OR implant OR prostheses OR prosthetic OR prosthetics) AND (calibration OR calibrate OR calibrated OR validation OR validate OR validated OR validating OR validity OR precision OR accuracy OR accurate OR precise OR "external validation" OR evaluation OR verification OR internal) AND (build OR building OR construct OR create OR develop OR establish OR train OR derive OR derivation) AND (models OR modelling OR "statistical model" OR modeling) AND (comorbidity OR comorbid OR co-morbid OR co-occurring OR diagnoses OR co-morbidity OR Elixhauser OR Charlson OR "comorbidity index" OR "comorbidity score" OR "Rx Risk V" OR ASA)`. We used no time or language constraints and used this query in PubMed (https://pubmed.gov accessed 2020-05-11), and identified 143 articles, whereof one was a duplicate. We performed an article screening with Rayyan (https://rayyan.qcri.org/ accessed 2020-05-12). 131 articles were excluded based on titles, and an additional 6 after reading the abstracts. 5 articles remained, whereof 3 were already considered during the ad hoc review process. Research on cadavers, canines, and patients with diagnoses other than elective hip disorders (including hip fractures) were excluded during the screening process, as were prediction models with outcomes other than mortality. In addition, we used Open Grey (https://opengrey.eu accessed 2020-05-12) with the query above, as well as a simpler query (`hip AND prediction`). We found 9 items, whereof none was considered relevant. The same queries were used with Epistemonikos (https://epistemonikos.org accessed 2020-05-12). No items were found using the longer query, but 33 systematic reviews based on the shorter. 30 where excluded after title screening, and the remaining 3 after screening of abstracts.
-
-In summary, several prediction models have been developed for short-term mortality in patients operated with total hip arthroplasty (THA). Most of them are based on small sample sizes, make use of too elaborate predictors based on data that are unavailable in a clinical setting, only consider in-hospital deaths, are inadequately internally or externally validated or not validated at all, or have no national population coverage. Only few model descriptions are accompanied by a practical tool for use in clinical practice (often only nomograms or a mathematical formula are supplied). Some relevant models are further described in the main text. Meta-analysis is most relevant for pooling individual effect estimates or measures of predictive power for a model validated on different cohorts. Hence, no relevant meta-analysis was applicable to our study.
-
-
-## Added value of this study
-
-Our study is the first to develop and externally validate a parsimonious prediction model for early mortality after THA based on two European cohorts, and to simultaneously provide a simple web-calculator for use in clinical practice.
-
-
-## Implications of all the available evidence
-
-Prediction models must consider all aspects of the relevant cohorts, including different health care systems, population demographics, and treatment traditions. Our tool was derived on a Swedish cohort and then validated on a similar cohort from England and Wales. We believe that the model might have broader clinical relevance and is suitable for clinical usage.
-
-
-
 ##### PAGE BREAK
 
 # Introduction
