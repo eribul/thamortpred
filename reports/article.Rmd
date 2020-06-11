@@ -1,6 +1,6 @@
 ---
 title: "Prediction of 90-day mortality after Total Hip Arthroplasty: a simplified and externally validated model based on observational registry data from Sweden, England and Wales"
-author: Anne Garland, PhD`*`^1,2,3^, Erik Bulow, MSc`*`^2,4^, Erik Lenguerrand, MSc^5^, Prof Ashley Blom, PhD^5,6^, Prof J. Mark Wilkinson, PhD^7^, Adrian Sayers, MSc^5^, Prof Ola Rolfson, PhD^2,4^, Prof Nils P. Hailer, MD^1,2^
+author: Anne Garland`*`^1,2,3^, Erik Bulow`*`^2,4^, Erik Lenguerrand^5^, Ashley Blom^5,6^, J. Mark Wilkinson^7^, Adrian Sayers^5^, Ola Rolfson2,4^, Nils P. Hailer^1,2^
 date: '`r Sys.Date()`'
 bibliography: H:/zotero_lib.bib
 csl: bjj.csl
@@ -42,15 +42,6 @@ shiny_url <- "https://shpr.registercentrum.se/om-registret-1/forskning/prediktio
 5. Translational Health Sciences, Bristol Medical School, University of Bristol, UK.
 6. The National Institute of Health Research Biomedical Research Centre Bristol
 7. Department of Oncology and Metabolism, University of Sheffield, Sheffield, UK.
-
-## Addresses
-
-- AG: Andersrogatan 5, SE-621 45 Visby, SWEDEN
-- EB/OR: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45 Gothenbutg, SWEDEN
-- EL/AB/AS: Musculoskeletal Research Unit, University of Bristol, Beacon House, Queens Road, Bristol, BS8 1QU, UK
-- JMW: Department of Oncology and Metabolism, The Medical School, Beech Hill Road, Sheffield, S10 2RX, UK
-- NPH: Akademiska sjukhuset, 751 85 Uppsala, SWEDEN  
-
 
 ## Correspondence 
 Erik Bulow. + 46 70 08 234 28. erik.bulow@vgregion.se. Postal: Svenska Hoftprotesregistret, Registercentrum Vastra Gotaland, SE-413 45 Gothenburg, SWEDEN  
@@ -145,7 +136,7 @@ Co-morbidity is associated with a shorter remaining life span, but the Charlson 
 
 Pre-operative co-morbidity data have been used to develop clinically applicable prediction models for early mortality and adverse events such as surgical site infection in the context of THA surgery.[@Bozic2013a; @Bozic2013b; @Harris2018; @Harris2018a; @Inacio2016; @Price2019; @Harris2019] The first prediction model based on a European cohort was the patient decision support tool for joint replacement in the UK (https://jointcalc.shef.ac.uk/). However, it remains unclear to what level the depth of co-morbidity characterization influences the accuracy of  mortality prediction models.
 
-Here we aimed to develop a parsimonious prediction model of 90-day postoperative mortality after THA with internal and external validation of discrimination and calibration, and to compare this to the accuracy of prediction models based on existing co-morbidity measures.[@Manning2016]
+We aimed to develop a parsimonious prediction model of 90-day postoperative mortality after THA with internal and external validation of discrimination and calibration, and to compare this to the accuracy of prediction models based on existing co-morbidity measures.[@Manning2016]
 
 
 
