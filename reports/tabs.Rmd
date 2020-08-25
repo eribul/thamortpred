@@ -1,5 +1,7 @@
 ##### PAGE BREAK
 
+(ref:comorbidity) Categorization of comorbidities based on diagnostic groups according to the Charlson and Elixhauser comorbidity indices. ~~Each sub-condition was firsdt classified based on data from the Swedish National patient register and from the Hospital Episodes statistics registry in England and Wales, coded by the International classification of diseases veriosn 10 (ICD-10), with categorization defined in table 1 and 2 from Quan et al.[Quan2005]~~. (CNS = central nervous system.)
+
 ```{r tabcategorization}
 tab_categorization %>%
   ungroup() %>% 
@@ -8,7 +10,7 @@ tab_categorization %>%
       gsub("Heart infarct", "Myocardial infarction", `Comorbidities by groups`)
   ) %>% 
   knitr::kable(
-    caption = "Categorization of co-morbidities based on diagnostic groups according to Charlson and Elixhauser. (CNS = central nervous system.)")
+    caption = "(ref:comorbidity)")
 
 ```
 
