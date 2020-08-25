@@ -1,7 +1,7 @@
 # Add important variables to data
 
-df <-
-  df_shpr %>%
+prepare_df <- function(df) {
+  df %>%
   mutate_if(is.logical, coalesce, FALSE) %>%
   mutate_at(vars(contains("index")), coalesce, 0) %>%
   mutate(
@@ -44,8 +44,8 @@ df <-
   select(
     -P_AcetCupCemMix,
     -P_FemStemCemMix,
-    -LopNr,
-    -P_Side,
+  #  -LopNr,
+  #  -P_Side,
     -opnr,
     -DateOfDeath,
     -P_SurgDate,
@@ -59,4 +59,7 @@ df <-
   # Shorter names
   rename_all(~ gsub("charlson_icd10", "CCI", .)) %>%
   rename_all(~ gsub("elix_icd10", "ECI", .))
+}
 
+df <- prepare_df(df_shpr) %>% select(-LopNr, -P_Side)
+df_ignore_fixation <- prepare_df(df_shpr_ignore_fixation)

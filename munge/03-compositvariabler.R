@@ -4,6 +4,7 @@
 # Fel i coder-paketet döpte "malignancy" till "malingnancy"
 # Ska funka korrekt med senaste coder-version men vill inte köra om just nu!
 df <- rename(df, CCI_malignancy = CCI_malingnancy)
+df_ignore_fixation <- rename(df_ignore_fixation, CCI_malignancy = CCI_malingnancy)
 
 
 # Make mutate statments from Excel-file -----------------------------------
@@ -29,11 +30,13 @@ cache("categorization")
 
 # Do it!
 c_cols <- bind_cols(pmap(categorization, ~transmute(df, !!.x := !!.y)))
+c_cols_ignore_fixation <-
+  bind_cols(pmap(categorization, ~transmute(df_ignore_fixation, !!.x := !!.y)))
 
 
 # Combine some existing columns with new ones --------------------------------
 
-df <-
+comb <- function(df, c_cols) {
   df %>%
   select(
     everything(),
@@ -42,4 +45,11 @@ df <-
   ) %>%
   bind_cols(c_cols)
 
+}
+
+df <- comb(df, c_cols)
 cache("df")
+
+df_ignore_fixation <- comb(df_ignore_fixation, c_cols_ignore_fixation)
+cache("df_ignore_fixation")
+
