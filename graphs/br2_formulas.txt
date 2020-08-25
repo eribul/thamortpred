@@ -1,0 +1,8 @@
+Formler som används i br2.svg
+klistras in här: https://www.codecogs.com/latex/eqneditor.php
+fil exporteras som svg 20pt
+
+3 a: \Vert D(y, X\beta))\Vert_2^2 +
+  b: + \lambda \Vert \beta\Vert_1
+4:   \hat \beta_j = \frac{1}{N}\sum_{l = 1}^{100} \vert \hat \beta_l \vert  
+6:   \{\hat \beta_{j_1}, \ldots,  \hat \beta_{j_l}\}
