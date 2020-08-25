@@ -12,7 +12,7 @@ people <-
         P_ASA             = factor(1),
         c_obesity         = FALSE,
         P_Gender          = "Kvinna",
-        P_Age             = min(df$P_Age)
+        P_Age             = 57
       ),
 
     healthy_female =
@@ -45,7 +45,7 @@ people <-
         P_ASA             = factor(3),
         c_obesity         = FALSE,
         P_Gender          = "Man",
-        P_Age             = max(df$P_Age)
+        P_Age             = 95
       ),
     .id = "id"
   ) %>%

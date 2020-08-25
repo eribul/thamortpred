@@ -207,7 +207,7 @@ Ethical approval for this study was obtained from the Regional Ethical Review Bo
 
 ## Study participants
 
-`r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` of the patients from SHAR died within 90 days (`r surv90d` according to Kaplan--Meier) and no one was censored before that. Patients from NJR had an unadjusted risk of 90 day mortality of `r njr_surv`. Further cohort characteristics are presented in Table \@ref(tab:tab1).
+`r with(df, sprintf("%d (%.2f %%)", sum(death90), mean(death90) * 100))` of the patients from SHAR died within 90 days (`r surv90d` according to Kaplan--Meier) and no one was censored before that. Patients from NJR had an unadjusted risk of 90 day mortality of `r njr_surv`. ~~The median age of patients who died within 90 days were `r age_median` years (range `r age_range`) with distribution in Table \@ref(tab:agedist).~~ Further cohort characteristics are presented in Table \@ref(tab:tab1).
 
 
 ## Model development and internal validation
@@ -248,7 +248,7 @@ The discriminative ability for the reduced model was not statistically significa
 # Discussion
 
 We found that a multivariable main effects logistic regression model with `r coefs_print_reduced` was better at predicting death within 90 days after THA than traditional models based on the Charlson or Elixhauser co-morbidity indices. The resulting model predicted the probability of death within 90 days as: $\hat p = 1 / [1 +\exp(-\hat \beta x)]$ where $\hat \beta$ is the vector of estimated coefficients (including intercept) presented in table \@ref(tab:brlreduced).
-This formula is considered valid for patients aged `r paste(range(df$P_Age), collapse = "--")` years and for predicted probabilities up to 5 %.
+This formula is considered valid for patients aged ~~`r age_range`~~ years and for predicted probabilities up to 5 %.
 
 ```{r}
 get_risk <- function(who) people[people$id == who, "p", drop = TRUE]
@@ -257,7 +257,7 @@ get_risk <- function(who) people[people$id == who, "p", drop = TRUE]
 
 ## Clinical usage
 
-Our model could be used in clinical practice, either by the formula, or by the web calculator (`r shiny_url`). A `r min(df$P_Age)`-year-old woman with ASA class I and none of the important co-morbidities would have a `r get_risk("baseline")` risk to die within 90 days of surgery. A woman, `r quantile(df$P_Age, .25)` years old, would have an elevated risk of `r get_risk("healthy_female")`. A `r max(df$P_Age)`-year-old man with ASA class III and cancer, would have a risk of `r get_risk("sickest_man")`. Note, however, that covariate patterns with observed probabilities above 5 % were rare (`r mean(pred_probs > 5) * 100` %, n = `r sum(pred_probs > 5)`). Risks above 5 % are therefore subject to extrapolation. The true proportions are likely lower (as indicated by Figure \@ref(fig:calibration)). Some risk calculators ignore this problem,[@Bozic2013a; @Harris2019] but we think this should be acknowledged.
+Our model could be used in clinical practice, either by the formula, or by the web calculator (`r shiny_url`). A ~~`r substr(age_range, 1, 2)`~~-year-old woman with ASA class I and none of the important co-morbidities would have a ~~`r get_risk("baseline")`~~ risk to die within 90 days of surgery. A woman, `r quantile(df$P_Age, .25)` years old, would have an elevated risk of `r get_risk("healthy_female")`. A ~~`r substr(age_range, 4, 5)`~~-year-old man with ASA class III and cancer, would have a risk of ~~`r get_risk("sickest_man")`~~. Note, however, that covariate patterns with observed probabilities above 5 % were rare (`r mean(pred_probs > 5) * 100` %, n = `r sum(pred_probs > 5)`). Risks above 5 % are therefore subject to extrapolation. The true proportions are likely lower (as indicated by Figure \@ref(fig:calibration)). Some risk calculators ignore this problem,[@Bozic2013a; @Harris2019] but we think this should be acknowledged.
 
 Variables in our model were chosen based on statistical properties and should therefore not be assigned any exact epidemiological and/or causal meaning per se. Nevertheless, age and sex are well-known predictors of remaining life span.~~[@Gibbs2020; @Shohat2020]~~ ASA class III has the largest estimated coefficient among all predictors, indicating large relative importance. This is clinically reasonable since a label of "severe systemic disease" should be based on a relevant patient assessment prior to surgery. 
 

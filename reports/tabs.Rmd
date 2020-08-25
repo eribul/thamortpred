@@ -21,6 +21,19 @@ knitr::kable(
     caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anesthesiologists classification. CNS = central nervous system.")
 ```
 
+
+##### PAGE BREAK
+
+(ref:agedist) ~~Age distribution among patients who died (range `r age_range`years).~~
+```{r agedist}
+knitr::kable(
+  tab_agedist,
+  caption = "(ref:agedist)"
+)
+
+```
+
+
 ##### PAGE BREAK
 
 ```{r brlprop}
