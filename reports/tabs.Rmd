@@ -7,7 +7,9 @@ tab_categorization %>%
   ungroup() %>% 
   mutate(
     `Comorbidities by groups` = 
-      gsub("Heart infarct", "Myocardial infarction", `Comorbidities by groups`)
+      gsub("Heart infarct", "Myocardial infarction", `Comorbidities by groups`),
+    `Comorbidities by groups` = 
+      gsub("Obesity", "~~Diagnosed~~ obesity", `Comorbidities by groups`)
   ) %>% 
   knitr::kable(
     caption = "(ref:comorbidity)")
@@ -18,7 +20,10 @@ tab_categorization %>%
 
 ```{r tab1}
 table1_combined_tot %>% 
-  mutate(what = gsub("Heart infarct", "Myocardial infarction", what)) %>% 
+  mutate(
+    what = gsub("Heart infarct", "Myocardial infarction", what),
+    what = gsub("Obesity", "~~Diagnosed~~ obesity", what)
+  ) %>% 
 knitr::kable(
     caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anesthesiologists classification. CNS = central nervous system.")
 ```
@@ -45,7 +50,8 @@ t <-
     variable = clean_names(variable),
     variable = gsub("= 2", "II", variable),
     variable = gsub("= 3", "III", variable),
-    variable = gsub("Heart infarct", "Myocardial infarction", variable)
+    variable = gsub("Heart infarct", "Myocardial infarction", variable),
+    variable = gsub("Obesity", "~~Diagnosed~~ obesity", variable)
   )
 
 knitr::kable(
@@ -60,7 +66,8 @@ brlasso_tbl_coefs %>%
   select(-math) %>%
   mutate(
     term = gsub("= 2", "II", term),
-    term = gsub("= 3", "III", term)
+    term = gsub("= 3", "III", term),
+    term = gsub("Obesity", "~~Diagnosed~~ besity", term)
   ) %>% 
 knitr::kable(
   caption = 'Estimated coefficients (beta) and odds ratios (OR) with 95 % confidence intervals for the reduced model.'

@@ -134,7 +134,7 @@ get_auc <- function(mod) {
 
 **Patients and methods: ** We included `r format(nrow(df), big.mark = ",")` patients with cemented THA due to osteoarthritis from the Swedish Hip Arthroplasty Register for model derivation and internal validation, as well as `r format(N_njr$tot, big.mark = ",")` patients from the National Joint Register from England and Wales for external model validation. A model was developed using a bootstrap ranking procedure with a least absolute shrinkage and selection operator (LASSO) logistic regression model combined with piecewise linear regression. Discriminative ability was evaluated by the area under the receiver operating characteristics curve (AUC). Calibration belt plots were used for model calibration. 
 
-**Results: ** A main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
+**Results: ** A main effects model combining age, sex, American Society for Anesthesiologists (ASA) class, the presence of cancer, diseases of the central nervous system, kidney disease, and ~~diagnosed~~ obesity had good discrimination, both internally `r get_auc("Reduced model")` and externally `r get_auc("NJR (Reduced model)")`. This model was superior to traditional models based on the Charlson `r get_auc("Charlson")` and Elixhauser `r get_auc("Elixhauser")` co-morbidity indices. The model was well calibrated for predicted probabilities up to 5%.
 
 **Concusion: ** We developed a parsimonious model which may facilitate individualized risk assessment prior to one of the most common surgical interventions. We published a web-calculator to aid clinical decision-making (`r shiny_url`).
 
@@ -142,7 +142,7 @@ get_auc <- function(mod) {
 **Clinical relevance:**
 
 - We developed a parsimonious model for risk assessment of 90-day mortality after elective THA. 
-- The model considers age, sex, ASA class, the presence of cancer, diseases of the central nervous system, kidney disease, and obesity.
+- The model considers age, sex, ASA class, the presence of cancer, diseases of the central nervous system, kidney disease, and ~~diagnosed~~ obesity.
 - We published an on-line web-calculator (`r shiny_url`).
 
 ##### PAGE BREAK
