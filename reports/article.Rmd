@@ -161,7 +161,7 @@ We aimed to develop a parsimonious prediction model of 90-day mortality after TH
 
 # Participants and Methods
 
-We used data from the Swedish Hip Arthroplasty Register (SHAR) for model derivation and internal validation. The model was then validated externally on patients from England and Wales recorded in the National Joint Registry for England, Wales, Northern Ireland, the Isle of Man and the States of Guernsey (NJR). We focused on patients with cemented THA due to osteoarthritis. Cementation is the most common fixation technique used in Sweden, thus used as inclusion criteria to decrease heterogeneity. Only the last operated hip was accounted for in patients with bilateral THA (Figure \@ref(fig:flowchartshar)).[@Bulow2020]
+We used data from the Swedish Hip Arthroplasty Register (SHAR) for model derivation and internal validation. The model was then validated externally on patients from England and Wales recorded in the National Joint Registry for England, Wales, Northern Ireland, the Isle of Man and the States of Guernsey (NJR). We focused on patients with cemented THA due to osteoarthritis. ~~We thus excluded patients where either the femoral stem and/or the acetabular cup were uncemented (uncemented, hybrids and reverse hybrids).~~ Cementation is the most common fixation technique used in Sweden, thus used as inclusion criteria to decrease heterogeneity. Only the last operated hip was accounted for in patients with bilateral THA (Figure \@ref(fig:flowchartshar)).[@Bulow2020]
 
 
 ## Derivation cohort (Sweden)
