@@ -11,14 +11,14 @@ knitr::include_graphics("../graphs/images.png")
 
 ```
 
-(ref:br1) ~~Outer steps of the bootstrap ranking procedure. All included patients (A) were re-sampled with replacements 100 times (B). For each bootstrap sample, the inner process (C; as depicted in figure \@ref(fig:br2)) was applied. The final output was a table with all potential predictors ranked by the number of times they got selected (D). Potential predictors selected at least once were included in the main model, and each predictor selected at least 33 out of the 100 times, were included in a reduced model as well.~~
+(ref:br1) ~~Outer steps of the bootstrap ranking procedure. All included patients (A) were re-sampled with replacements 100 times (B). For each bootstrap sample, the inner process (C; as depicted in figure \@ref(fig:br2)) was applied. The final output was a table with all potential predictors ranked by the number of times they got selected (D). Potential predictors selected at least once were included in the main model, and each predictor selected at least 33 out of the 100 times, were included in a reduced model as well.[@Bulow2020a]~~
 
 ```{r br1, fig.cap = "(ref:br1)", out.width = "\\columnwidth"}
 # knitr::include_graphics("../graphs/br1.pdf")
 knitr::include_graphics("../graphs/images.png")
 ```
 
-(ref:br2) ~~Inner steps of the bootstrap ranking procedure. For each bootstrap sample (1), 100 new bootstrap samples were created (2). Logistic LASSO-regression was applied within each sample (3). Absolute values of the estimated coefficient values (whereof some shrunk to 0 by the LASSO), were averaged as a measure of variable importance (4). Variables with their estimated variable importance above an estimated break-point from linear piece-wise regression (5) were kept as potential predictors (6).~~
+(ref:br2) ~~Inner steps of the bootstrap ranking procedure. For each bootstrap sample (1), 100 new bootstrap samples were created (2). Logistic LASSO-regression was applied within each sample (3). Absolute values of the estimated coefficient values (whereof some shrunk to 0 by the LASSO), were averaged as a measure of variable importance (4). Variables with their estimated variable importance above an estimated break-point from linear piece-wise regression (5) were kept as potential predictors (6).[@Bulow2020a]~~
 
 ```{r br2, fig.cap = "(ref:br2)", out.width = "\\columnwidth"}
 # knitr::include_graphics("../graphs/br2.pdf")
@@ -38,7 +38,7 @@ knitr::include_graphics("../graphs/images.png")
 ```
 
 
-```{r rocvalidation, fig.cap = "Receiver Operation Characteristics (ROC) curves. There was no difference when applying the reduced model to the external validation cohort from England and Wales ,compared to the Swedish derivation cohort."}
+```{r rocvalidation, fig.cap = "Receiver Operation Characteristics (ROC) curves. There was no difference when applying the reduced model to the external validation cohort from England and Wales, compared to the Swedish derivation cohort."}
 # knitr::include_graphics("../graphs/roc_validation.eps")
 knitr::include_graphics("../graphs/images.png")
 ```

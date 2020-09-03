@@ -1,6 +1,6 @@
 ##### PAGE BREAK
 
-(ref:comorbidity) Categorization of comorbidities based on diagnostic groups according to the Charlson and Elixhauser comorbidity indices. ~~Each sub-condition was firsdt classified based on data from the Swedish National patient register and from the Hospital Episodes statistics registry in England and Wales, coded by the International classification of diseases veriosn 10 (ICD-10), with categorization defined in table 1 and 2 from Quan et al.[Quan2005]~~. (CNS = central nervous system.)
+(ref:comorbidity) Categorization of comorbidities based on diagnostic groups according to the Charlson and Elixhauser comorbidity indices. ~~Each sub-condition was first classified based on data from the Swedish National patient register and from the Hospital Episodes statistics registry in England and Wales, coded by the International classification of diseases version 10 (ICD-10), with categorization defined in table 1 and 2 from Quan et al.[@Quan2005]~~ (CNS = central nervous system.)
 
 ```{r tabcategorization}
 tab_categorization %>%
@@ -11,21 +11,11 @@ tab_categorization %>%
     `Comorbidities by groups` = 
       gsub("Obesity", "~~Diagnosed~~ obesity", `Comorbidities by groups`)
   ) %>% 
+  mutate_all(~ gsub("nemia", "naemia", .)) %>% 
+  mutate_all(~ gsub("tumor", "tumour", .)) %>% 
   knitr::kable(
     caption = "(ref:comorbidity)")
 
-```
-
-##### PAGE BREAK
-
-```{r tab1}
-table1_combined_tot %>% 
-  mutate(
-    what = gsub("Heart infarct", "Myocardial infarction", what),
-    what = gsub("Obesity", "~~Diagnosed~~ obesity", what)
-  ) %>% 
-knitr::kable(
-    caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anesthesiologists classification. CNS = central nervous system.")
 ```
 
 
@@ -43,6 +33,20 @@ knitr::kable(
 
 ##### PAGE BREAK
 
+```{r tab1}
+table1_combined_tot %>% 
+  mutate(
+    what = gsub("Heart infarct", "Myocardial infarction", what),
+    what = gsub("Obesity", "~~Diagnosed~~ obesity", what),
+    what = gsub("Anemia", "Anaemia", what)
+  ) %>% 
+knitr::kable(
+    caption = "Characteristics of the study population in the model derivation cohort (SHAR) and external validation cohort (NJR). Educational levels were classified as low (up to 9 years), middle (10-12 years) and high (at least 12 years).  BMI = Body mass index. ASA = American Society for Anaesthesiologists classification. CNS = central nervous system.")
+```
+
+
+##### PAGE BREAK
+
 ```{r brlprop}
 t <- 
   brlasso_tbl_selected %>% 
@@ -51,7 +55,8 @@ t <-
     variable = gsub("= 2", "II", variable),
     variable = gsub("= 3", "III", variable),
     variable = gsub("Heart infarct", "Myocardial infarction", variable),
-    variable = gsub("Obesity", "~~Diagnosed~~ obesity", variable)
+    variable = gsub("Obesity", "~~Diagnosed~~ obesity", variable),
+    variable = gsub("Anemia", "Anaemia", variable)
   )
 
 knitr::kable(
@@ -67,7 +72,7 @@ brlasso_tbl_coefs %>%
   mutate(
     term = gsub("= 2", "II", term),
     term = gsub("= 3", "III", term),
-    term = gsub("Obesity", "~~Diagnosed~~ besity", term)
+    term = gsub("Obesity", "~~Diagnosed~~ obesity", term)
   ) %>% 
 knitr::kable(
   caption = 'Estimated coefficients (beta) and odds ratios (OR) with 95 % confidence intervals for the reduced model.'
