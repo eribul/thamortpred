@@ -53,22 +53,6 @@
       </names>
     </group>
   </macro>
-  <macro name="publisher">
-    <group delimiter=": " suffix=",">
-      <choose>
-        <if type="thesis">
-          <text variable="publisher-place" prefix="[" suffix="]"/>
-        </if>
-        <else-if type="webpage">
-          <text variable="URL" suffix=" "/>
-        </else-if>
-        <else>
-          <text variable="publisher-place"/>
-        </else>
-      </choose>
-      <text variable="publisher"/>
-    </group>
-  </macro>
   <macro name="accessed-date">
     <choose>
       <if variable="URL">
@@ -84,22 +68,12 @@
       <if type="article-journal article-magazine paper-conference article-newspaper" match="any">
         <group suffix=" " delimiter=" ">
           <text variable="container-title" form="short" font-style="italic" strip-periods="true"/>
-          <choose>
-            <if variable="URL">
-              <text term="internet" prefix="[" suffix="]" text-case="capitalize-first"/>
-            </if>
-          </choose>
         </group>
         <text macro="edition" prefix=" "/>
       </if>
       <else-if type="chapter">
         <group suffix="." delimiter=" ">
           <text variable="container-title" form="short" font-style="italic"/>
-          <choose>
-            <if variable="URL">
-              <text term="internet" prefix="[" suffix="]" text-case="capitalize-first"/>
-            </if>
-          </choose>
         </group>
         <text macro="edition" prefix=" "/>
       </else-if>
@@ -233,7 +207,6 @@
       <group delimiter=" " suffix=". ">
         <text macro="editor"/>
         <text macro="container-title"/>
-        <text macro="publisher"/>
         <group>
           <text macro="date"/>
           <text macro="journal-location"/>

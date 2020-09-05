@@ -1,6 +1,8 @@
+# Table headings
+
 ##### PAGE BREAK
 
-(ref:comorbidity) Categorization of comorbidities based on diagnostic groups according to the Charlson and Elixhauser comorbidity indices. ~~Each sub-condition was first classified based on data from the Swedish National patient register and from the Hospital Episodes statistics registry in England and Wales, coded by the International classification of diseases version 10 (ICD-10), with categorization defined in table 1 and 2 from Quan et al.[@Quan2005]~~ (CNS = central nervous system.)
+(ref:comorbidity) Categorization of comorbidities based on diagnostic groups according to the Charlson and Elixhauser comorbidity indices. ~~Each main  comorbidity category was first defined based on comorbidity data from the Swedish National patient register and from the Hospital Episodes statistics registry in England and Wales, coded along the International Classification of Diseases version 10 (ICD-10) and categorized according to Quan et al.[@Quan2005]~~ (CNS = central nervous system.)
 
 ```{r tabcategorization}
 tab_categorization %>%
@@ -21,7 +23,7 @@ tab_categorization %>%
 
 ##### PAGE BREAK
 
-(ref:agedist) ~~Age distribution among patients who died (range `r age_range`years).~~
+(ref:agedist) ~~Age distribution among patients who died in the Swedish derivation cohort (range `r age_range`years).~~
 ```{r agedist}
 knitr::kable(
   tab_agedist,
@@ -61,7 +63,7 @@ t <-
 
 knitr::kable(
   t, 
-  caption = "Variables selected by the bootstrap ranking procedure, and therefore kept in the main model. Variables chosen at least 33 times out of 100 were kept in the reduced model as well. ASA class II and III were kept in both models, since those are usually distinguished anyway. To simplify the models further would be possible by lumping class I and II together. Variables chosen more frequently are likely more important predictors. This is not necessarily true however since one of several strongly correlated variables might be chosen spuriously. (CNS = central nervous system.)")
+  caption = "Variables selected by the bootstrap ranking procedure, and therefore kept in the main model. Only variables chosen at least 33 times out of 100 were kept in the reduced model. ASA classes II and III were, however, kept in both models. Variables chosen more frequently are likely to be more important predictors. (CNS = central nervous system.)")
 ```
 
 ##### PAGE BREAK

@@ -1,3 +1,5 @@
+# Figure legends
+
 <!-- FIGURES -->
 
 ```{r flowchartshar, fig.cap = "Flowchart depicting inclusion criteria and number of patients from the Swedish derivation cohort."}
