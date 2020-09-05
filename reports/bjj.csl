@@ -53,11 +53,23 @@
       </names>
     </group>
   </macro>
+  <macro name="access">
+    <choose>
+      <if variable="URL">
+        <if type="PhD thesis">
+          <group delimiter=": ">
+            <text term="available at" text-case="capitalize-first"/>
+            <text variable="URL"/>
+          </group>
+        </if>
+      </if>
+    </choose>
+  </macro>
   <macro name="accessed-date">
     <choose>
       <if variable="URL">
         <group prefix="[" suffix="]" delimiter=" ">
-          <text term="cited"/>
+          <text term="cited" text-case="lowercase"/>
           <date variable="accessed" form="text"/>
         </group>
       </if>
@@ -214,6 +226,7 @@
         </group>
       </group>
       <text macro="report-details" suffix=". "/>
+      <text macro="access"/>
     </layout>
   </bibliography>
 </style>

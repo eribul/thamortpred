@@ -207,7 +207,7 @@ Ethical approval for this study was obtained from the Regional Ethical Review Bo
 
 ## Study participants
 
-`r sprintf("%d [%s]", sum(df$death90), surv90d)` of the patients from SHAR died within 90 days and no one was censored before that. ~~The median age of patients who died was `r age_median` years (range `r age_range`; Table \@ref(tab:agedist).~~ Patients from ~~the~~ NJR had an unadjusted risk of 90-day mortality of `r njr_surv`. Further cohort characteristics are presented in Table \@ref(tab:tab1).
+`r sprintf("%d [%s]", sum(df$death90), surv90d)` of the patients from SHAR died within 90 days and no one was censored before that. ~~The median age of patients who died was `r age_median` years (range `r age_range`; Table \@ref(tab:agedist)).~~ Patients from ~~the~~ NJR had an unadjusted risk of 90-day mortality of `r njr_surv`. Further cohort characteristics are presented in Table \@ref(tab:tab1).
 
 
 ## Model development and internal validation
