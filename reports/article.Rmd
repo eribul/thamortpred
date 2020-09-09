@@ -234,7 +234,7 @@ half_paran <- function(x)
 ```
 
 
-The main and reduced models were no different regarding discriminative ability `r sprintf("%s versus %s", gsub(")", "", get_auc("Main model"), fixed = TRUE), gsub("(", "", get_auc("Reduced model"), fixed = TRUE))`. We therefore considered the reduced model as superior due to its simplicity. Traditional models performed poorly with 95&nbsp;% confidence intervals not above 0.7: The Charlson comorbidity index had an AUC of `r half_paran("Charlson")` and the Elixhauser comorbidity an AUC of `r gsub("\\)", ";", half_paran("Elixhauser"))` Figure \@ref(fig:rocvalidation) and Figure \@ref(fig:aucci)). 
+The main and reduced models were no different regarding discriminative ability `r sprintf("%s versus %s", gsub(")", "", get_auc("Main model"), fixed = TRUE), gsub("(", "", get_auc("Reduced model"), fixed = TRUE))`. We therefore considered the reduced model as superior due to its simplicity. Traditional models performed poorly with 95&nbsp;% confidence intervals not above 0.7: The Charlson comorbidity index had an AUC of `r half_paran("Charlson")` and the Elixhauser comorbidity an AUC of `r gsub("\\)", ";", half_paran("Elixhauser"))` Figure \@ref(fig:rocderivation) and Figure \@ref(fig:aucci)). 
 
 The ability of the reduced model to estimate probabilities of death within 90 days is further illustrated in Figure \@ref(fig:separationhist) and \@ref(fig:separationdens). Model calibration was good for estimated probabilities up to 3&nbsp;% and acceptable up to 5&nbsp;% (Figure \@ref(fig:calibration)). Estimated model coefficients and corresponding odds ratios for the reduced model are presented in Table \@ref(tab:brlreduced). Omitting cancer from the reduced model did not affect the AUC or calibration for estimated probabilities below 3&nbsp;%, but calibration outside this range deteriorated, and we thus retained cancer as an important predictor.
 
@@ -247,7 +247,7 @@ The discriminative ability for the reduced model was not statistically significa
 
 # Discussion
 
-We found that a multivariable main effects logistic regression model with `r coefs_print_reduced` was better at predicting death within 90 days after THA than traditional models based on the Charlson or Elixhauser comorbidity indices. The resulting model predicted the probability of death within 90 days as: $\hat p = 1 / [1 +\exp(-\hat \beta x)]$ where $\hat \beta$ is the vector of estimated coefficients (including intercept) presented in table \@ref(tab:brlreduced).
+We found that a multivariable main effects logistic regression model with `r coefs_print_reduced` was better at predicting death within 90 days after THA than traditional models based on the Charlson or Elixhauser comorbidity indices. The resulting model predicted the probability of death within 90 days as: $\hat p = 1 / [1 +\exp(-\hat \beta' x)]$ where $\hat \beta$ is the vector of estimated coefficients (including intercept) presented in table \@ref(tab:brlreduced).
 This formula is considered valid for patients aged ~~`r age_range`~~ years and for predicted probabilities up to 5&nbsp;%.
 
 ```{r}
