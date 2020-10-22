@@ -1,14 +1,15 @@
 # "unregularized least-square fit restricted to variables in J" /[@Bach2008]
 form <- function(nms) paste("death90f ~", paste(gsub("_TRUE.|_X[23]|_Man", "", nms), collapse = " + "))
+cache("form")
 
 # Splines for age - Har testat med både 2 och 3 knots!
 # Ingen skillnad så behåller med 3
 fns3 <- function(coefs) {
   paste0(form(setdiff(coefs, "P_Age")), " + splines::ns(P_Age, 3)")
 }
+cache("fns3")
 
-
-glmdf <- function(f){
+glmdf <- function(f, df){
   glm <-  glm(f, data = df, family = binomial())
 
   # I tried to use LASSO to avoid over-estimation but found that best penalty-terms were virtually 0 for all models.
@@ -22,6 +23,7 @@ glmdf <- function(f){
 
   list(glm = glm, lrm = lrm)
 }
+cache("glmdf")
 
 all_models_tmp <-
   tribble(

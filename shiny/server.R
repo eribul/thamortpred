@@ -49,7 +49,7 @@ function(input, output, session) {
       sliderInput(
         'P_Age',
         renderText({get_text(input$lang, "age")}),
-        min = 35, max = 99, value = 72, step = 1, round = TRUE
+        min = 57, max = 95, value = 72, step = 1, round = TRUE
       ),
       TIP$age_title,
       TIP$age_content,
