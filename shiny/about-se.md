@@ -43,7 +43,7 @@ Vi har därför ett väldigt begränsat underlag avseende svårt sjuka patietner
 Därför redovisas inte skattade sannolikheter högre än 5 procent.
 
 Hur tillförlitlig en skattad sannolkhet än är så är det fortfarande bara en sannolikhet baserad på ett litet antal parametrar.
-Hur framtiden verkligen utfaller påverksa förstås också av helt andra faktorer än de vi lyckats inkludera i modellen!
+Hur framtiden verkligen utfaller påverkas förstås också av helt andra faktorer än de vi lyckats inkludera i modellen!
 
 
 # Mer information
