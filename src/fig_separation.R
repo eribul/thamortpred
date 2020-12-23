@@ -30,12 +30,15 @@ fig_separation_hist <-
     alpha = .5, position = "identity"
   ) +
   geom_vline(aes(xintercept = .05), color = "darkgreen", linetype = "dashed") +
-    theme_minimal() +
+  theme_minimal() +
   theme(
     legend.position = "none",
-    panel.grid = element_blank(),
-    axis.text.x = element_text(angle = 30),
-    axis.ticks = element_line(size = 1)
+    panel.grid      = element_blank(),
+    axis.text.x     = element_text(angle = 30),
+    axis.ticks      = element_line(size = 1),
+    axis.line       = element_line(size = .25),
+    axis.ticks.length.x.bottom = unit(.25, "cm"),
+    axis.ticks.x = element_line(size = 0.25),
   ) +
   xlab(expression(paste("Predicted probability of death [", log[10], "]"))) +
   ylab(expression(paste(sqrt(n)))) +
@@ -67,12 +70,15 @@ fig_separation_density <-
   theme_minimal() +
   theme(
     legend.position = "bottom",
-    legend.title = element_blank(),
-    panel.grid = element_blank(),
-    axis.text.x = element_text(angle = 30),
-    axis.ticks = element_line(size = 1),
-    axis.ticks.y = element_line(color = "white"),
-    axis.text.y = element_text(color = "white", size = 17)     # To align with upper panel
+    legend.title    = element_blank(),
+    panel.grid      = element_blank(),
+    axis.text.x     = element_text(angle = 30),
+    axis.ticks.length.x.bottom = unit(.25, "cm"),
+    axis.ticks.x = element_line(size = 0.25),
+    axis.ticks      = element_line(size = 1),
+    axis.ticks.y    = element_line(color = "white"),
+    axis.text.y     = element_text(color = "white", size = 17),     # To align with upper panel
+    axis.line       = element_line(size = .25)
   ) +
   geom_vline(aes(xintercept = .05), color = "darkgreen", linetype = "dashed") +
   xlab(expression(paste("Predicted probability of death [", log[10], "]"))) +
