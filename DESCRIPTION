@@ -1,7 +1,7 @@
 Type: Compendium
 Package: SHAR mortality prediction model
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.2
+Version: 1.0.0
 Authors@R: 
     person(given = "Erik",
            family = "Bulow",
@@ -11,7 +11,7 @@ Authors@R:
 Description: Predict 90-day mortality after elective THA using
     Swedish Hip Arthroplasty Register data. Modelling based on Bootstrap
     ranking logistic LASSO regression.
-License: What license it uses
+License: MIT
 Depends: 
   ProjectTemplate,
   utils,
